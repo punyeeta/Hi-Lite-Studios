@@ -132,10 +132,10 @@ export default function AdminMagazine() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <article
-                key={item.id}
-                className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+              key={item.id}
+              className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
               >
-                <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100">
+              <div className="aspect-4/3 w-full overflow-hidden bg-gray-100">
                   <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
                 </div>
                 <div className="flex flex-1 flex-col gap-2 p-4">
