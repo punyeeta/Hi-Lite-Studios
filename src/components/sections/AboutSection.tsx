@@ -6,7 +6,7 @@ import Subtract from '@/assets/images/Subtract.png';
 
 const AboutSection = () => {
   return (
-    <section className="relative w-full bg-white overflow-hidden">
+    <section id="about" className="relative w-full bg-white overflow-hidden">
       {/* Top Accent Border */}
       <div className="w-screen relative flex justify-center pt-6 pb-4 z-20">
         <img

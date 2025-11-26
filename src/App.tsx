@@ -12,11 +12,11 @@ import About from './pages/About';
 import Appointment from './pages/Appointment';
 
 // Admin pages
-import LoginForAdmin from './Admin/AdminLogin';
-import AdminMain from './Admin/AdminMain';
-import BlogsStories from './Admin/Admin_components/AdminBlog';
-import AdminBookings from './Admin/Admin_components/AdminBookings';
-import AdminContent from './Admin/Admin_components/AdminContent';
+import LoginForAdmin from './admin/AdminLogin';
+import AdminMain from './admin/AdminMain';
+import BlogsStories from './admin/AdminComponents/AdminBlog';
+import AdminBookings from './admin/AdminComponents/AdminBookings';
+import AdminContent from './admin/AdminComponents/AdminContent';
 import RequireAuth from './routes/RequireAuth';
 
 // Public layout wrapper
