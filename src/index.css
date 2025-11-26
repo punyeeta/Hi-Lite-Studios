@@ -118,10 +118,15 @@
     border-color: var(--border);
     outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
   }
+  html {
+    /* Replaces Tailwind @apply overflow-x-hidden; to avoid unknownAtRules lint error */
+    overflow-x: hidden;
+  }
   body {
-    /* Replaces Tailwind @apply bg-background text-foreground; to avoid unknownAtRules lint error */
+    /* Replaces Tailwind @apply bg-background text-foreground overflow-x-hidden; to avoid unknownAtRules lint error */
     background-color: var(--background);
     color: var(--foreground);
+    overflow-x: hidden;
     font-family: 'Google Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }

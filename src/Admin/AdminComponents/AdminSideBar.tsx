@@ -9,6 +9,7 @@ const navItems = [
   { label: 'Bookings', path: '/admin/bookings' },
   { label: 'Content', path: '/admin/content' },
   { label: 'Stories', path: '/admin/stories' },
+  { label: 'FAQ', path: '/admin/faq' },
 ]
 
 export default function AdminSidebar({

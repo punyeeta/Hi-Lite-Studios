@@ -10,12 +10,12 @@ export default function InfiniteStrip() {
     </div>
   );
 
-  const allItems = [...items, ...items].map((item, idx) =>
+  const allItems = [...items, ...items, ...items].map((item, idx) =>
     createItem(item, idx)
   );
 
   return (
-    <div className="w-full overflow-hidden bg-linear-to-r from-blue-950 to-indigo-700 py-2">
+    <div className="w-screen overflow-x-hidden bg-linear-to-r from-blue-950 to-indigo-700 py-2 relative left-1/2 -translate-x-1/2">
       <div className="flex whitespace-nowrap animate-strip">    
         {allItems}
       </div>

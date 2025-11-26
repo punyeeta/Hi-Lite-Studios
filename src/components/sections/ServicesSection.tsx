@@ -73,7 +73,7 @@ const ServicesSection = () => {
   const navigate = useNavigate()
 
   return (
-    <section id="services" className="relative w-full bg-white py-16">
+    <section id="services" className="relative w-full bg-white py-4">
       {/* top marquee */}
       <Strip direction="top" />
 
