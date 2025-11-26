@@ -1,6 +1,8 @@
 import StripPanel from '../components/common/StripPanel';
 import Hero from '../components/common/Hero';
-import About from './About';
+import AboutSection from '../components/sections/AboutSection';
+import WorksSection from '../components/sections/WorksSection';
+import ServicesSection from '../components/sections/ServicesSection';
 
 const Home = () => {
   return (
@@ -14,10 +16,17 @@ const Home = () => {
         <Hero />
       </section>
 
-      <section id="about">
-        <About />
+      <section id="about-section">
+        <AboutSection />
+      </section>
+
+      <section id="works-section">
+        <WorksSection />
       </section>
       
+      <section id="services-section">
+        <ServicesSection />
+      </section>
     </div>
   );
 };
