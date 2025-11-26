@@ -13,3 +13,5 @@ const Capture = () => {
 
 export default Capture;
 
+
+
