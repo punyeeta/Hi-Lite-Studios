@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Home from './pages/Home';
 import RecentWorks from './pages/RecentWorks';
@@ -6,7 +6,6 @@ import Service from './pages/Service';
 import Magazine from './pages/Magazine';
 import FAQ from './pages/FAQ';
 import Capture from './pages/Capture';
-import Appointment from './pages/Appointment';
 
 function App() {
   return (
@@ -21,7 +20,6 @@ function App() {
             <Route path="/magazine" element={<Magazine />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/capture" element={<Capture />} />
-            <Route path="/appointment" element={<Appointment />} />
           </Routes>
         </main>
       </div>
