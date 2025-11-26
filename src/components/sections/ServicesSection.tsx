@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import IndoorIcon from '@/assets/images/Indoor.png'
 import OutdoorIcon from '@/assets/images/Outdoor.png'
 import VideoIcon from '@/assets/images/Vid.png'
@@ -43,10 +44,12 @@ const services: ServiceCard[] = [
     gradient: 'from-[#FBC93D] to-[#FF8000]',
     textColor: 'text-[#FF8000]',
     features: [
-      'School & Institutional Events',
-      'Milestone Celebrations',
-      'Outdoor Lifestyle Sessions',
-      'Community + Campus Programs',
+      'School Event Coverage',
+      'Institutional/Corp. Events',
+      'Birthday/Milestone Celeb.',
+      'Outdoor Portrait Sessions',
+      'Organizational Shoots',
+      'Engagement/Pre-Event Shoots',
     ],
   },
   {
@@ -58,16 +61,16 @@ const services: ServiceCard[] = [
     gradient: 'from-[#F2322E] to-[#AA1815]',
     textColor: 'text-[#AA1815]',
     features: [
-      'Event Highlight Films',
-      'Story-driven documentaries',
-      'Live Program Coverage',
-      'Social Media Cutdowns',
+      'Event Highlight Videos',
+      'Full Event Coverage',
+      'Video Documentation for School Events',
     ],
   },
 ]
 
 const ServicesSection = () => {
   const [activeCard, setActiveCard] = useState<ServiceCard | null>(null)
+  const navigate = useNavigate()
 
   return (
     <section id="services" className="relative w-full bg-white py-16">
@@ -189,8 +192,11 @@ const ServicesSection = () => {
                 <button className={`inline-flex items-center gap-2 rounded-ee-2xl rounded-tl-2xl bg-white px-6 py-3 font-semibold shadow-md transition hover:bg-white/90 ${activeCard.textColor}`}>
                     View More Services →
                 </button>
-                <button className="rounded-ee-2xl rounded-tl-2xl border border-white px-6 py-3 font-semibold transition hover:bg-white/10">
-                    Book Appointment
+                 <button
+                   className="rounded-ee-2xl rounded-tl-2xl border border-white px-6 py-3 font-semibold transition hover:bg-white/10"
+                   onClick={() => navigate('/appointment')}
+                 >
+                     Book Appointment
                 </button>
                 </div>
             </div>

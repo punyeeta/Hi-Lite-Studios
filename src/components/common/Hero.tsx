@@ -1,8 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import Intersect from '@/assets/images/Intersect.png';
 import Logo from '@/assets/images/Logo.png';
 import ChatbotButton from '@/assets/images/Chatbot Button.png';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative w-full bg-white overflow-hidden pt-4 pb-10">
       <div className="relative mx-auto flex w-full max-w-[1500px] flex-col gap-8 px-2 md:flex-row md:items-start md:px-4">
@@ -37,6 +40,7 @@ const Hero = () => {
             </div>
             
             <button
+              onClick={() => navigate('/appointment')}
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-8 py-5 text-xl font-semibold italic text-white shadow-lg transition hover:shadow-xl">
               <span className="relative z-10">Book Appointment</span>
               <span className="absolute inset-0 rounded-2xl p-1 pointer-events-none border-sweep-mask"></span>
