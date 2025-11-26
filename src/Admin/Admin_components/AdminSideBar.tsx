@@ -6,9 +6,9 @@ type AdminSidebarProps = {
 }
 
 const navItems = [
-  { label: 'Bookings', path: '/admin/bookings' },
-  { label: 'Content', path: '/admin/content' },
-  { label: 'Stories', path: '/admin/stories' },
+  { label: 'Booking Appointments', path: '/admin/bookings' },
+  { label: 'Content Management', path: '/admin/content' },
+  { label: 'Blogs and Stories', path: '/admin/stories' },
   { label: 'FAQ', path: '/admin/faq' },
 ]
 
