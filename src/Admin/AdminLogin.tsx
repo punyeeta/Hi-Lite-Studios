@@ -52,6 +52,7 @@ export default function LoginForAdmin() {
             id="email"
             name="email"
             type="email"
+            autoComplete="email"
             required
             className="border rounded px-3 py-2 text-sm"
           />
@@ -63,6 +64,7 @@ export default function LoginForAdmin() {
             id="password"
             name="password"
             type="password"
+            autoComplete="current-password"
             required
             className="border rounded px-3 py-2 text-sm"
           />

@@ -111,32 +111,9 @@
 }
 
 /* Google Sans font - add font files to public/fonts/ if you have them */
-@font-face {
-  font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-Regular.woff2') format('woff2'),
-       url('/fonts/GoogleSans-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-Medium.woff2') format('woff2'),
-       url('/fonts/GoogleSans-Medium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-Bold.woff2') format('woff2'),
-       url('/fonts/GoogleSans-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* Local Google Sans font disabled because the font files are not present in public/fonts.
+   This was causing “Failed to decode downloaded font / OTS parsing error” in the browser.
+   If you add the actual font files later, you can restore these @font-face blocks. */
 
 @layer base {
   * {

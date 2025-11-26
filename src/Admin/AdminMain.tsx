@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase/client'
-import AdminSidebar from '../components/Admin/adminsidebar'
+import AdminSidebar from './Admin_components/AdminSideBar'
 
 export default function AdminMain() {
   const [loading, setLoading] = useState(false)

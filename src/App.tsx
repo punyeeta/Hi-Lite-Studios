@@ -12,9 +12,11 @@ import About from './pages/About';
 import Appointment from './pages/Appointment';
 
 // Admin pages
-import LoginForAdmin from './admin/AdminLogin';
-import AdminMain from './admin/AdminMain';
-import BlogsStories from './admin/AdminBlog';
+import LoginForAdmin from './Admin/AdminLogin';
+import AdminMain from './Admin/AdminMain';
+import BlogsStories from './Admin/Admin_components/AdminBlog';
+import AdminBookings from './Admin/Admin_components/AdminBookings';
+import AdminContent from './Admin/Admin_components/AdminContent';
 import RequireAuth from './routes/RequireAuth';
 
 // Public layout wrapper
@@ -53,6 +55,8 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route path="/admin" element={<AdminMain />}>
             <Route index element={<Navigate to="bookings" replace />} />
+            <Route path="bookings" element={<AdminBookings />} />
+            <Route path="content" element={<AdminContent />} />
             <Route path="stories" element={<BlogsStories />} />
           </Route>
         </Route>
