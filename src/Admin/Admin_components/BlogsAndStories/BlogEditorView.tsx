@@ -99,12 +99,12 @@ export default function BlogEditorView({
           </div>
 
           <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-            <div className="aspect-video w-full bg-gray-100">
+            <div className="aspect-video w-full bg-gray-100 flex items-center justify-center">
               {form.cover_image ? (
                 <img
                   src={form.cover_image}
                   alt={form.title || 'Cover preview'}
-                  className="h-full w-full object-cover"
+                  className="max-h-full max-w-full object-contain"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-xs text-gray-400">

@@ -32,7 +32,7 @@ const Magazine = () => {
 
         {selected ? (
           <article className="overflow-hidden rounded-3xl bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
-            <div className="aspect-[16/7] w-full overflow-hidden bg-gray-200">
+            <div className="aspect-16/7 w-full overflow-hidden bg-gray-200">
               <img src={selected.image} alt={selected.title} className="h-full w-full object-cover" />
             </div>
             <div className="space-y-4 px-8 py-8 md:px-10">
