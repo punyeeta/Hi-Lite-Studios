@@ -1,5 +1,7 @@
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import type { Booking, BookingStatus } from '@/supabase/supabase_services/admin_boooking/bookings'
+import EmailModal from './EmailModal'
+import { sendCustomBookingEmail } from '@/supabase/supabase_services/send_email'
 
 export interface BookingRowProps {
   booking: Booking
@@ -18,6 +20,8 @@ export default memo(function BookingRow({
   onStatusChange,
   renderStatusBadge,
 }: BookingRowProps) {
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
+
   const fullName = [
     booking.client_first_name,
     booking.client_middle_initial,
@@ -25,6 +29,10 @@ export default memo(function BookingRow({
   ]
     .filter(Boolean)
     .join(' ')
+
+  const handleSendEmail = async (message: string) => {
+    await sendCustomBookingEmail(booking.email, booking.client_first_name, message, booking.status)
+  }
 
   return (
     <tr className={isSelected ? 'bg-violet-50' : undefined}>
@@ -73,29 +81,37 @@ export default memo(function BookingRow({
               Decline
             </button>
           </>
-        ) : booking.status === 'confirmed' ? (
+        ) : booking.status === 'confirmed' || booking.status === 'cancelled' || booking.status === 'declined' ? (
           <>
-            <a
-              href="https://mail.google.com"
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              onClick={() => setIsEmailModalOpen(true)}
               className="inline-flex items-center rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90"
               style={{ backgroundColor: '#FFC800' }}
             >
               Email
-            </a>
-            <button
-              type="button"
-              onClick={() => onStatusChange(booking.id, 'cancelled')}
-              disabled={loading}
-              className="rounded-md bg-gray-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300"
-            >
-              Cancel
             </button>
+            {booking.status === 'confirmed' && (
+              <button
+                type="button"
+                onClick={() => onStatusChange(booking.id, 'cancelled')}
+                disabled={loading}
+                className="rounded-md bg-gray-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Cancel
+              </button>
+            )}
           </>
         ) : (
           renderStatusBadge(booking.status)
         )}
+
+        <EmailModal
+          booking={booking}
+          isOpen={isEmailModalOpen}
+          onClose={() => setIsEmailModalOpen(false)}
+          onSend={handleSendEmail}
+        />
       </td>
     </tr>
   )
