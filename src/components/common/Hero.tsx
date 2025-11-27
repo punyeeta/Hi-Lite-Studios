@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StarYellow from '@/assets/images/StarYellow.png';
 import Logo from '@/assets/images/Logo.png';
 import ChatbotButton from '@/assets/images/ChatbotButton.png';
+import { Chatbot } from './Chatbot';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   return (
     <section className="relative w-full bg-white overflow-hidden pt-4 pb-10">
@@ -78,11 +81,22 @@ const Hero = () => {
       </div>
 
       <div className="fixed bottom-8 right-8 z-50">
-        <img
-          src={ChatbotButton}
-          alt="Chatbot Button"
+        <button
+          onClick={() => setIsChatbotOpen(!isChatbotOpen)}
           className="w-20 h-20 rounded-full shadow-lg cursor-pointer transition hover:shadow-[0_0_25px_rgba(0,123,255,0.9)]"
-        />
+        >
+          <img
+            src={ChatbotButton}
+            alt="Chatbot Button"
+            className="w-full h-full rounded-full"
+          />
+        </button>
+
+        {isChatbotOpen && (
+          <div className="absolute bottom-24 right-0 w-96">
+            <Chatbot onClose={() => setIsChatbotOpen(false)} />
+          </div>
+        )}
       </div>
     </section>
   );
