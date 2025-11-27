@@ -1,4 +1,10 @@
 import { NavLink } from 'react-router-dom'
+import sidebarBackground from '../../assets/images/sidebar_background.png'
+import wordmark from '../../assets/images/Wordmark.png'
+import bookingIcon from '../../assets/images/Bookingappointmentbutton.png'
+import contentIcon from '../../assets/images/contentManagementbutton.png'
+import blogIcon from '../../assets/images/blogstoriesbutton.png'
+import logoutIcon from '../../assets/images/logoutbutton.png'
 
 type AdminSidebarProps = {
   onLogout?: () => void
@@ -6,10 +12,9 @@ type AdminSidebarProps = {
 }
 
 const navItems = [
-  { label: 'Bookings', path: '/admin/bookings' },
-  { label: 'Content', path: '/admin/content' },
-  { label: 'Stories', path: '/admin/stories' },
-  { label: 'FAQ', path: '/admin/faq' },
+  { label: 'Booking Appointments', path: '/admin/bookings', icon: bookingIcon },
+  { label: 'Content Management', path: '/admin/content', icon: contentIcon },
+  { label: 'Blogs and Stories', path: '/admin/stories', icon: blogIcon },
 ]
 
 export default function AdminSidebar({
@@ -17,44 +22,76 @@ export default function AdminSidebar({
   loggingOut,
 }: AdminSidebarProps) {
   return (
-    <aside className="w-64 min-h-screen bg-white border-r border-black p-6 flex flex-col gap-8">
-      <div>
-        <p className="text-xs uppercase tracking-wide text-gray-500">
-          Hi-Lite Studio
-        </p>
-        <h2 className="text-xl font-semibold text-gray-900">Admin Menu</h2>
+    <aside className="w-72 min-h-screen border-r border-black relative">
+      {/* Background layer - using img element for stability */}
+      <img
+        src={sidebarBackground}
+        alt=""
+        className="absolute inset-0 z-0 w-full h-full object-cover pointer-events-none"
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          willChange: 'auto',
+        }}
+      />
+      
+      {/* Content layer */}
+      <div className="relative z-10 p-6 flex flex-col gap-8 min-h-screen">
+        <div>
+          <img
+            src={wordmark}
+            alt="Hi-Lite Studio"
+            className="w-full h-auto"
+          />
+          <p className="text-xs uppercase tracking-wide text-gray-400 mt-10 ">
+            ADMIN MENU
+          </p>
+        </div>
+
+        <nav className="flex-1">
+          <ul className="space-y-2">
+            {navItems.map((item) => (
+              <li key={item.path}>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    [
+                      'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors border border-transparent',
+                      isActive
+                        ? 'text-gray-900'
+                        : 'text-gray-700 hover:border-black hover:bg-gray-50',
+                    ].join(' ')
+                  }
+                  style={({ isActive }) =>
+                    isActive ? { backgroundColor: '#E2E2E2' } : {}
+                  }
+                >
+                  <img
+                    src={item.icon}
+                    alt=""
+                    className="w-5 h-5"
+                  />
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <button
+          type="button"
+          onClick={onLogout}
+          disabled={loggingOut}
+          className="flex items-center gap-3 w-full rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-black hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <img
+            src={logoutIcon}
+            alt=""
+            className="w-5 h-5"
+          />
+          {loggingOut ? 'Logging out...' : 'Log Out'}
+        </button>
       </div>
-
-      <nav className="flex-1">
-        <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.path}>
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  [
-                    'block rounded-md px-3 py-2 text-sm font-medium transition-colors border border-transparent',
-                    isActive
-                      ? 'bg-black text-white'
-                      : 'text-gray-700 hover:border-black hover:bg-gray-50',
-                  ].join(' ')
-                }
-              >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <button
-        type="button"
-        onClick={onLogout}
-        disabled={loggingOut}
-        className="w-full rounded-md border border-black px-3 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {loggingOut ? 'Logging out...' : 'Logout'}
-      </button>
     </aside>
   )
 }

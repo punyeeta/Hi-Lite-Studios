@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { useMagazine } from '@/context/MagazineContext'
 import MagazineCard from '@/components/cards/MagazineCard'
+import MagazineCardSkeleton from '@/components/cards/MagazineCardSkeleton'
 
 const MagazineSection = () => {
-  const { items } = useMagazine()
+  const { items, loading } = useMagazine()
   const navigate = useNavigate()
 
   const previews = items.slice(0, 3)
@@ -31,15 +32,22 @@ const MagazineSection = () => {
         </header>
 
         <div className="grid gap-10 md:grid-cols-3">
-          {previews.map((item) => (
-            <MagazineCard
-              key={item.id}
-              title={item.title}
-              image={item.image}
-              excerpt={item.excerpt}
-              onClick={() => navigate(`/magazine/${item.id}`)}
-            />
-          ))}
+          {loading ? (
+            // Show skeleton loaders while loading
+            Array.from({ length: 3 }).map((_, index) => (
+              <MagazineCardSkeleton key={`skeleton-${index}`} />
+            ))
+          ) : (
+            previews.map((item) => (
+              <MagazineCard
+                key={item.id}
+                title={item.title}
+                image={item.image}
+                excerpt={item.excerpt}
+                onClick={() => navigate(`/magazine/${item.id}`)}
+              />
+            ))
+          )}
         </div>
       </div>
     </section>

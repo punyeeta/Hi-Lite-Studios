@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import {
   fetchAllBlogStoriesForAdmin,
+  fetchBlogStoryById,
   createBlogStory,
   updateBlogStory,
   deleteBlogStory,
@@ -9,6 +10,7 @@ import {
   unpinBlogStory,
   uploadBlogImage,
 } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
+import { useMagazine } from '@/context/MagazineContext'
 import BlogListView from './BlogListView'
 import BlogEditorView, {
   type BlogFormState,
@@ -33,6 +35,7 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)+/g, '')
 
 export default function MagazineAdmin() {
+  const { refreshItems } = useMagazine()
   const [mode, setMode] = useState<Mode>('list')
   const [stories, setStories] = useState<BlogStory[]>([])
   const [loading, setLoading] = useState(false)
@@ -84,18 +87,42 @@ export default function MagazineAdmin() {
     setMode('create')
   }
 
-  const handleEditStory = (story: BlogStory) => {
-    setSelectedStory(story)
-    setForm({
-      title: story.title,
-      slug: story.slug,
-      cover_image: story.cover_image ?? '',
-      excerpt: story.excerpt ?? '',
-      content: story.content,
-      is_pinned: story.is_pinned,
-      status: story.status,
-    })
-    setMode('edit')
+  const handleEditStory = async (story: BlogStory) => {
+    // If content is empty (from lightweight query), fetch full content
+    if (!story.content) {
+      setLoading(true)
+      try {
+        const fullStory = await fetchBlogStoryById(story.id)
+        setSelectedStory(fullStory)
+        setForm({
+          title: fullStory.title,
+          slug: fullStory.slug,
+          cover_image: fullStory.cover_image ?? '',
+          excerpt: fullStory.excerpt ?? '',
+          content: fullStory.content,
+          is_pinned: fullStory.is_pinned,
+          status: fullStory.status,
+        })
+        setMode('edit')
+      } catch (err: any) {
+        setError(err.message ?? 'Failed to load story')
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      // Content already available
+      setSelectedStory(story)
+      setForm({
+        title: story.title,
+        slug: story.slug,
+        cover_image: story.cover_image ?? '',
+        excerpt: story.excerpt ?? '',
+        content: story.content,
+        is_pinned: story.is_pinned,
+        status: story.status,
+      })
+      setMode('edit')
+    }
   }
 
   const handleDeleteStory = async (story: BlogStory) => {
@@ -106,6 +133,8 @@ export default function MagazineAdmin() {
       setSaving(true)
       await deleteBlogStory(story.id)
       setStories((prev) => prev.filter((s) => s.id !== story.id))
+      // Refresh the magazine context so the UI updates immediately
+      await refreshItems()
       if (selectedStory?.id === story.id) {
         resetForm()
         setMode('list')
@@ -127,6 +156,8 @@ export default function MagazineAdmin() {
       setStories((prev) =>
         prev.map((s) => (s.id === story.id ? updated : s)),
       )
+      // Refresh the magazine context so the UI updates immediately
+      await refreshItems()
     } catch (err: any) {
       setError(err.message ?? 'Failed to update pin state')
     } finally {
@@ -216,6 +247,8 @@ export default function MagazineAdmin() {
           status: form.status,
         })
         setStories((prev) => [created, ...prev])
+        // Refresh the magazine context so the UI updates immediately
+        await refreshItems()
         resetForm()
         setMode('list')
       } else if (mode === 'edit' && selectedStory) {
@@ -231,6 +264,8 @@ export default function MagazineAdmin() {
         setStories((prev) =>
           prev.map((s) => (s.id === updated.id ? updated : s)),
         )
+        // Refresh the magazine context so the UI updates immediately
+        await refreshItems()
         setSelectedStory(updated)
         setMode('list')
       }

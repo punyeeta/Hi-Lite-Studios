@@ -1,14 +1,52 @@
+import { useState } from 'react'
+import WorksCollection from './WorksCollection'
+import AboutUsSection from './AboutUsSection'
+import AdminFAQ from './AdminFAQ'
+
+type Tab = 'works' | 'about' | 'faq'
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'works', label: 'Works Collection' },
+  { id: 'about', label: 'About Us' },
+  { id: 'faq', label: 'FAQs' },
+]
+
 export default function AdminContent() {
+  const [activeTab, setActiveTab] = useState<Tab>('works')
+
   return (
-    <section className="space-y-4">
-      <header>
-        <h1 className="text-2xl font-semibold">Content</h1>
-        <p className="text-sm text-gray-600">
-          This is a placeholder for managing site content.
-        </p>
+    <section className="space-y-6">
+      <header className="space-y-1">
+        <p className="text-sm font-medium text-gray-500">Welcome, Admin.</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
+          Content Management
+        </h1>
       </header>
+
+      {/* Tab Navigation */}
+      <div className="inline-flex rounded-full bg-gray-100 p-1">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-full transition ${
+              activeTab === tab.id
+                ? 'bg-white text-[#291471] shadow-sm'
+                : 'text-gray-500 hover:text-gray-800'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      <div>
+        {activeTab === 'works' && <WorksCollection />}
+        {activeTab === 'about' && <AboutUsSection />}
+        {activeTab === 'faq' && <AdminFAQ />}
+      </div>
     </section>
   )
 }
-
-

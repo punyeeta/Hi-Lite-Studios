@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { fetchAllFAQs, createFAQ, updateFAQ, deleteFAQ } from '@/supabase/supabase_services/Content_Management/FAQs/faqs'
 
 export type FAQItem = {
   id: string
@@ -8,73 +9,83 @@ export type FAQItem = {
 
 type FAQContextValue = {
   items: FAQItem[]
-  addItem: (input: Omit<FAQItem, 'id'>) => void
-  updateItem: (id: string, input: Partial<Omit<FAQItem, 'id'>>) => void
-  deleteItem: (id: string) => void
+  loading: boolean
+  error: string | null
+  addItem: (input: Omit<FAQItem, 'id'>) => Promise<void>
+  updateItem: (id: string, input: Partial<Omit<FAQItem, 'id'>>) => Promise<void>
+  deleteItem: (id: string) => Promise<void>
+  refreshItems: () => Promise<void>
 }
 
 const FAQContext = createContext<FAQContextValue | undefined>(undefined)
 
-const initialItems: FAQItem[] = [
-  {
-    id: '1',
-    question: 'What is Hi‑Lite Studio?',
-    answer:
-      'Hi‑Lite Studio is a professional photography and videography studio based in Cagayan de Oro. We specialize in capturing meaningful moments for families, students, organizations, and individuals through a blend of technical precision and emotional storytelling.',
-  },
-  {
-    id: '2',
-    question: 'What services do you offer?',
-    answer:
-      'We offer three main services: Indoor & Studio Photography (portraits, family photos, academic portraits), Outdoor & Event Photography (school events, institutional events, birthday celebrations), and Videography (event highlight videos and full coverage).',
-  },
-  {
-    id: '3',
-    question: 'How do I book a session?',
-    answer:
-      'You can book a session through our website by visiting the "Capture with Us" page and filling out the booking form. You\'ll select your preferred service type, desired date, and provide any special requests. Our team will then contact you to confirm and finalize the details.',
-  },
-  {
-    id: '4',
-    question: 'What is your turnaround time for edited photos?',
-    answer:
-      'Our standard turnaround time for edited photos is 2-3 weeks after the session, depending on the package and complexity. Rush options may be available upon request for an additional fee.',
-  },
-  {
-    id: '5',
-    question: 'Do you offer packages or discounts for bulk orders?',
-    answer:
-      'Yes, we offer various packages tailored to different needs and budgets. We also provide discounts for organizational bulk bookings and repeat clients. Please contact us directly for a customized quote.',
-  },
-  {
-    id: '6',
-    question: 'Can I use the photos commercially?',
-    answer:
-      'Most of our packages include personal use rights for the delivered photos. Commercial usage rights require a separate agreement and additional licensing fees. Please discuss your intended use when booking to ensure proper licensing.',
-  },
-]
-
 export function FAQProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<FAQItem[]>(initialItems)
+  const [items, setItems] = useState<FAQItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const addItem: FAQContextValue['addItem'] = (input) => {
-    const id =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random()}`
-    setItems((prev) => [...prev, { id, ...input }])
+  const refreshItems = async () => {
+    try {
+      setError(null)
+      const data = await fetchAllFAQs()
+      // Convert FAQ to FAQItem (exclude created_at and updated_at)
+      setItems(
+        data.map((faq) => ({
+          id: faq.id,
+          question: faq.question,
+          answer: faq.answer,
+        })),
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch FAQs')
+      console.error('Error fetching FAQs:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const updateItem: FAQContextValue['updateItem'] = (id, input) => {
-    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...input } : item)))
+  useEffect(() => {
+    refreshItems()
+  }, [])
+
+  const addItem: FAQContextValue['addItem'] = async (input) => {
+    try {
+      setError(null)
+      await createFAQ(input)
+      await refreshItems()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add FAQ')
+      console.error('Error adding FAQ:', err)
+      throw err
+    }
   }
 
-  const deleteItem: FAQContextValue['deleteItem'] = (id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id))
+  const updateItem: FAQContextValue['updateItem'] = async (id, input) => {
+    try {
+      setError(null)
+      await updateFAQ(id, input)
+      await refreshItems()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update FAQ')
+      console.error('Error updating FAQ:', err)
+      throw err
+    }
+  }
+
+  const deleteItem: FAQContextValue['deleteItem'] = async (id) => {
+    try {
+      setError(null)
+      await deleteFAQ(id)
+      await refreshItems()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete FAQ')
+      console.error('Error deleting FAQ:', err)
+      throw err
+    }
   }
 
   return (
-    <FAQContext.Provider value={{ items, addItem, updateItem, deleteItem }}>
+    <FAQContext.Provider value={{ items, loading, error, addItem, updateItem, deleteItem, refreshItems }}>
       {children}
     </FAQContext.Provider>
   )

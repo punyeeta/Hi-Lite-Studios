@@ -18,7 +18,8 @@ import BlogsStories from './Admin/Admin_components/BlogsAndStories/Magazine';
 import AdminBookings from './Admin/Admin_components/BookingAppointments/AdminBookings';
 import AdminContent from './Admin/Admin_components/ContentManagement/AboutUS';
 import RequireAuth from './routes/RequireAuth';
-import AdminFAQ from './Admin/Admin_components/AdminFAQ';
+import AdminFAQ from './Admin/Admin_components/ContentManagement/AdminFAQ';
+import AddNewProject from './Admin/Admin_components/ContentManagement/AddNewProject';
 // Public layout wrapper
 function PublicLayout() {
   return (
@@ -57,6 +58,7 @@ function App() {
             <Route index element={<Navigate to="bookings" replace />} />
             <Route path="bookings" element={<AdminBookings />} />
             <Route path="content" element={<AdminContent />} />
+            <Route path="content/works/new" element={<AddNewProject />} />
             <Route path="stories" element={<BlogsStories />} />
             <Route path="faq" element={<AdminFAQ />} />
           </Route>

@@ -58,27 +58,32 @@ export async function createBlogStory(input: NewBlogStoryInput) {
   return data as BlogStory
 }
 
+// Lightweight query for admin list view (excludes large content field)
 export async function fetchAllBlogStoriesForAdmin() {
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .select('*')
+    .select('id, title, slug, cover_image, excerpt, is_pinned, status, created_at, updated_at')
     .order('is_pinned', { ascending: false })
     .order('created_at', { ascending: false })
 
   if (error) throw error
-  return (data ?? []) as BlogStory[]
+  // Return with empty content since we don't need it for list views
+  // Full content will be fetched when editing
+  return (data ?? []).map((story) => ({ ...story, content: '' })) as BlogStory[]
 }
 
+// Lightweight query for list views (excludes large content field)
 export async function fetchPublishedBlogStories() {
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .select('*')
+    .select('id, title, slug, cover_image, excerpt, is_pinned, status, created_at, updated_at')
     .eq('status', 'published')
     .order('is_pinned', { ascending: false })
     .order('created_at', { ascending: false })
 
   if (error) throw error
-  return (data ?? []) as BlogStory[]
+  // Return with empty content since we don't need it for list views
+  return (data ?? []).map((story) => ({ ...story, content: '' })) as BlogStory[]
 }
 
 export async function fetchBlogStoryById(id: number) {

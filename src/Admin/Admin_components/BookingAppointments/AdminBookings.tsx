@@ -1,4 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import PendingIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Pending_Button.png'
+import ConfirmedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/ConfirmedButton.png'
+import CancelledIcon from '../../../assets/images/Adminbuttons/bookings_buttons/CancellButton.png'
+import DeclinedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Declinebutton.png'
+import AvailableDatesIcon from '../../../assets/images/Adminbuttons/bookings_buttons/AvailableDatesButton.png'
 import type { Booking, BookingStatus } from '@/supabase/supabase_services/admin_boooking/bookings'
 import {
   fetchBookingsByStatus,
@@ -8,12 +13,12 @@ import {
 
 type Tab = BookingStatus | 'available-dates'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'pending', label: 'Pending' },
-  { id: 'confirmed', label: 'Confirmed' },
-  { id: 'cancelled', label: 'Cancelled' },
-  { id: 'declined', label: 'Declined' },
-  { id: 'available-dates', label: 'Available Dates' },
+const TABS: { id: Tab; label: string; icon: string }[] = [
+  { id: 'pending', label: 'Pending', icon: PendingIcon },
+  { id: 'confirmed', label: 'Confirmed', icon: ConfirmedIcon },
+  { id: 'cancelled', label: 'Cancelled', icon: CancelledIcon },
+  { id: 'declined', label: 'Declined', icon: DeclinedIcon },
+  { id: 'available-dates', label: 'Available Dates', icon: AvailableDatesIcon },
 ]
 
 export default function AdminBookings() {
@@ -131,8 +136,8 @@ export default function AdminBookings() {
   return (
     <section className="space-y-6">
       <header className="space-y-1">
-        <p className="text-sm font-medium text-gray-500">Welcome, Admin.</p>
-        <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
+        <p className="text-md font-medium text-[#D42724]">Welcome, Admin.</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-gray-900">
           Booking Appointments
         </h1>
       </header>
@@ -144,13 +149,20 @@ export default function AdminBookings() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-full transition ${
+              className={`px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-md transition ${
                 activeTab === tab.id
-                  ? 'bg-white text-[#291471] shadow-sm'
+                  ? 'bg-[#E2E2E2] text-[#291471] shadow-sm'
                   : 'text-gray-500 hover:text-gray-800'
               }`}
             >
-              {tab.label}
+              <span className="flex items-center gap-2">
+                <img
+                  src={tab.icon}
+                  alt={`${tab.label} tab icon`}
+                  className="h-5 w-auto"
+                />
+                {tab.label}
+              </span>
             </button>
           ))}
         </div>
@@ -220,14 +232,35 @@ export default function AdminBookings() {
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
               {loading && !bookings.length ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-4 py-8 text-center text-sm text-gray-500"
-                  >
-                    Loading bookings...
-                  </td>
-                </tr>
+                // Skeleton loaders for table rows
+                Array.from({ length: 5 }).map((_, index) => (
+                  <tr key={`skeleton-${index}`} className="animate-pulse">
+                    <td className="px-4 py-3">
+                      <div className="h-4 w-4 rounded border border-gray-300 bg-gray-200" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="h-4 w-20 rounded bg-gray-200" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="h-4 w-32 rounded bg-gray-200" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="h-4 w-24 rounded bg-gray-200" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="h-4 w-24 rounded bg-gray-200" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="h-4 w-40 rounded bg-gray-200" />
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <div className="h-7 w-20 rounded-md bg-gray-200" />
+                        <div className="h-7 w-20 rounded-md bg-gray-200" />
+                      </div>
+                    </td>
+                  </tr>
+                ))
               ) : bookings.length === 0 ? (
                 <tr>
                   <td
@@ -349,6 +382,3 @@ export default function AdminBookings() {
     </section>
   )
 }
-
-
-

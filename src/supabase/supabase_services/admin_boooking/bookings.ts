@@ -50,15 +50,17 @@ export async function createBooking(input: NewBookingInput) {
   return data as Booking
 }
 
+// Optimized query - excludes notes field for list views (can be large)
 export async function fetchBookingsByStatus(status: BookingStatus) {
   const { data, error } = await supabase
     .from(TABLE_NAME)
-    .select('*')
+    .select('id, client_first_name, client_last_name, client_middle_initial, email, phone, type, event_date, status, created_at, updated_at')
     .eq('status', status)
     .order('created_at', { ascending: false })
 
   if (error) throw error
-  return (data ?? []) as Booking[]
+  // Return with null notes since we don't need it for list views
+  return (data ?? []).map((booking) => ({ ...booking, notes: null })) as Booking[]
 }
 
 export async function updateBookingStatus(id: number, status: BookingStatus) {
