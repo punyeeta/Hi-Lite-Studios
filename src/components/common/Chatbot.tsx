@@ -35,7 +35,7 @@ LEFT SIDE:
 RIGHT SIDE:
 - About Us: Learn about Hi-Lite Studios, our mission, and meet our team
 - FAQs: Get answers to common questions
-- Capture with Us: Book an appointment (RED BUTTON)
+- Capture with Us: Book an appointment
 
 LOGO CENTER: Clicking the logo takes you home
 
