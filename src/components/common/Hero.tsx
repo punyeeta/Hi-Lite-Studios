@@ -94,15 +94,7 @@ const Hero = () => {
 
         {isChatbotOpen && (
           <div className="absolute bottom-24 right-0 w-96">
-            <div className="relative">
-              <button
-                onClick={() => setIsChatbotOpen(false)}
-                className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold hover:bg-red-700 z-10"
-              >
-                ✕
-              </button>
-              <Chatbot />
-            </div>
+            <Chatbot onClose={() => setIsChatbotOpen(false)} />
           </div>
         )}
       </div>

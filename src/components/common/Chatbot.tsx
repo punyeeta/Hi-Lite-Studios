@@ -39,10 +39,6 @@ RIGHT SIDE:
 
 LOGO CENTER: Clicking the logo takes you home
 
-BOOKING:
-- Users book via the "Capture with Us" button (red button on navbar)
-- This takes them to the appointment/booking page at /appointment
-- OR users can click the "Capture with Us" button in the hero section on the home page
 
 HOW TO FORMAT BOOKING TYPES:
 When you see booking types like "indoor_studio_photography", convert them to user-friendly format:
@@ -51,12 +47,6 @@ When you see booking types like "indoor_studio_photography", convert them to use
 - videography → Videography
 Always present them in Title Case with spaces instead of underscores.
 
-HOW TO GUIDE USERS:
-1. "Where is About Us?" → "Click 'About Us' in the top navbar"
-2. "How do I book?" → "Click the red 'Capture with Us' button in the navbar"
-3. "Where's the booking page?" → "Click 'Capture with Us' button - it's the red button on the right side of the navbar"
-4. "Tell me about services" → "Click 'Services' in the navbar to learn more"
-5. "Where can I see your work?" → "Click 'Works' in the navbar to browse our portfolio"
 
 TONE & STYLE:
 - Be friendly and conversational, yet professional
@@ -69,7 +59,11 @@ TONE & STYLE:
 - Answer questions directly and helpfully
 - Write ONLY plain text - no asterisks, no markdown symbols whatsoever`;
 
-export const Chatbot = () => {
+interface ChatbotProps {
+  onClose?: () => void;
+}
+
+export const Chatbot = ({ onClose }: ChatbotProps) => {
   const { messages, loading, error, sendMessage } = useChatbot();
   const [input, setInput] = useState("");
 
@@ -82,72 +76,91 @@ export const Chatbot = () => {
   };
 
   return (
-    <div className="flex flex-col h-[500px] border border-gray-300 rounded-lg bg-white shadow-md overflow-hidden">
+    <div className="flex flex-col h-[600px] border border-gray-200 rounded-lg bg-white shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-300 bg-gray-100">
-        <h3 className="m-0 text-base text-gray-800 font-semibold">Hi-Lite Studios Chatbot</h3>
+      <div className="px-4 py-4 border-b border-gray-200 bg-white flex items-center gap-3">
+        <img 
+          src="/src/assets/images/ChatbotLOgo.png" 
+          alt="Litebot" 
+          className="h-10 w-10 object-contain"
+        />
+        <div>
+          <h3 className="m-0 text-base font-bold bg-linear-to-r from-[#291471] to-[#4E26D7] bg-clip-text text-transparent">Litebot</h3>
+          <p className="m-0 text-xs text-gray-600">Your AI Chatbot Assistant</p>
+        </div>
+        <button onClick={onClose} className="ml-auto text-transparent hover:opacity-80 text-lg font-light leading-none p-1 bg-linear-to-r from-[#291471] to-[#4E26D7] bg-clip-text">×</button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+      <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-gray-50">
         {messages.length === 0 && (
-          <div className="flex">
-            <p className="bg-blue-100 text-blue-900 px-4 py-2 rounded-lg text-sm">
-              👋 Hello! Ask me anything about Hi-Lite Studios...
+          <div className="flex flex-col items-center justify-center h-full gap-6">
+            <p className="text-center text-gray-500 text-sm font-medium">
+              Ask anything about Hi-Lite Studios!
             </p>
           </div>
         )}
         
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-          >
-            <div
-              className={`px-4 py-2 rounded-lg text-sm max-w-md wrap-break-word whitespace-pre-wrap ${
-                msg.role === "user"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-900"
-              }`}
-            >
-              {msg.content}
-            </div>
-          </div>
-        ))}
-        
-        {loading && (
-          <div className="flex">
-            <p className="bg-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm italic">
-              Typing...
-            </p>
-          </div>
-        )}
-        
-        {error && (
-          <div className="flex">
-            <p className="bg-red-100 text-red-900 px-4 py-2 rounded-lg text-sm">
-              ❌ Error: {error}
-            </p>
-          </div>
+        {messages.length > 0 && (
+          <>
+            {messages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`px-4 py-3 rounded-lg text-sm max-w-xs wrap-break-word whitespace-pre-wrap ${
+                    msg.role === "user"
+                      ? "bg-purple-600 text-white rounded-br-none"
+                      : "bg-gray-200 text-gray-900 rounded-bl-none"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            
+            {loading && (
+              <div className="flex justify-start">
+                <img 
+                  src="/src/assets/images/ChatbotLOgo.png" 
+                  alt="Litebot Loading" 
+                  className="h-6 w-6 object-contain animate-wave"
+                />
+              </div>
+            )}
+            
+            {error && (
+              <div className="flex justify-start">
+                <div className="bg-red-100 text-red-900 px-4 py-3 rounded-lg text-sm rounded-bl-none">
+                  ⚠️ Error: {error}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="flex gap-2 p-4 border-t border-gray-300 bg-gray-50">
+      <form onSubmit={handleSubmit} className="flex gap-3 p-4 border-t border-gray-200 bg-white">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask me anything..."
+          placeholder="Type your question here..."
           disabled={loading}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="flex-1 px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 placeholder-gray-400"
         />
         <button
           type="submit"
           disabled={loading}
-          className="px-5 py-2 bg-blue-600 text-white rounded-md font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="px-4 py-3 bg-transparent hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center border-none"
         >
-          {loading ? "..." : "Send"}
+          <img 
+            src="/src/assets/images/Chatbot_send_button.png" 
+            alt="Send" 
+            className="h-6 w-6 object-contain"
+          />
         </button>
       </form>
     </div>
