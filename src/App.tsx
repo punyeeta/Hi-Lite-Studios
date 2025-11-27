@@ -4,14 +4,8 @@ import ContactSection from './components/sections/ContactSection';
 import Footer from './components/common/Footer';
 
 // Public pages
-import Home from './pages/Home';
-import RecentWorks from './pages/RecentWorks';
-import Service from './pages/Service';
-import Magazine from './pages/Magazine';
-import FAQ from './pages/FAQ';
-import Capture from './pages/Capture';
-import About from './pages/About';
-import Appointment from './pages/Appointment';
+import { Home } from './pages/Home'
+import { RecentWorks, Service, Magazine, FAQ, Capture, About, Appointment } from './pages/FullPages'
 
 // Admin pages
 import LoginForAdmin from './Admin/AdminLogin';

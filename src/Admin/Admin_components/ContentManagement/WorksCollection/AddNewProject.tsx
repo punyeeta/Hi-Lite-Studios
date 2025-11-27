@@ -315,7 +315,7 @@ export default function AddNewProject() {
         {mediaItems.length === 0 ? (
           <p className="text-sm text-gray-500">No media added yet. Click "Add Media" to upload images for the album.</p>
         ) : (
-          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-4 grid-cols-4">
             {mediaItems.map((media) => (
               <div key={media.id} className="relative group">
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50">

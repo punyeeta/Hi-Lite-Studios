@@ -24,7 +24,7 @@ const FAQ = () => {
             onClick={() => navigate('/')}
             className="self-start rounded-ee-2xl rounded-tl-2xl border border-[#222222] px-6 py-2 text-sm font-semibold text-[#222222] transition hover:bg-[#222222] hover:text-white"
           >
-            Back to Home
+            ← Back to Home
           </button>
         </header>
 
@@ -53,6 +53,3 @@ const FAQ = () => {
 }
 
 export default FAQ
-
-
-

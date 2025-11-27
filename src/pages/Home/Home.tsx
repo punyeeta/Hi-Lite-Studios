@@ -1,16 +1,15 @@
-import StripPanel from '../components/common/StripPanel';
-import Hero from '../components/common/Hero';
-import AboutSection from '../components/sections/AboutSection';
-import WorksSection from '../components/sections/WorksSection';
-import ServicesSection from '../components/sections/ServicesSection';
-import MagazineSection from '../components/sections/MagazineSection';
-import FAQSection from '../components/sections/FAQSection';
-import CaptureSection from '../components/sections/CaptureSection';
+import StripPanel from '@/components/common/StripPanel'
+import Hero from '@/components/common/Hero'
+import AboutSection from '@/components/sections/AboutSection'
+import WorksSection from '@/components/sections/WorksSection'
+import ServicesSection from '@/components/sections/ServicesSection'
+import MagazineSection from '@/components/sections/MagazineSection'
+import FAQSection from '@/components/sections/FAQSection'
+import CaptureSection from '@/components/sections/CaptureSection'
 
 const Home = () => {
   return (
     <div className="min-h-screen">
-      
       <section id="strip">
         <StripPanel />
       </section>
@@ -26,7 +25,7 @@ const Home = () => {
       <section id="works-section">
         <WorksSection />
       </section>
-      
+
       <section id="services-section">
         <ServicesSection />
       </section>
@@ -43,7 +42,7 @@ const Home = () => {
         <CaptureSection />
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

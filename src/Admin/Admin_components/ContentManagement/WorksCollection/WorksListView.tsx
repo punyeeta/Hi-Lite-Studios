@@ -45,7 +45,7 @@ export default function WorksListView({
       )}
 
       {loading && !works.length ? (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           {Array.from({ length: 6 }).map((_, index) => (
             <article
               key={`skeleton-${index}`}
@@ -74,7 +74,7 @@ export default function WorksListView({
           No works yet. Click <span className="font-semibold">Add New Project</span> to create your first work.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           {works.map((work) => (
             <WorkCard
               key={work.id}
