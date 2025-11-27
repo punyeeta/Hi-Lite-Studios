@@ -25,9 +25,9 @@ export default function AdminMain() {
   }, [navigate])
 
   return (
-    <div className="min-h-screen flex bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
       <AdminSidebar onLogout={handleLogout} loggingOut={loading} />
-      <main className="flex-1 p-10 overflow-y-auto" style={{ contain: 'layout' }}>
+      <main className="ml-72 p-10 overflow-y-auto min-h-screen" style={{ contain: 'layout' }}>
         <div className="min-h-[400px]">
           <Outlet />
           {message && (

@@ -30,23 +30,25 @@ export default function BlogListView({
       key={story.id}
       className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
     >
-      <div className="relative aspect-4/3 w-full bg-gray-100">
-        {story.cover_image ? (
-          <img
-            src={story.cover_image}
-            alt={story.title}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs text-gray-400">
-            No cover image
-          </div>
-        )}
-        {story.is_pinned && (
-          <span className="absolute left-3 top-3 rounded-full bg-[#F2322E] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">
-            Pinned
-          </span>
-        )}
+      <div className="p-4">
+        <div className="relative w-full bg-gray-100 overflow-hidden rounded-lg" style={{ aspectRatio: '4/3' }}>
+          {story.cover_image ? (
+            <img
+              src={story.cover_image}
+              alt={story.title}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-xs text-gray-400">
+              No cover image
+            </div>
+          )}
+          {story.is_pinned && (
+            <span className="absolute left-3 top-3 rounded-full bg-[#F2322E] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">
+              Pinned
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
@@ -141,7 +143,9 @@ export default function BlogListView({
               key={`skeleton-${index}`}
               className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm animate-pulse"
             >
-              <div className="aspect-4/3 w-full bg-gray-300" />
+              <div className="p-4">
+                <div className="w-full bg-gray-300 rounded-lg" style={{ aspectRatio: '4/3' }} />
+              </div>
               <div className="flex flex-1 flex-col gap-3 p-4">
                 <div className="space-y-2">
                   <div className="h-5 w-3/4 rounded bg-gray-300" />

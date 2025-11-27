@@ -24,7 +24,7 @@ function AdminSidebar({
 }: AdminSidebarProps) {
   return (
     <aside 
-      className="w-72 border-r border-black shrink-0"
+      className="w-72 border-r border-black fixed left-0 top-0 h-screen z-40"
       style={{
         backgroundImage: `url(${sidebarBackground})`,
         backgroundSize: 'cover',
@@ -32,8 +32,6 @@ function AdminSidebar({
         backgroundRepeat: 'no-repeat',
         transform: 'translateZ(0)',
         willChange: 'auto',
-        height: '100vh',
-        overflow: 'hidden',
       }}
     >
       {/* Content layer */}
