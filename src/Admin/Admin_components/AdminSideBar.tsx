@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { memo } from 'react'
 import sidebarBackground from '../../assets/images/sidebar_background.png'
 import wordmark from '../../assets/images/Wordmark.png'
 import bookingIcon from '../../assets/images/Bookingappointmentbutton.png'
@@ -17,26 +18,26 @@ const navItems = [
   { label: 'Blogs and Stories', path: '/admin/stories', icon: blogIcon },
 ]
 
-export default function AdminSidebar({
+function AdminSidebar({
   onLogout,
   loggingOut,
 }: AdminSidebarProps) {
   return (
-    <aside className="w-72 min-h-screen border-r border-black relative">
-      {/* Background layer - using img element for stability */}
-      <img
-        src={sidebarBackground}
-        alt=""
-        className="absolute inset-0 z-0 w-full h-full object-cover pointer-events-none"
-        style={{
-          transform: 'translateZ(0)',
-          backfaceVisibility: 'hidden',
-          willChange: 'auto',
-        }}
-      />
-      
+    <aside 
+      className="w-72 border-r border-black shrink-0"
+      style={{
+        backgroundImage: `url(${sidebarBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        transform: 'translateZ(0)',
+        willChange: 'auto',
+        height: '100vh',
+        overflow: 'hidden',
+      }}
+    >
       {/* Content layer */}
-      <div className="relative z-10 p-6 flex flex-col gap-8 min-h-screen">
+      <div className="p-6 flex flex-col gap-8 h-full overflow-y-auto" style={{ contain: 'layout' }}>
         <div>
           <img
             src={wordmark}
@@ -95,3 +96,5 @@ export default function AdminSidebar({
     </aside>
   )
 }
+
+export default memo(AdminSidebar)

@@ -121,6 +121,8 @@
   html {
     /* Replaces Tailwind @apply overflow-x-hidden; to avoid unknownAtRules lint error */
     overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
   }
   body {
     /* Replaces Tailwind @apply bg-background text-foreground overflow-x-hidden; to avoid unknownAtRules lint error */

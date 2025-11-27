@@ -23,12 +23,9 @@ export default function WhatWeDoForm({
   onCancel,
 }: WhatWeDoFormProps) {
   return (
-    <section className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Title</p>
-          <h2 className="text-2xl font-semibold text-gray-900">{values.title || 'Title'}</h2>
-        </div>
+    <section className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-end gap-4">
         <div className="flex flex-wrap gap-2">
           {editing ? (
             <>
@@ -36,7 +33,8 @@ export default function WhatWeDoForm({
                 type="button"
                 onClick={onSubmit}
                 disabled={submitting}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded px-4 py-2 text-xs font-semibold text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{ backgroundColor: '#1E40AF' }}
               >
                 {submitting ? 'Saving...' : 'Save'}
               </button>
@@ -44,7 +42,7 @@ export default function WhatWeDoForm({
                 type="button"
                 onClick={onCancel}
                 disabled={submitting}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -53,7 +51,8 @@ export default function WhatWeDoForm({
             <button
               type="button"
               onClick={onEditToggle}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+              className="rounded px-4 py-2 text-xs font-semibold text-white shadow-sm hover:opacity-90"
+              style={{ backgroundColor: '#1E40AF' }}
             >
               Edit
             </button>
@@ -61,12 +60,13 @@ export default function WhatWeDoForm({
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Edit Form */}
+      <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-800">Title</label>
+          <label className="text-xs font-medium text-gray-700">TITLE</label>
           <input
             type="text"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             value={values.title}
             onChange={(e) => onChange({ title: e.target.value })}
             disabled={!editing || submitting}
@@ -74,9 +74,9 @@ export default function WhatWeDoForm({
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-800">Description</label>
+          <label className="text-xs font-medium text-gray-700">DESCRIPTION</label>
           <textarea
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             rows={6}
             value={values.description}
             onChange={(e) => onChange({ description: e.target.value })}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase/client'
 import AdminSidebar from './Admin_components/AdminSideBar'
@@ -7,7 +7,7 @@ export default function AdminMain() {
   const [message, setMessage] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  async function handleLogout() {
+  const handleLogout = useCallback(async () => {
     setLoading(true)
     setMessage(null)
     try {
@@ -22,12 +22,12 @@ export default function AdminMain() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [navigate])
 
   return (
     <div className="min-h-screen flex bg-gray-100">
       <AdminSidebar onLogout={handleLogout} loggingOut={loading} />
-      <main className="flex-1 p-10">
+      <main className="flex-1 p-10 overflow-y-auto" style={{ contain: 'layout' }}>
         <div className="min-h-[400px]">
           <Outlet />
           {message && (

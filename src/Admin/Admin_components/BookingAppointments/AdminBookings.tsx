@@ -173,7 +173,8 @@ export default function AdminBookings() {
               type="button"
               onClick={() => handleBulkStatusChange('confirmed')}
               disabled={!selectedIds.length || loading}
-              className="rounded-md bg-[#FFB800] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm disabled:cursor-not-allowed disabled:bg-gray-300"
+              className="rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ backgroundColor: !selectedIds.length || loading ? '#cccccc' : '#FFC800' }}
             >
               Approve Selected
             </button>
@@ -181,7 +182,8 @@ export default function AdminBookings() {
               type="button"
               onClick={() => handleBulkStatusChange('declined')}
               disabled={!selectedIds.length || loading}
-              className="rounded-md bg-[#F2322E] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm disabled:cursor-not-allowed disabled:bg-gray-300"
+              className="rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ backgroundColor: !selectedIds.length || loading ? '#cccccc' : '#EE0202' }}
             >
               Decline Selected
             </button>
@@ -318,7 +320,8 @@ export default function AdminBookings() {
                                 handleStatusChange(booking.id, 'confirmed')
                               }
                               disabled={loading}
-                              className="rounded-md bg-[#FFB800] px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#ff9a00] disabled:cursor-not-allowed disabled:bg-gray-300"
+                              className="rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300"
+                              style={{ backgroundColor: '#FFC800' }}
                             >
                               Approve
                             </button>
@@ -328,7 +331,8 @@ export default function AdminBookings() {
                                 handleStatusChange(booking.id, 'declined')
                               }
                               disabled={loading}
-                              className="rounded-md bg-[#F2322E] px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#d51e1a] disabled:cursor-not-allowed disabled:bg-gray-300"
+                              className="rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300"
+                              style={{ backgroundColor: '#EE0202' }}
                             >
                               Decline
                             </button>
@@ -339,7 +343,8 @@ export default function AdminBookings() {
                               href="https://mail.google.com"
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center rounded-md bg-[#FFB800] px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#ff9a00]"
+                              className="inline-flex items-center rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90"
+                              style={{ backgroundColor: '#FFC800' }}
                             >
                               Email
                             </a>

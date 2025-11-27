@@ -67,14 +67,6 @@ export default function AdminFAQ() {
 
   return (
     <section className="space-y-8">
-      <header>
-        <h1 className="text-2xl font-semibold">FAQ Management</h1>
-        <p className="text-sm text-gray-600">
-          Create, edit, and remove FAQ items. Changes here are reflected on the FAQ Page and Homepage
-          section immediately.
-        </p>
-      </header>
-
       {/* Error Message */}
       {(error || submitError) && (
         <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
@@ -120,7 +112,8 @@ export default function AdminFAQ() {
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: '#1E40AF' }}
           >
             {submitting ? 'Saving...' : editingId ? 'Update FAQ' : 'Add FAQ'}
           </button>
@@ -129,7 +122,7 @@ export default function AdminFAQ() {
               type="button"
               onClick={resetForm}
               disabled={submitting}
-              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
@@ -159,17 +152,6 @@ export default function AdminFAQ() {
           </div>
         )}
       </section>
-
-      {/* Info Box */}
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-        <p className="font-medium mb-1">💡 Tips:</p>
-        <ul className="list-disc list-inside space-y-1 text-xs">
-          <li>FAQs appear as a preview (first 3) on the homepage FAQ section</li>
-          <li>All FAQs are available on the dedicated FAQ page</li>
-          <li>Changes appear immediately for all users</li>
-          <li>Keep answers clear, concise, and helpful</li>
-        </ul>
-      </div>
     </section>
   )
 }
