@@ -10,7 +10,7 @@ const MagazineCard = ({ title, image, excerpt, onClick }: MagazineCardProps) => 
     <button
       type="button"
       onClick={onClick}
-      className="flex h-full w-full flex-col overflow-hidden rounded-3xl border border-black bg-white text-left shadow-[0_15px_45px_rgba(0,0,0,0.08)] transition hover:-translate-y-1 hover:border-gray-600 hover:shadow-[0_25px_60px_rgba(0,0,0,0.12)]"
+      className="flex h-full w-full flex-col overflow-hidden rounded-3xl border bg-white text-left shadow-[0_15px_45px_rgba(0,0,0,0.20)] transition hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(0,0,0,0.28)]"
     >
       <div className="px-4 pt-4">
         <div className="aspect-4/3 w-full overflow-hidden rounded-lg bg-gray-200">

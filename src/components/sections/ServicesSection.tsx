@@ -189,9 +189,6 @@ const ServicesSection = () => {
                 <div className="h-0.5 w-full bg-linear-to-r from-white/80 to-white/0" />
 
                 <div className="mt-3 flex flex-wrap gap-4">
-                <button className={`inline-flex items-center gap-2 rounded-ee-2xl rounded-tl-2xl bg-white px-6 py-3 font-semibold shadow-md transition hover:bg-white/90 ${activeCard.textColor}`}>
-                    View More Services →
-                </button>
                  <button
                    className="rounded-ee-2xl rounded-tl-2xl border border-white px-6 py-3 font-semibold transition hover:bg-white/10"
                    onClick={() => navigate('/appointment')}
