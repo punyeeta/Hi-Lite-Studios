@@ -19,7 +19,7 @@ export default function BookingsHeader({
         type="button"
         onClick={onApproveSelected}
         disabled={isDisabled}
-        className="rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-md px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         style={{ backgroundColor: isDisabled ? '#cccccc' : '#FFC800' }}
       >
         Approve Selected

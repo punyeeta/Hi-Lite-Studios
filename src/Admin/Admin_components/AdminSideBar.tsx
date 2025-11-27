@@ -24,7 +24,7 @@ function AdminSidebar({
 }: AdminSidebarProps) {
   return (
     <aside 
-      className="w-72 border-r border-black fixed left-0 top-0 h-screen z-40"
+      className="w-72 border-r border-[#b4b4b4] fixed left-0 top-0 h-screen z-40"
       style={{
         backgroundImage: `url(${AdminStar})`,
         backgroundSize: 'cover',
