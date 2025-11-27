@@ -5,7 +5,7 @@ import ConfirmedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/
 import CancelledIcon from '../../../assets/images/Adminbuttons/bookings_buttons/CancellButton.png'
 import DeclinedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Declinebutton.png'
 import AvailableDatesIcon from '../../../assets/images/Adminbuttons/bookings_buttons/AvailableDatesButton.png'
-import { useBookings, BOOKING_TABS } from '../utils'
+import { useBookings, BOOKING_TABS } from '../../../utils'
 import { BookingsTable, BookingsHeader } from '../shared'
 
 type Tab = BookingStatus | 'available-dates'

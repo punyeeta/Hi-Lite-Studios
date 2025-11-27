@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { ImageUploadField, MediaGallery, MediaUploadField } from '../../shared'
-import { WORK_LABEL_OPTIONS } from '../../utils'
+import { WORK_LABEL_OPTIONS } from '../../../../utils'
 import type { Work, WorkLabel, WorkMedia } from '@/supabase/supabase_services/Content_Management/WorksCollection_Service/WorksCollection'
 
 type Mode = 'create' | 'edit'
