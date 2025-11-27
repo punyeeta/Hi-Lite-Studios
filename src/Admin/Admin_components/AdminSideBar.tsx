@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { memo } from 'react'
-import sidebarBackground from '../../assets/images/sidebar_background.png'
+import AdminStar from '../../assets/images/AdminStar.png'
 import wordmark from '../../assets/images/Wordmark.png'
 import bookingIcon from '../../assets/images/Bookingappointmentbutton.png'
 import contentIcon from '../../assets/images/contentManagementbutton.png'
@@ -26,7 +26,7 @@ function AdminSidebar({
     <aside 
       className="w-72 border-r border-black fixed left-0 top-0 h-screen z-40"
       style={{
-        backgroundImage: `url(${sidebarBackground})`,
+        backgroundImage: `url(${AdminStar})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
