@@ -25,6 +25,8 @@ type MagazineContextValue = {
   updateItem: (id: string, input: Partial<Omit<MagazineItem, 'id'>>) => Promise<void>
   deleteItem: (id: string) => Promise<void>
   refreshItems: () => Promise<void>
+  getItemById: (id: string) => Promise<MagazineItem | null>
+  cachedItems: Map<string, MagazineItem>
 }
 
 const MagazineContext = createContext<MagazineContextValue | undefined>(undefined)
@@ -42,6 +44,7 @@ export function MagazineProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<MagazineItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [cachedItems] = useState<Map<string, MagazineItem>>(new Map())
 
   const loadItems = useCallback(async () => {
     setLoading(true)
@@ -118,15 +121,41 @@ export function MagazineProvider({ children }: { children: ReactNode }) {
 
       await deleteBlogStory(storyId)
       setItems((prev) => prev.filter((item) => item.id !== id))
+      cachedItems.delete(id)
     } catch (err: any) {
       setError(err.message ?? 'Failed to delete item')
       throw err
     }
   }
 
+  const getItemById: MagazineContextValue['getItemById'] = async (id) => {
+    // Check cache first
+    if (cachedItems.has(id)) {
+      return cachedItems.get(id) || null
+    }
+
+    // Check if already in items list
+    const existingItem = items.find((item) => item.id === id)
+    if (existingItem && existingItem.content) {
+      cachedItems.set(id, existingItem)
+      return existingItem
+    }
+
+    // Fetch from database
+    try {
+      const story = await fetchBlogStoryById(parseInt(id, 10))
+      const magazineItem = blogStoryToMagazineItem(story)
+      cachedItems.set(id, magazineItem)
+      return magazineItem
+    } catch (err) {
+      console.error('Error fetching article:', err)
+      return null
+    }
+  }
+
   return (
     <MagazineContext.Provider
-      value={{ items, loading, error, addItem, updateItem, deleteItem, refreshItems: loadItems }}
+      value={{ items, loading, error, addItem, updateItem, deleteItem, refreshItems: loadItems, getItemById, cachedItems }}
     >
       {children}
     </MagazineContext.Provider>

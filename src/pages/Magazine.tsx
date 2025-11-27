@@ -4,56 +4,33 @@ import { Search } from 'lucide-react'
 import MagazineCard from '@/components/cards/MagazineCard'
 import MagazineCardSkeleton from '@/components/cards/MagazineCardSkeleton'
 import StarBlack from '@/assets/images/StarBlack.png'
-import { useMagazine } from '@/context/MagazineContext'
-import { fetchBlogStoryById } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
+import { useMagazineStore } from '@/store/magazineStore'
 
 const Magazine = () => {
   const { id } = useParams<{ id?: string }>()
-  const { items, loading } = useMagazine()
   const navigate = useNavigate()
-  const [selectedItem, setSelectedItem] = useState<{ id: string; title: string; image: string; excerpt: string; content: string } | null>(null)
-  const [loadingArticle, setLoadingArticle] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // Zustand store
+  const { items, loading, articleLoading, articleCache, fetchItems, fetchArticleById } = useMagazineStore()
+  const selectedItem = id ? articleCache.get(id) || null : null
 
-  // Fetch full article content when viewing a single article
+  // Fetch all items on mount
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
+
+  // Fetch single article when ID changes
   useEffect(() => {
     if (id) {
-      setLoadingArticle(true)
-      const item = items.find((item) => item.id === id)
-      
-      if (item && item.content) {
-        // Content already available in context
-        setSelectedItem(item)
-        setLoadingArticle(false)
-      } else {
-        // Fetch full content from database (either item not in context or content is empty)
-        fetchBlogStoryById(parseInt(id, 10))
-          .then((story) => {
-            setSelectedItem({
-              id: story.id.toString(),
-              title: story.title,
-              image: story.cover_image || '',
-              excerpt: story.excerpt || '',
-              content: story.content,
-            })
-          })
-          .catch((err) => {
-            console.error('Error loading article:', err)
-            setSelectedItem(null)
-          })
-          .finally(() => {
-            setLoadingArticle(false)
-          })
-      }
-    } else {
-      setSelectedItem(null)
+      fetchArticleById(id)
     }
-  }, [id, items])
+  }, [id, fetchArticleById])
 
   // Filter items based on search query
   const filteredItems = items.filter((item) =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+    (item.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
   )
 
   const featuredItem = filteredItems.length > 0 ? filteredItems[0] : null
@@ -64,7 +41,7 @@ const Magazine = () => {
       <div className="flex w-full flex-col gap-12 px-22">
         {/* If ID is present, always show article view */}
         {id ? (
-          loadingArticle || !selectedItem ? (
+          articleLoading || !selectedItem ? (
             // Show skeleton while loading
             <article className="overflow-hidden rounded-3xl bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)] animate-pulse">
               <div className="aspect-16/7 w-full bg-gray-300" />
@@ -89,7 +66,7 @@ const Magazine = () => {
                 ← Back to Magazine
               </button>
               <div className="w-full flex justify-center py-8">
-                <img src={selectedItem.image} alt={selectedItem.title} className="max-w-2xl h-auto object-contain" />
+                <img src={selectedItem.cover_image || ''} alt={selectedItem.title} className="max-w-2xl h-auto object-contain" />
               </div>
               <div className="space-y-4 px-8 py-8 md:px-10 max-w-4xl mx-auto">
                 <h2 className="text-4xl font-semibold text-[#333333]">{selectedItem.title}</h2>
@@ -232,7 +209,7 @@ const Magazine = () => {
                   <div className="flex flex-col md:flex-row gap-6 md:gap-8">
                     <div className="md:w-2/5 overflow-hidden rounded-2xl aspect-video">
                       <img
-                        src={featuredItem.image}
+                        src={featuredItem.cover_image || ''}
                         alt={featuredItem.title}
                         className="h-full w-full object-cover rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
                         onClick={() => navigate(`/magazine/${featuredItem.id}`)}
@@ -279,8 +256,8 @@ const Magazine = () => {
                       <MagazineCard
                         key={item.id}
                         title={item.title}
-                        image={item.image}
-                        excerpt={item.excerpt}
+                        image={item.cover_image || ''}
+                        excerpt={item.excerpt || ''}
                         onClick={() => navigate(`/magazine/${item.id}`)}
                       />
                     ))

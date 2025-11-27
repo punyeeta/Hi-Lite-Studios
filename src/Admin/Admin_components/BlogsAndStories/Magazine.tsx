@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import {
-  fetchAllBlogStoriesForAdmin,
-  fetchBlogStoryById,
-  createBlogStory,
-  updateBlogStory,
-  deleteBlogStory,
-  pinBlogStory,
-  unpinBlogStory,
   uploadBlogImage,
 } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import { useMagazine } from '@/context/MagazineContext'
+import { useAdminBlogStore } from '@/store/adminBlogStore'
 import BlogListView from './BlogListView'
 import BlogEditorView, {
   type BlogFormState,
@@ -36,37 +30,18 @@ const slugify = (value: string) =>
 
 export default function MagazineAdmin() {
   const { refreshItems } = useMagazine()
+  const { stories, loading, error, saving, fetchStories, fetchStoryById, createStory, updateStory, deleteStory, togglePin } = useAdminBlogStore()
+  
   const [mode, setMode] = useState<Mode>('list')
-  const [stories, setStories] = useState<BlogStory[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
   const [selectedStory, setSelectedStory] = useState<BlogStory | null>(null)
   const [form, setForm] = useState<BlogFormState>(emptyForm)
   const [uploadingCover, setUploadingCover] = useState(false)
   const [uploadingBodyImage, setUploadingBodyImage] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
 
   useEffect(() => {
-    let cancelled = false
-    const load = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const data = await fetchAllBlogStoriesForAdmin()
-        if (!cancelled) setStories(data)
-      } catch (err: any) {
-        if (!cancelled) setError(err.message ?? 'Failed to load stories')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-
-    load()
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
+    fetchStories()
+  }, [fetchStories])
 
   const pinnedStories = useMemo(
     () => stories.filter((s) => s.is_pinned),
@@ -101,34 +76,26 @@ export default function MagazineAdmin() {
     })
     setMode('edit')
 
-    // If content is empty (from lightweight query), fetch full content in background
+    // If content is empty (from lightweight query), fetch full content with caching
+    // This will use the cache if already fetched before
     if (!story.content) {
-      try {
-        const fullStory = await fetchBlogStoryById(story.id)
+      const fullStory = await fetchStoryById(story.id)
+      if (fullStory) {
         setSelectedStory(fullStory)
-        setForm({
-          title: fullStory.title,
-          slug: fullStory.slug,
-          cover_image: fullStory.cover_image ?? '',
-          excerpt: fullStory.excerpt ?? '',
+        setForm((prev) => ({
+          ...prev,
           content: fullStory.content,
-          is_pinned: fullStory.is_pinned,
-          status: fullStory.status,
-        })
-      } catch (err: any) {
-        setError(err.message ?? 'Failed to load story')
+        }))
       }
     }
-  }, [])
+  }, [fetchStoryById])
 
   const handleDeleteStory = useCallback(async (story: BlogStory) => {
     if (!window.confirm('Delete this post? This action cannot be undone.'))
       return
 
-    try {
-      setSaving(true)
-      await deleteBlogStory(story.id)
-      setStories((prev) => prev.filter((s) => s.id !== story.id))
+    const success = await deleteStory(story.id)
+    if (success) {
       setSelectedStory((current) => current?.id === story.id ? null : current)
       if (selectedStory?.id === story.id) {
         resetForm()
@@ -136,31 +103,14 @@ export default function MagazineAdmin() {
       }
       // Refresh context in background without blocking UI
       refreshItems().catch(() => {})
-    } catch (err: any) {
-      setError(err.message ?? 'Failed to delete story')
-    } finally {
-      setSaving(false)
     }
-  }, [selectedStory])
+  }, [deleteStory, selectedStory, refreshItems])
 
   const handlePinToggle = useCallback(async (story: BlogStory) => {
-    try {
-      setSaving(true)
-      const updated = story.is_pinned
-        ? await unpinBlogStory(story.id)
-        : await pinBlogStory(story.id)
-
-      setStories((prev) =>
-        prev.map((s) => (s.id === story.id ? updated : s)),
-      )
-      // Refresh context in background without blocking UI
-      refreshItems().catch(() => {})
-    } catch (err: any) {
-      setError(err.message ?? 'Failed to update pin state')
-    } finally {
-      setSaving(false)
-    }
-  }, [])
+    await togglePin(story.id, story.is_pinned)
+    // Refresh context in background without blocking UI
+    refreshItems().catch(() => {})
+  }, [togglePin, refreshItems])
 
   const handleChange =
     (field: keyof BlogFormState) =>
@@ -176,13 +126,13 @@ export default function MagazineAdmin() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setError(null)
+    setLocalError(null)
     setUploadingCover(true)
     try {
       const { publicUrl } = await uploadBlogImage(file, 'covers')
       setForm((prev) => ({ ...prev, cover_image: publicUrl }))
     } catch (err: any) {
-      setError(err.message ?? 'Failed to upload cover image')
+      setLocalError(err.message ?? 'Failed to upload cover image')
     } finally {
       setUploadingCover(false)
       e.target.value = ''
@@ -193,7 +143,7 @@ export default function MagazineAdmin() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setError(null)
+    setLocalError(null)
     setUploadingBodyImage(true)
     try {
       const { publicUrl } = await uploadBlogImage(file, 'body')
@@ -204,7 +154,7 @@ export default function MagazineAdmin() {
           `<p><img src="${publicUrl}" alt="" /></p>`,
       }))
     } catch (err: any) {
-      setError(err.message ?? 'Failed to upload image for content')
+      setLocalError(err.message ?? 'Failed to upload image for content')
     } finally {
       setUploadingBodyImage(false)
       e.target.value = ''
@@ -216,11 +166,11 @@ export default function MagazineAdmin() {
     const content = form.content.trim()
 
     if (!title) {
-      setError('Title is required')
+      setLocalError('Title is required')
       return
     }
     if (!content) {
-      setError('Content is required')
+      setLocalError('Content is required')
       return
     }
 
@@ -229,12 +179,11 @@ export default function MagazineAdmin() {
     const excerpt =
       plainText.length > 220 ? `${plainText.slice(0, 220).trimEnd()}...` : plainText
 
-    setError(null)
-    setSaving(true)
+    setLocalError(null)
 
     try {
       if (mode === 'create') {
-        const created = await createBlogStory({
+        const created = await createStory({
           title,
           slug: generatedSlug,
           cover_image: form.cover_image.trim() || null,
@@ -243,13 +192,14 @@ export default function MagazineAdmin() {
           is_pinned: form.is_pinned,
           status: form.status,
         })
-        setStories((prev) => [created, ...prev])
-        resetForm()
-        setMode('list')
-        // Refresh context in background without blocking UI
-        refreshItems().catch(() => {})
+        if (created) {
+          resetForm()
+          setMode('list')
+          // Refresh context in background without blocking UI
+          refreshItems().catch(() => {})
+        }
       } else if (mode === 'edit' && selectedStory) {
-        const updated = await updateBlogStory(selectedStory.id, {
+        const updated = await updateStory(selectedStory.id, {
           title,
           slug: generatedSlug,
           cover_image: form.cover_image.trim() || null,
@@ -258,18 +208,15 @@ export default function MagazineAdmin() {
           is_pinned: form.is_pinned,
           status: form.status,
         })
-        setStories((prev) =>
-          prev.map((s) => (s.id === updated.id ? updated : s)),
-        )
-        setSelectedStory(updated)
-        setMode('list')
-        // Refresh context in background without blocking UI
-        refreshItems().catch(() => {})
+        if (updated) {
+          setSelectedStory(updated)
+          setMode('list')
+          // Refresh context in background without blocking UI
+          refreshItems().catch(() => {})
+        }
       }
     } catch (err: any) {
-      setError(err.message ?? 'Failed to save story')
-    } finally {
-      setSaving(false)
+      setLocalError(err.message ?? 'Failed to save story')
     }
   }
 
@@ -311,6 +258,7 @@ export default function MagazineAdmin() {
 
       {isEditing && (
         <BlogEditorView
+          key={`${mode}-${selectedStory?.id || 'new'}`}
           mode={mode}
           form={form}
           saving={saving}
@@ -325,9 +273,15 @@ export default function MagazineAdmin() {
         />
       )}
 
-      {error && isEditing && (
+      {error && !isEditing && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
+        </div>
+      )}
+
+      {localError && isEditing && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {localError}
         </div>
       )}
     </section>
