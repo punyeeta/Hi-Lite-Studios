@@ -102,15 +102,6 @@ export default memo(function BookingRow({
               </button>
             )}
           </>
-        ) : booking.status === 'cancelled' || booking.status === 'declined' ? (
-          <button
-            type="button"
-            onClick={() => window.open(`mailto:${booking.email}`)}
-            className="rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90"
-            style={{ backgroundColor: '#FFC800' }}
-          >
-            Send Email
-          </button>
         ) : (
           renderStatusBadge(booking.status)
         )}
