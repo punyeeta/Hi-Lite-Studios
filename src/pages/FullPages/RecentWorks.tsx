@@ -1,32 +1,17 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import RecentHeader from '@/assets/images/RecentHeader.png'
-import Card from '@/components/cards/RecentCards'
 import StarTopLeft from '@/assets/images/StarTL.png'
 import StarBottomRight from '@/assets/images/StarBR.png'
-
-interface WorkItem {
-  id: string
-  image: string
-  description: string
-}
+import { useWorksStore } from '@/store/worksStore'
 
 const RecentWorks = () => {
   const navigate = useNavigate()
+  const { items: works, loading, error, fetchItems } = useWorksStore()
 
-  // Placeholder image data URI 
-  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%236b7280" font-size="16" font-family="sans-serif"%3EImage Placeholder%3C/text%3E%3C/svg%3E'
-  
-  // Sample data 
-  const works: WorkItem[] = [
-    { id: '1', image: placeholderImage, description: 'Description' },
-    { id: '2', image: placeholderImage, description: 'Description' },
-    { id: '3', image: placeholderImage, description: 'Description' },
-    { id: '4', image: placeholderImage, description: 'Description' },
-    { id: '5', image: placeholderImage, description: 'Description' },
-    { id: '6', image: placeholderImage, description: 'Description' },
-    { id: '7', image: placeholderImage, description: 'Description' },
-    { id: '8', image: placeholderImage, description: 'Description' },
-  ]
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
 
   return (
     <div className="min-h-screen bg-white">
@@ -72,16 +57,56 @@ const RecentWorks = () => {
             </div>
           </div>
 
-          {/* Image Grid - 2x4 */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {works.map((work) => (
-              <Card
-                key={work.id}
-                image={work.image}
-                description={work.description}
-              />
-            ))}
-          </div>
+          {/* Error Message */}
+          {error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-6">
+              Error: {error}
+            </div>
+          )}
+
+          {/* Loading State */}
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={`skeleton-${index}`}
+                  className="aspect-square bg-gray-200 rounded-lg animate-pulse"
+                />
+              ))}
+            </div>
+          ) : works.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No works found yet.</p>
+            </div>
+          ) : (
+            /* Image Grid - 2x4 */
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {works.map((work) => (
+                <div 
+                  key={work.id} 
+                  className="flex flex-col cursor-pointer group"
+                  onClick={() => navigate(`/works/${work.id}`)}
+                >
+                  <div className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
+                    <img
+                      src={work.main_image_url || ''}
+                      alt={work.label_1 || 'Work'}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23e5e7eb"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%239ca3af" font-size="18"%3ENo Image%3C/text%3E%3C/svg%3E'
+                      }}
+                    />
+                  </div>
+                  {/* Label - Below Image */}
+                  {work.label_1 && (
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-600 group-hover:text-gray-900 transition-colors">
+                      {work.label_1}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

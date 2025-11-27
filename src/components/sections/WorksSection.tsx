@@ -1,34 +1,36 @@
-import RecentHeader from '@/assets/images/RecentHeader.png';
-import Card from '@/components/cards/RecentCards';
-import StarTopLeft from '@/assets/images/StarTL.png';
-import StarBottomRight from '@/assets/images/StarBR.png';
-
-interface WorkItem {
-  id: string;
-  image: string;
-  description: string;
-}
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import RecentHeader from '@/assets/images/RecentHeader.png'
+import Card from '@/components/cards/RecentCards'
+import StarTopLeft from '@/assets/images/StarTL.png'
+import StarBottomRight from '@/assets/images/StarBR.png'
+import { useWorksStore } from '@/store/worksStore'
 
 const WorksSection = () => {
-  // Placeholder image data URI 
-  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%236b7280" font-size="16" font-family="sans-serif"%3EImage Placeholder%3C/text%3E%3C/svg%3E';
-  
-  // Sample data 
-  const works: WorkItem[] = [
-    { id: '1', image: placeholderImage, description: 'Description' },
-    { id: '2', image: placeholderImage, description: 'Description' },
-    { id: '3', image: placeholderImage, description: 'Description' },
-    { id: '4', image: placeholderImage, description: 'Description' },
-    { id: '5', image: placeholderImage, description: 'Description' },
-    { id: '6', image: placeholderImage, description: 'Description' },
-    { id: '7', image: placeholderImage, description: 'Description' },
-    { id: '8', image: placeholderImage, description: 'Description' },
-  ];
+  const navigate = useNavigate()
+  const { items, loading, fetchItems } = useWorksStore()
+
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
+
+  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%236b7280" font-size="16" font-family="sans-serif"%3EImage Placeholder%3C/text%3E%3C/svg%3E'
+
+  // Show first 8 works, or placeholders while loading
+  const displayWorks = items.length > 0 ? items.slice(0, 8) : Array.from({ length: 8 }).map((_, i) => ({
+    id: `placeholder-${i}`,
+    main_image_url: placeholderImage,
+    description: 'Description',
+    label_1: null,
+    label_2: null,
+    date: null,
+    created_at: '',
+    updated_at: '',
+  }))
 
   const handleViewMore = () => {
-    // Handle view more action
-    console.log('View More clicked');
-  };
+    navigate('/works')
+  }
 
   return (
     <section id="works" className="relative w-full bg-white md:px-8 py-8 overflow-hidden">
@@ -60,7 +62,7 @@ const WorksSection = () => {
               className="h-auto w-auto max-w-md mx-auto"
             />
           </div>
-          
+
           {/* View More Button */}
           <button
             onClick={handleViewMore}
@@ -72,18 +74,32 @@ const WorksSection = () => {
 
         {/* Image Grid - 2x4 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {works.map((work) => (
-            <Card
-              key={work.id}
-              image={work.image}
-              description={work.description}
-            />
+          {displayWorks.map((work) => (
+            <div 
+              key={work.id} 
+              className="flex flex-col cursor-pointer group"
+              onClick={() => work.id !== 'placeholder-0' && !work.id.startsWith('placeholder-') && navigate(`/works/${work.id}`)}
+            >
+              <div className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
+                <img
+                  src={work.main_image_url || placeholderImage}
+                  alt={work.label_1 || 'Work'}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              {/* Label - Below Image */}
+              {work.label_1 && (
+                <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-600 group-hover:text-gray-900 transition-colors">
+                  {work.label_1}
+                </p>
+              )}
+            </div>
           ))}
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default WorksSection;
+export default WorksSection
 
