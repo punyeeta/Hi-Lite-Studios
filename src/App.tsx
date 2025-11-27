@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
+import ContactSection from './components/sections/ContactSection';
+import Footer from './components/common/Footer';
 
 // Public pages
 import Home from './pages/Home';
@@ -20,14 +22,17 @@ import AdminContent from './Admin/Admin_components/ContentManagement/AboutUS';
 import RequireAuth from './routes/RequireAuth';
 import AdminFAQ from './Admin/Admin_components/ContentManagement/AdminFAQ';
 import AddNewProject from './Admin/Admin_components/ContentManagement/AddNewProject';
-// Public layout wrapper
-function PublicLayout() {
+
+// Public layout wrapper (UserLayout)
+function UserLayout() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1">
         <Outlet />
       </main>
+      <ContactSection />
+      <Footer />
     </div>
   );
 }
@@ -38,7 +43,7 @@ function App() {
       <Routes>
 
         {/* Public Pages */}
-        <Route element={<PublicLayout />}>
+        <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/works" element={<RecentWorks />} />
           <Route path="/services" element={<Service />} />

@@ -35,10 +35,10 @@ const Appointment = () => {
             <div className="mx-auto h-1 w-full bg-linear-to-r from-transparent via-[#FF8C00]/30 to-transparent lg:mx-0" />
             </div>
 
-        {/* form section */}
-        <BookingForm />
-      </main>
-    </div>
+                {/* form section */}
+                <BookingForm />
+            </main>
+        </div>
   )
 }
 
