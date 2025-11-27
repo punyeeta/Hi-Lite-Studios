@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import WorksCollection from '../WorksCollection'
-import AdminFAQ from '../AdminFAQ'
+import WorksCollection from '../WorksCollection/WorksCollection'
+import AdminFAQ from '../AdminFAQs/AdminFAQ'
 import AboutUsTab from './index'
 
 type Tab = 'works' | 'about' | 'faq'
