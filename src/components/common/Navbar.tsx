@@ -22,7 +22,7 @@ const Navbar = () => {
   }
 
   return (
-    <header className="w-full sticky top-0 z-50 bg-white shadow-sm">
+    <header id="navbar" className="w-full sticky top-0 z-50 bg-white shadow-sm">
       <nav className="w-full bg-white px-14 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* LEFT LINKS */}
@@ -69,7 +69,7 @@ const Navbar = () => {
             </button>
 
             <button
-              onClick={() => goHomeAndScroll('faq')}
+              onClick={() => goHomeAndScroll('faq-section')}
               className="relative text-[#212121] hover:text-blue-800 transition-colors font-medium before:content-[''] before:absolute before:left-0 before:-bottom-1 before:h-0.5 before:w-0 before:bg-blue-800 before:transition-all before:duration-300 hover:before:w-full"
             >
               FAQs

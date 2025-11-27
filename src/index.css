@@ -140,6 +140,14 @@
   margin-right: auto;
 }
 
+button {
+  cursor: pointer;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 @keyframes stripMove {
   0% {
     transform: translateX(0);

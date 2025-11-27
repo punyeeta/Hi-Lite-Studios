@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import IndoorIcon from '@/assets/images/Indoor.png'
-import OutdoorIcon from '@/assets/images/Outdoor.png'
-import VideoIcon from '@/assets/images/Vid.png'
+import IndoorIcon from '@/assets/images/ServiceIndoor.png'
+import OutdoorIcon from '@/assets/images/ServiceOutdoor.png'
+import VideoIcon from '@/assets/images/ServiceVid.png'
 import ServiceLogo from '@/assets/images/ServiceLogo.png'
 import BorderStar from '@/assets/images/BorderStar.png'
-import StarService from '@/assets/images/StarService.png'
+import StarService from '@/assets/images/ServiceStar.png'
 
 type ServiceCard = {
   id: string

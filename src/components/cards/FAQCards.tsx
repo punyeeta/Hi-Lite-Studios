@@ -8,6 +8,7 @@ type FAQCardProps = {
   expanded?: boolean // when true, show the full answer by default (non-collapsible)
   onEdit?: (item: FAQItem) => void
   onDelete?: (id: string) => void
+  onClick?: (item: FAQItem) => void // NEW: trigger modal or custom action
   className?: string
 }
 
@@ -18,24 +19,39 @@ const FAQCard = ({
   expanded = false,
   onEdit,
   onDelete,
+  onClick,
   className = '',
 }: FAQCardProps) => {
   const [isOpen, setIsOpen] = useState(false)
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(item) // let parent handle (modal)
+    } else if (!isAdmin && !preview) {
+      setIsOpen((s) => !s) // fallback: toggle inline expand
+    }
+  }
 
   return (
     <article
       className={`rounded-2xl bg-white shadow-[6px_10px_40px_rgba(0,0,0,0.20)] transition hover:shadow-[12px_16px_40px_rgba(0,0,0,0.16)] overflow-hidden ${className}`}
     >
       <div
-        className={`w-full px-4 py-3 mt-2 text-left ${!isAdmin && !preview ? 'cursor-pointer hover:bg-gray-50' : ''} ${isAdmin ? 'cursor-default' : ''}`}
-        onClick={() => {
-          if (!isAdmin && !preview) setIsOpen((s) => !s)
-        }}
+        className={`w-full px-4 py-3 mt-2 text-left ${
+          !isAdmin && !preview ? 'cursor-pointer hover:bg-gray-50' : ''
+        } ${isAdmin ? 'cursor-default' : ''}`}
+        onClick={handleClick}
       >
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-xl md:text-2xl font-bold text-[#333333] flex-1">{item.question}</h3>
-          {!isAdmin && !preview && (
-            <div className={`text-2xl text-gray-400 transition shrink-0 ${isOpen ? 'rotate-45' : ''}`}>
+          <h3 className="text-xl md:text-2xl font-bold text-[#333333] flex-1">
+            {item.question}
+          </h3>
+          {!isAdmin && !preview && !onClick && (
+            <div
+              className={`text-2xl text-gray-400 transition shrink-0 ${
+                isOpen ? 'rotate-45' : ''
+              }`}
+            >
               +
             </div>
           )}
@@ -43,10 +59,15 @@ const FAQCard = ({
       </div>
 
       {/* Answer area */}
-      {/* Answer area for users: preview (truncated), expanded (full), or interactive collapse */}
       {!isAdmin && (preview || expanded || isOpen) && (
         <div className="px-4 py-2 mb-2 bg-white">
-          <p className={`${preview ? 'text-sm text-gray-600 leading-relaxed line-clamp-3' : 'text-gray-700 leading-relaxed'}`}>
+          <p
+            className={`${
+              preview
+                ? 'text-sm text-gray-600 leading-relaxed line-clamp-3'
+                : 'text-gray-700 leading-relaxed'
+            }`}
+          >
             {item.answer}
           </p>
         </div>

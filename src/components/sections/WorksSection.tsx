@@ -1,7 +1,7 @@
 import RecentHeader from '@/assets/images/RecentHeader.png';
 import Card from '@/components/cards/RecentCards';
-import IntersectTopLeft from '@/assets/images/IntersectTL.png';
-import IntersectBottomRight from '@/assets/images/IntersectBR.png';
+import StarTopLeft from '@/assets/images/StarTL.png';
+import StarBottomRight from '@/assets/images/StarBR.png';
 
 interface WorkItem {
   id: string;
@@ -35,8 +35,8 @@ const WorksSection = () => {
       {/* Decorative Top Left */}
       <div className="absolute top-[-150px] left-[-275px] w-[600px] h-[600px] object-contain">
         <img
-          src={IntersectTopLeft}
-          alt="Intersect top left"
+          src={StarTopLeft}
+          alt="Star top left"
           className="w-full h-full object-contain"
         />
       </div>
@@ -44,8 +44,8 @@ const WorksSection = () => {
       {/* Decorative Bottom Right */}
       <div className="absolute bottom-[-300px] right-[-275px] w-[600px] h-[600px] object-contain">
         <img
-          src={IntersectBottomRight}
-          alt="Intersect bottom right"
+          src={StarBottomRight}
+          alt="Star bottom right"
           className="w-full h-full object-contain"
         />
       </div>

@@ -1,6 +1,6 @@
 import AboutBackground from '@/assets/images/AboutBackground.png';
 import AboutHeader from '@/assets/images/AboutHeader.png';
-import BlueBorder from '@/assets/images/Blue Border.png';
+import BlueBorder from '@/assets/images/BorderBlue.png';
 import LearnButton from '@/assets/images/LearnButton.png';
 import Subtract from '@/assets/images/Subtract.png';
 

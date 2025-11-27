@@ -1,19 +1,19 @@
 import BookingForm from '@/components/booking form/booking _form'
-import IntersectTL from '@/assets/images/IntersectTL.png'
-import IntersectBR from '@/assets/images/IntersectBR.png';
-import StarService from '@/assets/images/StarService.png'
+import StarTL from '@/assets/images/StarTL.png'
+import StarBR from '@/assets/images/StarBR.png';
+import ServiceStar from '@/assets/images/ServiceStar.png'
 
 const Appointment = () => {
     return (
         <div className="min-h-screen bg-white text-[#1f1f1f] relative overflow-hidden">
             <img
-            src={IntersectTL}
+            src={StarTL}
             alt="Decorative star"
             className="pointer-events-none absolute -left-80 -top-40 hidden lg:block z-0"
             />
 
             <img
-            src={IntersectBR}
+            src={StarBR}
             alt="Decorative star"
             className="pointer-events-none absolute -right-90 -bottom-100 hidden lg:block z-0"
             />
@@ -21,7 +21,7 @@ const Appointment = () => {
         <main className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 z-10">
             <div className="relative w-full mb-4 mt-10">
                 <img
-                src={StarService}
+                src={ServiceStar}
                 alt="star-service"
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-40 w-40"
                 />
