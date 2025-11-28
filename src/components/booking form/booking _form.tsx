@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { createBooking } from '@/supabase/supabase_services/admin_boooking/bookings'
+import { validateEmail } from '@/utils/formValidation'
 
 const INQUIRY_TYPES = [
   { value: 'indoor_studio_photography', label: 'Indoor & Studio Photography' },
@@ -19,6 +20,13 @@ const BookingForm = () => {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // Get today's date at midnight for comparison
+  const getTodayAtMidnight = () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return today
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage(null)
@@ -26,6 +34,19 @@ const BookingForm = () => {
 
     if (!firstName || !lastName || !email || !inquiryType || !date) {
       setError('Please complete all required fields.')
+      return
+    }
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+
+    // Validate date is not in the past
+    const selectedDateAtMidnight = new Date(date)
+    selectedDateAtMidnight.setHours(0, 0, 0, 0)
+    if (selectedDateAtMidnight < getTodayAtMidnight()) {
+      setError('Please select a future date for your booking.')
       return
     }
 
@@ -135,8 +156,21 @@ const BookingForm = () => {
             Preferred Date*
           </label>
           <div className="flex-1 rounded-2xl border border-[#dcdcdc] p-2 flex justify-center">
-            <Calendar mode="single" selected={date} onSelect={setDate} />
+            <Calendar 
+              mode="single" 
+              selected={date} 
+              onSelect={setDate}
+              disabled={(date) => {
+                // Disable all dates before today
+                const today = new Date()
+                today.setHours(0, 0, 0, 0)
+                const checkDate = new Date(date)
+                checkDate.setHours(0, 0, 0, 0)
+                return checkDate < today
+              }}
+            />
           </div>
+          <p className="text-xs text-gray-500 mt-2">Only future dates are available</p>
         </div>
       </div>
 

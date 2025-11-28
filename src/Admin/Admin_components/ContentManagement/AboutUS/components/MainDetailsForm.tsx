@@ -1,4 +1,5 @@
 import type { ChangeEvent } from 'react'
+import { COLORS } from '../../constants'
 
 type MainDetailsValues = {
   main_image_url: string
@@ -48,7 +49,7 @@ export default function MainDetailsForm({
                 onClick={onSubmit}
                 disabled={submitting}
                 className="rounded-lg px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ backgroundColor: '#1E40AF' }}
+                style={{ backgroundColor: COLORS.PRIMARY_BLUE }}
               >
                 {submitting ? 'Saving...' : 'Save'}
               </button>
@@ -66,7 +67,7 @@ export default function MainDetailsForm({
               type="button"
               onClick={onEditToggle}
               className="rounded-lg px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105"
-              style={{ backgroundColor: '#D42724' }}
+              style={{ backgroundColor: COLORS.PRIMARY_RED }}
             >
               Edit
             </button>
@@ -86,7 +87,7 @@ export default function MainDetailsForm({
             placeholder="Paste image link..."
             disabled={!editing || submitting}
           />
-          <label className="inline-flex cursor-pointer items-center justify-center rounded px-4 py-2 text-xs font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50" style={{ backgroundColor: '#1E40AF' }}>
+          <label className="inline-flex cursor-pointer items-center justify-center rounded px-4 py-2 text-xs font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50" style={{ backgroundColor: COLORS.PRIMARY_BLUE }}>
             <span>{uploadingImage ? 'Uploading...' : 'Upload Image'}</span>
             <input
               type="file"

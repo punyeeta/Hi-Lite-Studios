@@ -1,12 +1,11 @@
 import type { ChangeEvent } from 'react'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 import { Calendar } from '@/components/ui/calendar'
 import { ImageUploadField, MediaGallery, MediaUploadField } from '../../shared'
 import { WORK_LABEL_OPTIONS } from '../../../../utils'
+import { COLORS } from '../constants'
 import StarBlack from '@/assets/images/StarBlack.png'
 import type { WorkLabel, WorkMedia } from '@/supabase/supabase_services/Content_Management/WorksCollection_Service/WorksCollection'
-
-const PURPLE_PRIMARY = '#291471'
-const RED_LIGHT = '#D42724'
 
 interface WorksEditorViewProps {
   form: {
@@ -14,6 +13,7 @@ interface WorksEditorViewProps {
     description: string
     label_1: WorkLabel | ''
     date: Date | null
+    status: 'draft' | 'published'
   }
   selectedWorkMedia: WorkMedia[]
   pendingMedia: { id: string; image_url: string }[]
@@ -21,6 +21,7 @@ interface WorksEditorViewProps {
   uploadingImage?: boolean
   uploadingMedia?: boolean
   error?: string | null
+  success?: string | null
   onChangeField: (field: string, value: any) => void
   onMainImageUpload: (e: ChangeEvent<HTMLInputElement>) => Promise<void> | void
   onMediaUpload: (e: ChangeEvent<HTMLInputElement>) => Promise<void> | void
@@ -28,6 +29,11 @@ interface WorksEditorViewProps {
   onSave: () => Promise<void> | void
   onSaveDraft?: () => Promise<void> | void
   onCancel: () => void
+  onDeleteCurrent?: () => void
+  showDeleteModal?: boolean
+  deleting?: boolean
+  onConfirmDelete?: () => Promise<void> | void
+  onCancelDelete?: () => void
 }
 
 export default function WorksEditorView({
@@ -38,6 +44,7 @@ export default function WorksEditorView({
   uploadingImage = false,
   uploadingMedia = false,
   error,
+  success,
   onChangeField,
   onMainImageUpload,
   onMediaUpload,
@@ -45,45 +52,64 @@ export default function WorksEditorView({
   onSave,
   onSaveDraft,
   onCancel,
+  onDeleteCurrent,
+  showDeleteModal = false,
+  deleting = false,
+  onConfirmDelete,
+  onCancelDelete,
 }: WorksEditorViewProps) {
   return (
     <div className="space-y-1">
-      {/* Top Action Bar */}
-      <div className="flex items-center justify-end gap-3 mr-6">
-        <button
-          type="button"
-          onClick={() => (onSaveDraft ? onSaveDraft() : undefined)}
-          disabled={submitting}
-          className="rounded-full px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ background: 'linear-gradient(to right, #9CA3AF 0%, #6B7280 100%)' }}
-          title="Save as draft"
-        >
-          {submitting ? 'Saving...' : 'Save as Draft'}
-        </button>
-        <button
-          type="button"
-          onClick={onSave}
-          disabled={submitting || !form.main_image_url}
-          className="rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-          style={{ backgroundColor: RED_LIGHT }}
-        >
-          {submitting ? 'Saving...' : 'Save'}
-        </button>
+      {/* Top Action Bar - Delete & Cancel on Right */}
+      <div className="flex items-center justify-end gap-3 mr-6 mb-4">
+        {onDeleteCurrent && (
+          <button
+            type="button"
+            onClick={onDeleteCurrent}
+            disabled={submitting || deleting}
+            className="rounded-full border-2 border-red-500 px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-200 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Delete project"
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </button>
+        )}
         <button
           type="button"
           onClick={onCancel}
-          disabled={submitting}
+          disabled={submitting || deleting}
           className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:shadow-md hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
         >
           Cancel
         </button>
       </div>
+      
+      {/* Success Message */}
+      {success && (
+        <div className="rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-700">
+          <p className="font-medium">✓ {success}</p>
+        </div>
+      )}
+      
+      {/* Error Message */}
       {error && (
         <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-medium">Error:</p>
           <p>{error}</p>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete Project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={deleting}
+        isDangerous={true}
+        onConfirm={onConfirmDelete}
+        onCancel={onCancelDelete}
+      />
 
       {/* Main Content Form */}
       <div className="rounded-xl bg-white p-6 space-y-6">
@@ -95,7 +121,7 @@ export default function WorksEditorView({
           onChange={onMainImageUpload}
           label="Upload Cover Image"
           changeButtonText="Change Image"
-          buttonColor={PURPLE_PRIMARY}
+          buttonColor={COLORS.PRIMARY_PURPLE}
         />
 
         {/* Two-Column Layout */}
@@ -109,7 +135,7 @@ export default function WorksEditorView({
               value={form.description}
               onChange={(e) => onChangeField('description', e.target.value)}
               placeholder="Enter description..."
-              disabled={submitting}
+              disabled={submitting || deleting}
             />
           </div>
 
@@ -123,7 +149,7 @@ export default function WorksEditorView({
                   mode="single"
                   selected={form.date || undefined}
                   onSelect={(date) => onChangeField('date', date || null)}
-                  disabled={submitting}
+                  disabled={submitting || deleting}
                 />
               </div>
             </div>
@@ -136,7 +162,7 @@ export default function WorksEditorView({
                           focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-100"
                 value={form.label_1}
                 onChange={(e) => onChangeField('label_1', e.target.value as WorkLabel)}
-                disabled={submitting}
+                disabled={submitting || deleting}
               >
                 <option value="">Select label...</option>
                 {WORK_LABEL_OPTIONS.map((opt) => (
@@ -145,6 +171,29 @@ export default function WorksEditorView({
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Save Buttons */}
+            <div className="flex gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => (onSaveDraft ? onSaveDraft() : undefined)}
+                disabled={submitting || deleting}
+                className="flex-1 rounded-full px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: COLORS.GRAY_GRADIENT }}
+                title="Save as draft"
+              >
+                {submitting ? 'Saving...' : 'Save as Draft'}
+              </button>
+              <button
+                type="button"
+                onClick={onSave}
+                disabled={submitting || deleting || !form.main_image_url}
+                className="flex-1 rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                style={{ backgroundColor: COLORS.PRIMARY_RED }}
+              >
+                {submitting ? 'Saving...' : 'Save'}
+              </button>
             </div>
           </div>
         </div>

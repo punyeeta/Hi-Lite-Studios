@@ -51,12 +51,22 @@ export async function createBooking(input: NewBookingInput) {
 }
 
 // Optimized query - excludes notes field for list views (can be large)
-export async function fetchBookingsByStatus(status: BookingStatus) {
-  const { data, error } = await supabase
+export async function fetchBookingsByStatus(status: BookingStatus, filterDate?: string) {
+  let query = supabase
     .from(TABLE_NAME)
     .select('id, client_first_name, client_last_name, client_middle_initial, email, phone, type, event_date, status, created_at, updated_at')
     .eq('status', status)
-    .order('created_at', { ascending: false })
+
+  // Server-side date filter for confirmed bookings
+  if (filterDate) {
+    const nextDay = new Date(filterDate)
+    nextDay.setDate(nextDay.getDate() + 1)
+    query = query
+      .gte('event_date', filterDate)
+      .lt('event_date', nextDay.toISOString().split('T')[0])
+  }
+
+  const { data, error } = await query.order('created_at', { ascending: false })
 
   if (error) throw error
   // Return with null notes since we don't need it for list views

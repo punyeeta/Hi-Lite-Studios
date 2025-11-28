@@ -8,11 +8,12 @@ import {
 
 interface UseBookingsOptions {
   activeTab: BookingStatus | 'available-dates'
+  filterDate?: string
 }
 
 export type { UseBookingsOptions }
 
-export function useBookings({ activeTab }: UseBookingsOptions) {
+export function useBookings({ activeTab, filterDate }: UseBookingsOptions) {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -28,7 +29,7 @@ export function useBookings({ activeTab }: UseBookingsOptions) {
       setLoading(true)
       setError(null)
       try {
-        const data = await fetchBookingsByStatus(activeTab)
+        const data = await fetchBookingsByStatus(activeTab, filterDate)
         if (!cancelled) {
           setBookings(data)
         }
@@ -45,18 +46,24 @@ export function useBookings({ activeTab }: UseBookingsOptions) {
     return () => {
       cancelled = true
     }
-  }, [activeTab])
+  }, [activeTab, filterDate])
 
   const updateStatus = async (id: number, status: BookingStatus) => {
     try {
       // Remove from UI immediately (optimistic update)
       setBookings((prev) => prev.filter((b) => b.id !== id))
       
-      // Update in background without blocking UI
+      // Update in database
       await updateBookingStatus(id, status)
+      
+      // Refetch to ensure UI is in sync
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
     } catch (err: any) {
       setError(err.message ?? 'Failed to update booking')
-      // Optionally reload on error to sync state
+      // Reload on error to sync state
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
     }
   }
 
@@ -66,11 +73,17 @@ export function useBookings({ activeTab }: UseBookingsOptions) {
       // Remove from UI immediately (optimistic update)
       setBookings((prev) => prev.filter((b) => !ids.includes(b.id)))
       
-      // Update in background without blocking UI
+      // Update in database
       await updateManyBookingStatus(ids, status)
+      
+      // Refetch to ensure UI is in sync
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
     } catch (err: any) {
       setError(err.message ?? 'Failed to update selected bookings')
-      // Optionally reload on error to sync state
+      // Reload on error to sync state
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
     }
   }
 

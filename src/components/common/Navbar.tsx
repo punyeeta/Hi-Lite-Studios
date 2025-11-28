@@ -28,10 +28,24 @@ const Navbar = () => {
     }
   }
 
-  const goHomeAndScroll = (sectionId: string) => {
+  const goHomeAndScroll = async (sectionId: string) => {
     if (location.pathname !== '/') {
       navigate('/')
-      setTimeout(() => scrollToSection(sectionId), 50)
+      // Wait for navigation to complete before scrolling
+      await new Promise((resolve) => {
+        const checkAndScroll = () => {
+          const section = document.getElementById(sectionId)
+          if (section) {
+            section.scrollIntoView({ behavior: 'smooth' })
+            resolve(true)
+          } else {
+            // Retry after a short delay
+            setTimeout(checkAndScroll, 50)
+          }
+        }
+        // Start checking after a brief delay to allow DOM to update
+        setTimeout(checkAndScroll, 100)
+      })
     } else {
       scrollToSection(sectionId)
     }

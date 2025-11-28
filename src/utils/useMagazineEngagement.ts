@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { MagazineEngagement, ReactionType } from '@/supabase/supabase_services/Blogs_Stories/reactions_comments'
 import {
   getEngagementsForBlog,
@@ -29,6 +29,11 @@ export const useMagazineEngagement = ({ blogStoryId }: UseMagazineEngagementOpti
       setLoading(false)
     }
   }, [blogStoryId])
+
+  // Auto-load engagements on mount
+  useEffect(() => {
+    loadEngagements()
+  }, [loadEngagements])
 
   // Create engagement (emoji + comment)
   const createEngagement = useCallback(

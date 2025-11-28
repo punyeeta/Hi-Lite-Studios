@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import type { Booking, BookingStatus } from '@/supabase/supabase_services/admin_boooking/bookings'
 import { fetchBookingById } from '@/supabase/supabase_services/admin_boooking/bookings'
+import { BOOKING_COLORS, BOOKING_LABELS, BOOKING_ERRORS } from './constants'
 import PendingIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Pending_Button.png'
 import ConfirmedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/ConfirmedButton.png'
 import CancelledIcon from '../../../assets/images/Adminbuttons/bookings_buttons/CancellButton.png'
@@ -32,9 +33,10 @@ export default function AdminBookings() {
   const [filterDate, setFilterDate] = useState<string>('')
 
   // Use custom hook for all booking logic
-  const { bookings, loading, error, updateStatus, updateManyStatus } = useBookings({ activeTab })
+  const { bookings, loading, error, updateStatus, updateManyStatus } = useBookings({ activeTab, filterDate })
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [modalLoading, setModalLoading] = useState(false)
 
   const toggleSelectAll = useCallback(() => {
     const allSelected = bookings.length > 0 && selectedIds.length === bookings.length
@@ -72,13 +74,17 @@ export default function AdminBookings() {
 
   const handleRowClick = useCallback(async (booking: Booking) => {
     try {
+      setModalLoading(true)
       setDetailsOpen(true)
       // Fetch full details including notes/description
       const full = await fetchBookingById(booking.id)
       setSelectedBooking(full)
     } catch (e) {
+      console.error('[AdminBookings] Failed to fetch booking details:', e)
       // Fallback to partial booking if fetch fails
       setSelectedBooking(booking)
+    } finally {
+      setModalLoading(false)
     }
   }, [])
 
@@ -105,17 +111,8 @@ export default function AdminBookings() {
     if (activeTab !== 'confirmed') setFilterDate('')
   }, [activeTab])
 
-  // Apply a client-side date filter when viewing confirmed bookings
-  const displayedBookings =
-    activeTab === 'confirmed' && filterDate
-      ? bookings.filter((b) => {
-          try {
-            return new Date(b.event_date).toISOString().slice(0, 10) === filterDate
-          } catch (e) {
-            return false
-          }
-        })
-      : bookings
+  // Bookings are already filtered server-side when filterDate is used
+  const displayedBookings = bookings
 
   return (
     <section className="space-y-6 relative">
@@ -134,9 +131,10 @@ export default function AdminBookings() {
               onClick={() => setActiveTab(tab.id as BookingStatus)}
               className={`group px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md transition-all duration-200 ease-in-out 
                           ${activeTab === tab.id
-                            ? 'bg-[#E2E2E2] text-[#291471] shadow-md scale-105'
+                            ? `shadow-md scale-105`
                             : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200'
                           }`}
+              style={activeTab === tab.id ? { backgroundColor: BOOKING_COLORS.LIGHT_GRAY_BG, color: BOOKING_COLORS.PRIMARY_PURPLE } : {}}
             >
               <span className="flex items-center gap-2">
                 <img
@@ -193,8 +191,8 @@ export default function AdminBookings() {
       <>
         {activeTab === 'confirmed' && filterDate && !loading && !error && displayedBookings.length === 0 ? (
           <div className="mt-8 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-lg text-gray-600">
-            <p className="font-semibold mb-2">No booking appointments on this date.</p>
-            <p>Try clearing the date filter to see all confirmed bookings.</p>
+            <p className="font-semibold mb-2">{BOOKING_LABELS.NO_RESULTS}</p>
+            <p>{BOOKING_LABELS.CLEAR_FILTER}</p>
           </div>
         ) : (
           <>
@@ -211,10 +209,9 @@ export default function AdminBookings() {
             />
 
             {displayedBookings.length > 0 && (
-              <div className="flex items-center justify-between pt-4 text-s text-[#333333]">
+              <div className="flex items-center justify-between pt-4 text-s" style={{ color: BOOKING_COLORS.TEXT_DARK }}>
                 <span>
-                  Showing <strong>{displayedBookings.length}</strong> result
-                  {displayedBookings.length !== 1 && 's'}
+                  {BOOKING_LABELS.RESULT_COUNT} <strong>{displayedBookings.length}</strong> {displayedBookings.length !== 1 ? BOOKING_LABELS.RESULT_PLURAL : BOOKING_LABELS.RESULT_SINGULAR}
                 </span>
               </div>
             )}
@@ -223,6 +220,7 @@ export default function AdminBookings() {
               booking={selectedBooking}
               isOpen={detailsOpen}
               onClose={() => setDetailsOpen(false)}
+              loading={modalLoading}
             />
           </>
         )}

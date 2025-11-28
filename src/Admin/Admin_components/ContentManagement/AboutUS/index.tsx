@@ -12,6 +12,13 @@ import {
   type AboutUs as AboutUsType,
   type AboutUsStaff,
 } from '@/supabase/supabase_services/Content_Management/AboutUs_Servicce/AboutUs'
+import {
+  COLORS,
+  ABOUT_US_ERRORS,
+  FORM_SECTIONS,
+  SAVING_STATES,
+  EMPTY_FORMS,
+} from '../constants'
 
 type MainFormState = {
   main_image_url: string
@@ -61,9 +68,9 @@ type Action =
 const initialState: State = {
   aboutUs: null,
   staff: [],
-  mainForm: { main_image_url: '', description: '' },
-  meetTeamForm: { title: '', subtitle: '' },
-  whatWeDoForm: { title: '', description: '' },
+  mainForm: EMPTY_FORMS.MAIN,
+  meetTeamForm: EMPTY_FORMS.MEET_TEAM,
+  whatWeDoForm: EMPTY_FORMS.WHAT_WE_DO,
   editing: { main: false, meetTeam: false, whatWeDo: false },
   newStaffName: '',
   loading: true,
@@ -177,71 +184,70 @@ export default function AboutUsTab() {
     } catch (err) {
       dispatch({
         type: 'SET_ERROR',
-        payload: err instanceof Error ? err.message : 'Failed to load About Us data.',
+        payload: err instanceof Error ? err.message : ABOUT_US_ERRORS.LOAD_DATA,
       })
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false })
     }
   }
 
-  const handleMainSubmit = async () => {
-    dispatch({ type: 'SET_SAVING', payload: { section: 'main', value: true } })
+  /**
+   * Generic form submit handler to eliminate redundancy
+   * Handles all form section submissions with the same logic
+   */
+  const handleFormSubmit = async (
+    section: 'main' | 'meetTeam' | 'whatWeDo',
+    updateData: Partial<AboutUsType>,
+    errorMessage: string,
+  ) => {
+    const savingSection = section === 'main' ? 'main' : section === 'meetTeam' ? 'team' : 'what'
+    dispatch({ type: 'SET_SAVING', payload: { section: savingSection as any, value: true } })
     dispatch({ type: 'SET_ERROR', payload: null })
     try {
-      const updated = await updateAboutUs({
-        main_image_url: state.mainForm.main_image_url || null,
-        description: state.mainForm.description || null,
-      })
+      const updated = await updateAboutUs(updateData)
       dispatch({ type: 'SET_ABOUT_US', payload: updated })
-      dispatch({ type: 'SET_EDITING', payload: { section: 'main', value: false } })
+      dispatch({ type: 'SET_EDITING', payload: { section, value: false } })
     } catch (err) {
       dispatch({
         type: 'SET_ERROR',
-        payload: err instanceof Error ? err.message : 'Failed to save main section.',
+        payload: err instanceof Error ? err.message : errorMessage,
       })
     } finally {
-      dispatch({ type: 'SET_SAVING', payload: { section: 'main', value: false } })
+      dispatch({ type: 'SET_SAVING', payload: { section: savingSection as any, value: false } })
     }
+  }
+
+  const handleMainSubmit = async () => {
+    await handleFormSubmit(
+      'main',
+      {
+        main_image_url: state.mainForm.main_image_url || null,
+        description: state.mainForm.description || null,
+      },
+      ABOUT_US_ERRORS.SAVE_MAIN,
+    )
   }
 
   const handleMeetTeamSubmit = async () => {
-    dispatch({ type: 'SET_SAVING', payload: { section: 'team', value: true } })
-    dispatch({ type: 'SET_ERROR', payload: null })
-    try {
-      const updated = await updateAboutUs({
+    await handleFormSubmit(
+      'meetTeam',
+      {
         meet_team_title: state.meetTeamForm.title || null,
         meet_team_subtitle: state.meetTeamForm.subtitle || null,
-      })
-      dispatch({ type: 'SET_ABOUT_US', payload: updated })
-      dispatch({ type: 'SET_EDITING', payload: { section: 'meetTeam', value: false } })
-    } catch (err) {
-      dispatch({
-        type: 'SET_ERROR',
-        payload: err instanceof Error ? err.message : 'Failed to save meet the team section.',
-      })
-    } finally {
-      dispatch({ type: 'SET_SAVING', payload: { section: 'team', value: false } })
-    }
+      },
+      ABOUT_US_ERRORS.SAVE_TEAM,
+    )
   }
 
   const handleWhatWeDoSubmit = async () => {
-    dispatch({ type: 'SET_SAVING', payload: { section: 'what', value: true } })
-    dispatch({ type: 'SET_ERROR', payload: null })
-    try {
-      const updated = await updateAboutUs({
+    await handleFormSubmit(
+      'whatWeDo',
+      {
         what_we_do_title: state.whatWeDoForm.title || null,
         what_we_do_description: state.whatWeDoForm.description || null,
-      })
-      dispatch({ type: 'SET_ABOUT_US', payload: updated })
-      dispatch({ type: 'SET_EDITING', payload: { section: 'whatWeDo', value: false } })
-    } catch (err) {
-      dispatch({
-        type: 'SET_ERROR',
-        payload: err instanceof Error ? err.message : 'Failed to save what we do section.',
-      })
-    } finally {
-      dispatch({ type: 'SET_SAVING', payload: { section: 'what', value: false } })
-    }
+      },
+      ABOUT_US_ERRORS.SAVE_WHAT_WE_DO,
+    )
   }
 
   const handleImageUpload = async (file: File) => {
@@ -253,7 +259,7 @@ export default function AboutUsTab() {
     } catch (err) {
       dispatch({
         type: 'SET_ERROR',
-        payload: err instanceof Error ? err.message : 'Failed to upload image.',
+        payload: err instanceof Error ? err.message : ABOUT_US_ERRORS.UPLOAD_IMAGE,
       })
     } finally {
       dispatch({ type: 'SET_SAVING', payload: { section: 'uploading', value: false } })
@@ -271,7 +277,7 @@ export default function AboutUsTab() {
     } catch (err) {
       dispatch({
         type: 'SET_ERROR',
-        payload: err instanceof Error ? err.message : 'Failed to add staff.',
+        payload: err instanceof Error ? err.message : ABOUT_US_ERRORS.ADD_STAFF,
       })
     } finally {
       dispatch({ type: 'SET_SAVING', payload: { section: 'addingStaff', value: false } })
@@ -285,24 +291,37 @@ export default function AboutUsTab() {
     } catch (err) {
       dispatch({
         type: 'SET_ERROR',
-        payload: err instanceof Error ? err.message : 'Failed to delete staff.',
+        payload: err instanceof Error ? err.message : ABOUT_US_ERRORS.DELETE_STAFF,
       })
     }
   }
 
-  const resetMainForm = () => {
+  /**
+   * Generic form reset handler to eliminate redundancy
+   * Resets any form section back to original values
+   */
+  const handleFormReset = (section: 'main' | 'meetTeam' | 'whatWeDo') => {
     if (!state.aboutUs) return
-    dispatch({ type: 'RESET_MAIN_FORM', payload: state.aboutUs })
+    switch (section) {
+      case 'main':
+        dispatch({ type: 'RESET_MAIN_FORM', payload: state.aboutUs })
+        break
+      case 'meetTeam':
+        dispatch({ type: 'RESET_MEET_TEAM_FORM', payload: state.aboutUs })
+        break
+      case 'whatWeDo':
+        dispatch({ type: 'RESET_WHAT_WE_DO_FORM', payload: state.aboutUs })
+        break
+    }
   }
 
-  const resetMeetTeamForm = () => {
-    if (!state.aboutUs) return
-    dispatch({ type: 'RESET_MEET_TEAM_FORM', payload: state.aboutUs })
+  const handleEditToggle = (section: 'main' | 'meetTeam' | 'whatWeDo') => {
+    dispatch({ type: 'SET_EDITING', payload: { section, value: true } })
   }
 
-  const resetWhatWeDoForm = () => {
-    if (!state.aboutUs) return
-    dispatch({ type: 'RESET_WHAT_WE_DO_FORM', payload: state.aboutUs })
+  const handleEditCancel = (section: 'main' | 'meetTeam' | 'whatWeDo') => {
+    handleFormReset(section)
+    dispatch({ type: 'SET_EDITING', payload: { section, value: false } })
   }
 
   if (state.loading) {
@@ -326,11 +345,8 @@ export default function AboutUsTab() {
         submitting={state.saving.main}
         uploadingImage={state.saving.uploading}
         editing={state.editing.main}
-        onEditToggle={() => dispatch({ type: 'SET_EDITING', payload: { section: 'main', value: true } })}
-        onCancel={() => {
-          resetMainForm()
-          dispatch({ type: 'SET_EDITING', payload: { section: 'main', value: false } })
-        }}
+        onEditToggle={() => handleEditToggle('main')}
+        onCancel={() => handleEditCancel('main')}
       />
 
       <hr className="border-gray-200" />
@@ -347,11 +363,8 @@ export default function AboutUsTab() {
         onNewStaffNameChange={(name) => dispatch({ type: 'SET_NEW_STAFF_NAME', payload: name })}
         onDeleteStaff={handleDeleteStaff}
         editing={state.editing.meetTeam}
-        onEditToggle={() => dispatch({ type: 'SET_EDITING', payload: { section: 'meetTeam', value: true } })}
-        onCancel={() => {
-          resetMeetTeamForm()
-          dispatch({ type: 'SET_EDITING', payload: { section: 'meetTeam', value: false } })
-        }}
+        onEditToggle={() => handleEditToggle('meetTeam')}
+        onCancel={() => handleEditCancel('meetTeam')}
       />
 
       <hr className="border-gray-200" />
@@ -362,11 +375,8 @@ export default function AboutUsTab() {
         onChange={(changes) => dispatch({ type: 'SET_WHAT_WE_DO_FORM', payload: changes })}
         onSubmit={handleWhatWeDoSubmit}
         editing={state.editing.whatWeDo}
-        onEditToggle={() => dispatch({ type: 'SET_EDITING', payload: { section: 'whatWeDo', value: true } })}
-        onCancel={() => {
-          resetWhatWeDoForm()
-          dispatch({ type: 'SET_EDITING', payload: { section: 'whatWeDo', value: false } })
-        }}
+        onEditToggle={() => handleEditToggle('whatWeDo')}
+        onCancel={() => handleEditCancel('whatWeDo')}
       />
     </section>
   )

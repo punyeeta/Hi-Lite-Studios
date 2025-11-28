@@ -1,5 +1,6 @@
 import { memo, useMemo, useState } from 'react'
 import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
+import { BLOG_COLORS } from './constants'
 
 interface BlogListViewProps {
   stories: BlogStory[]
@@ -45,7 +46,7 @@ const StoryCard = memo(function StoryCard({
             </div>
           )}
           {story.is_pinned && (
-            <span className="absolute left-3 top-3 rounded-full bg-[#F2322E] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">
+            <span className="absolute left-3 top-3 rounded-full text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm px-3 py-1" style={{ backgroundColor: BLOG_COLORS.PRIMARY_RED }}>
               Pinned
             </span>
           )}
@@ -84,8 +85,9 @@ const StoryCard = memo(function StoryCard({
             className={`rounded-lg px-3 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 ${
               story.is_pinned
                 ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                : 'bg-[#F2322E] text-white hover:bg-[#d51e1a]'
+                : 'text-white hover:scale-105'
             }`}
+            style={!story.is_pinned ? { backgroundColor: BLOG_COLORS.PRIMARY_RED } : {}}
           >
             {story.is_pinned ? 'Remove Pin' : 'Pin'}
           </button>
@@ -93,7 +95,8 @@ const StoryCard = memo(function StoryCard({
             <button
               type="button"
               onClick={() => onEdit(story)}
-              className="rounded-lg bg-[#291471] px-4 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-[#1e0f55] hover:shadow-lg hover:scale-105"
+              className="rounded-lg px-4 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105"
+              style={{ backgroundColor: BLOG_COLORS.PRIMARY_PURPLE }}
             >
               Edit
             </button>
@@ -102,7 +105,7 @@ const StoryCard = memo(function StoryCard({
               onClick={() => onDelete(story)}
               disabled={saving}
               className="rounded-lg px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-700 shadow-sm transition-all duration-150 hover:bg-gray-200 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed"
-              style={{ background: 'linear-gradient(to right, #f3f4f6 0%, #e5e7eb 100%)' }}
+              style={{ background: BLOG_COLORS.LIGHT_GRAY_GRADIENT }}
             >
               Delete
             </button>

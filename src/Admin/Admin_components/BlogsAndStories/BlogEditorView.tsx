@@ -1,6 +1,7 @@
 import { memo, type ChangeEvent } from 'react'
 import RichTextEditor from '@/components/common/RichTextEditor'
 import { AdminEngagementPanel } from './AdminEngagementPanel'
+import { BLOG_COLORS } from './constants'
 import type {
   BlogStatus,
 } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
@@ -77,7 +78,7 @@ export default memo(function BlogEditorView({
                 type="button"
                 onClick={() => onDeleteCurrent()}
                 className="rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105"
-                style={{ background: 'linear-gradient(to right, #F2322E 0%, #AA1815 100%)' }}
+                style={{ background: BLOG_COLORS.RED_GRADIENT }}
               >
                 Delete Post
               </button>
@@ -107,7 +108,7 @@ export default memo(function BlogEditorView({
                 value={form.cover_image}
                 onChange={onChangeField('cover_image')}
                 placeholder="https://.../blog-images/covers/post-1.jpg"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#291471] focus:outline-none focus:ring-1 focus:ring-[#291471]"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[${BLOG_COLORS.PRIMARY_PURPLE}] focus:outline-none focus:ring-1 focus:ring-[${BLOG_COLORS.PRIMARY_PURPLE}]"
               />
               <label className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-gray-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-black hover:shadow-lg hover:scale-105">
                 <span>{uploadingCover ? 'Uploading...' : 'Upload'}</span>
@@ -150,7 +151,7 @@ export default memo(function BlogEditorView({
               type="text"
               value={form.title}
               onChange={onChangeField('title')}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#291471] focus:outline-none focus:ring-1 focus:ring-[#291471]"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[${BLOG_COLORS.PRIMARY_PURPLE}] focus:outline-none focus:ring-1 focus:ring-[${BLOG_COLORS.PRIMARY_PURPLE}]"
             />
           </div>
         </div>
@@ -204,7 +205,7 @@ export default memo(function BlogEditorView({
             disabled={saving}
             title="Save as draft"
             className="rounded-lg px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed"
-            style={{ background: 'linear-gradient(to right, #9CA3AF 0%, #6B7280 100%)' }}
+            style={{ background: BLOG_COLORS.GRAY_GRADIENT }}
           >
             {saving ? 'Saving...' : 'Save as Draft'}
           </button>
@@ -212,15 +213,17 @@ export default memo(function BlogEditorView({
             type="submit"
             onClick={onSave}
             disabled={saving}
-            className="rounded-lg bg-[#291471] px-6 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-[#1e0f55] hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed disabled:bg-gray-400"
+            className={`rounded-lg px-6 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed disabled:bg-gray-400`}
+            style={{ backgroundColor: BLOG_COLORS.PRIMARY_PURPLE }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BLOG_COLORS.DARK_PURPLE)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BLOG_COLORS.PRIMARY_PURPLE)}
           >
             {saving
-              ? mode === 'create'
-                ? 'Saving...'
-                : 'Updating...'
+              ? 'Saving...'
               : mode === 'create'
-              ? 'Save Post'
-              : 'Update Post'}
+              ? 'Publish Post'
+              : 'Publish Changes'
+            }
           </button>
         </div>
       </div>

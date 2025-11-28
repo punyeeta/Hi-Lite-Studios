@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Booking } from '@/supabase/supabase_services/admin_boooking/bookings'
 
 interface EmailModalProps {
@@ -6,6 +6,8 @@ interface EmailModalProps {
   isOpen: boolean
   onClose: () => void
   onSend: (message: string) => Promise<void>
+  error?: string | null
+  onErrorClear?: () => void
 }
 
 const fullName = (booking: Booking) =>
@@ -35,26 +37,38 @@ const getDefaultMessage = (booking: Booking, status: string) => {
   }
 }
 
-export default function EmailModal({ booking, isOpen, onClose, onSend }: EmailModalProps) {
+export default function EmailModal({ booking, isOpen, onClose, onSend, error, onErrorClear }: EmailModalProps) {
   const [message, setMessage] = useState(getDefaultMessage(booking, booking.status))
   const [sending, setSending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null)
+
+  // Reset message when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setMessage(getDefaultMessage(booking, booking.status))
+      setLocalError(null)
+      if (onErrorClear) onErrorClear()
+    }
+  }, [isOpen, booking, onErrorClear])
 
   const handleSend = async () => {
     setSending(true)
-    setError(null)
+    setLocalError(null)
     try {
       await onSend(message)
       setMessage('')
       onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send email')
+      const errorMsg = err instanceof Error ? err.message : 'Failed to send email'
+      setLocalError(errorMsg)
     } finally {
       setSending(false)
     }
   }
 
   if (!isOpen) return null
+
+  const displayError = error || localError
 
   const getSubject = () => {
     switch (booking.status) {
@@ -106,9 +120,9 @@ export default function EmailModal({ booking, isOpen, onClose, onSend }: EmailMo
           />
         </div>
 
-        {error && (
+        {displayError && (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
+            {displayError}
           </div>
         )}
 

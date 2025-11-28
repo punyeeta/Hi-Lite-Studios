@@ -1,4 +1,5 @@
 import type { Work } from '@/supabase/supabase_services/Content_Management/WorksCollection_Service/WorksCollection'
+import { COLORS } from '../constants'
 
 interface WorkCardProps {
   work: Work
@@ -17,6 +18,15 @@ export default function WorkCard({ work, onEdit }: WorkCardProps) {
           </div>
         )}
         
+        {/* Draft Badge - Top Right */}
+        {work.status === 'draft' && (
+          <div className="absolute top-3 right-3 z-10">
+            <span className="inline-block rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-md" style={{ backgroundColor: COLORS.PRIMARY_RED }}>
+              Draft
+            </span>
+          </div>
+        )}
+
         {/* Label - Bottom Left */}
         {work.label_1 && (
           <div className="absolute bottom-3 left-3 z-10">
@@ -31,7 +41,8 @@ export default function WorkCard({ work, onEdit }: WorkCardProps) {
           <button
             type="button"
             onClick={() => onEdit(work)}
-            className="rounded-full bg-[#D42724] px-6 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-md hover:bg-[#bd110e]"
+            className="rounded-full px-6 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-md hover:scale-105"
+            style={{ backgroundColor: COLORS.PRIMARY_RED }}
           >
             Edit
           </button>

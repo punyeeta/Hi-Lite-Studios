@@ -2,6 +2,12 @@ import { useState, useRef } from 'react'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 import { useFAQ, type FAQItem } from '@/components/sections/context/FAQContext'
 import FAQCard from '@/components/cards/FAQCards'
+import {
+  getFAQOrder,
+  getFeaturedFAQs,
+  saveFAQOrder,
+  saveFeaturedFAQs,
+} from '@/components/sections/context/faqStorageKeys'
 
 const emptyForm = {
   question: '',
@@ -77,19 +83,15 @@ export default function AdminFAQ() {
 
   // Ordering / featured helpers (persisted to localStorage)
   const getOrder = () => {
-    try {
-      const raw = localStorage.getItem('faq_order')
-      return raw ? (JSON.parse(raw) as string[]) : items.map((i) => i.id)
-    } catch {
-      return items.map((i) => i.id)
-    }
+    const order = getFAQOrder()
+    return order.length > 0 ? order : items.map((i) => i.id)
   }
 
   const saveOrder = (newOrder: string[]) => {
-    try {
-      localStorage.setItem('faq_order', JSON.stringify(newOrder))
-    } catch {}
-    refreshItems().catch(() => {})
+    saveFAQOrder(newOrder)
+    refreshItems().catch((err) => {
+      console.error('Failed to refresh items after saving order:', err)
+    })
   }
 
   const moveUp = (id: string) => {
@@ -112,23 +114,16 @@ export default function AdminFAQ() {
     }
   }
 
-  const getFeatured = () => {
-    try {
-      const raw = localStorage.getItem('faq_featured')
-      return raw ? (JSON.parse(raw) as string[]) : []
-    } catch {
-      return []
-    }
-  }
+  const getFeatured = () => getFeaturedFAQs()
 
   const toggleFeatured = (id: string) => {
     const featured = getFeatured()
     const idx = featured.indexOf(id)
     const next = idx === -1 ? [...featured, id] : featured.filter((f) => f !== id)
-    try {
-      localStorage.setItem('faq_featured', JSON.stringify(next))
-    } catch {}
-    refreshItems().catch(() => {})
+    saveFeaturedFAQs(next)
+    refreshItems().catch((err) => {
+      console.error('Failed to refresh items after toggling featured:', err)
+    })
   }
 
   const handleDeleteConfirmed = async () => {

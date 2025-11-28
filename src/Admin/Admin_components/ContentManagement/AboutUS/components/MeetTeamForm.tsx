@@ -1,4 +1,5 @@
 import StaffList from './StaffList'
+import { COLORS } from '../../constants'
 
 type MeetTeamValues = {
   title: string
@@ -48,7 +49,7 @@ export default function MeetTeamForm({
                 onClick={onSubmit}
                 disabled={submitting}
                 className="rounded-lg px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ backgroundColor: '#1E40AF' }}
+                style={{ backgroundColor: COLORS.PRIMARY_BLUE }}
               >
                 {submitting ? 'Saving...' : 'Save'}
               </button>
@@ -66,7 +67,7 @@ export default function MeetTeamForm({
               type="button"
               onClick={onEditToggle}
               className="rounded-lg px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105"
-              style={{ backgroundColor: '#D42724' }}
+              style={{ backgroundColor: COLORS.PRIMARY_RED }}
             >
               Edit
             </button>
@@ -123,7 +124,7 @@ export default function MeetTeamForm({
                 onClick={onAddStaff}
                 disabled={!editing || addingStaff || !newStaffName.trim()}
                 className="rounded-lg px-4 py-1 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ backgroundColor: '#1E40AF' }}
+                style={{ backgroundColor: COLORS.PRIMARY_BLUE }}
               >
                 {addingStaff ? 'Adding...' : 'Add Staff'}
               </button>

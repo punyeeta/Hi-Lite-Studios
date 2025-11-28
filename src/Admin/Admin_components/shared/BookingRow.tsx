@@ -23,6 +23,8 @@ export default memo(function BookingRow({
   onRowClick,
 }: BookingRowProps) {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
+  const [actionLoading, setActionLoading] = useState<string | null>(null) // Track which action is loading
+  const [emailError, setEmailError] = useState<string | null>(null)
 
   const fullName = [
     booking.client_first_name,
@@ -33,7 +35,22 @@ export default memo(function BookingRow({
     .join(' ')
 
   const handleSendEmail = async (message: string) => {
-    await sendCustomBookingEmail(booking.email, booking.client_first_name, message, booking.status)
+    try {
+      setEmailError(null)
+      await sendCustomBookingEmail(booking.email, booking.client_first_name, message, booking.status)
+    } catch (err: any) {
+      setEmailError(err.message || 'Failed to send email')
+      throw err
+    }
+  }
+
+  const handleStatusChange = async (status: BookingStatus) => {
+    try {
+      setActionLoading(status)
+      await onStatusChange(booking.id, status)
+    } finally {
+      setActionLoading(null)
+    }
   }
 
   const clickable = (e: React.MouseEvent) => {
@@ -73,21 +90,21 @@ export default memo(function BookingRow({
           <>
             <button
               type="button"
-              onClick={() => onStatusChange(booking.id, 'confirmed')}
-              disabled={loading}
+              onClick={() => handleStatusChange('confirmed')}
+              disabled={loading || actionLoading !== null}
               className="rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300"
-              style={{ backgroundColor: '#FFC800' }}
+              style={{ backgroundColor: actionLoading === 'confirmed' ? '#FFD700' : '#FFC800' }}
             >
-              Approve
+              {actionLoading === 'confirmed' ? 'Approving...' : 'Approve'}
             </button>
             <button
               type="button"
-              onClick={() => onStatusChange(booking.id, 'declined')}
-              disabled={loading}
+              onClick={() => handleStatusChange('declined')}
+              disabled={loading || actionLoading !== null}
               className="rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300"
-              style={{ backgroundColor: '#EE0202' }}
+              style={{ backgroundColor: actionLoading === 'declined' ? '#CC0000' : '#EE0202' }}
             >
-              Decline
+              {actionLoading === 'declined' ? 'Declining...' : 'Decline'}
             </button>
           </>
         ) : booking.status === 'confirmed' || booking.status === 'cancelled' || booking.status === 'declined' ? (
@@ -95,19 +112,26 @@ export default memo(function BookingRow({
             <button
               type="button"
               onClick={() => setIsEmailModalOpen(true)}
-              className="inline-flex items-center rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90"
+              disabled={actionLoading !== null}
+              className="inline-flex items-center rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               style={{ backgroundColor: '#FFC800' }}
             >
               Email
             </button>
+            {emailError && (
+              <div className="text-xs text-red-600 mt-1">
+                {emailError}
+              </div>
+            )}
             {booking.status === 'confirmed' && (
               <button
                 type="button"
-                onClick={() => onStatusChange(booking.id, 'cancelled')}
-                disabled={loading}
-                className="rounded-md bg-gray-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300"
+                onClick={() => handleStatusChange('cancelled')}
+                disabled={loading || actionLoading !== null}
+                className="rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300"
+                style={{ backgroundColor: actionLoading === 'cancelled' ? '#4a4a4a' : '#333333' }}
               >
-                Cancel
+                {actionLoading === 'cancelled' ? 'Cancelling...' : 'Cancel'}
               </button>
             )}
           </>
@@ -120,6 +144,8 @@ export default memo(function BookingRow({
           isOpen={isEmailModalOpen}
           onClose={() => setIsEmailModalOpen(false)}
           onSend={handleSendEmail}
+          error={emailError}
+          onErrorClear={() => setEmailError(null)}
         />
       </td>
     </tr>

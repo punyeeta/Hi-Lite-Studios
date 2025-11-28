@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 import { useMagazineEngagement } from '@/utils/useMagazineEngagement'
+import { BLOG_COLORS } from './constants'
 
 const EMOJI_MAP = {
   smile: '😊',
@@ -134,7 +135,7 @@ export const AdminEngagementPanel = ({ blogStoryId }: AdminEngagementPanelProps)
                       <button
                         onClick={() => openDelete(item.id)}
                         className="rounded-lg px-3 py-1 text-xs font-semibold text-white transition-all duration-150 hover:shadow-lg hover:scale-105"
-                        style={{ background: 'linear-gradient(to right, #F2322E 0%, #AA1815 100%)' }}
+                        style={{ background: BLOG_COLORS.RED_GRADIENT }}
                       >
                         Delete Comment
                       </button>

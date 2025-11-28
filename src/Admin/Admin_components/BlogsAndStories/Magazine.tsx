@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import ConfirmModal from '@/components/ui/ConfirmModal'
-import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
+import type { BlogStory, BlogStatus } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import {
   uploadBlogImage,
 } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import { useAdminBlogStore } from '@/store/adminBlogStore'
+import { BLOG_ERRORS, BLOG_LABELS } from './constants'
 import BlogListView from './BlogListView'
 import BlogEditorView, {
   type BlogFormState,
@@ -37,6 +38,7 @@ export default function MagazineAdmin() {
   const [uploadingCover, setUploadingCover] = useState(false)
   const [uploadingBodyImage, setUploadingBodyImage] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   useEffect(() => {
     fetchStories()
@@ -147,7 +149,7 @@ export default function MagazineAdmin() {
       const { publicUrl } = await uploadBlogImage(file, 'covers')
       setForm((prev) => ({ ...prev, cover_image: publicUrl }))
     } catch (err: any) {
-      setLocalError(err.message ?? 'Failed to upload cover image')
+      setLocalError(err.message ?? BLOG_ERRORS.FETCH_COVER)
     } finally {
       setUploadingCover(false)
       e.target.value = ''
@@ -169,23 +171,23 @@ export default function MagazineAdmin() {
           `<p><img src="${publicUrl}" alt="" /></p>`,
       }))
     } catch (err: any) {
-      setLocalError(err.message ?? 'Failed to upload image for content')
+      setLocalError(err.message ?? BLOG_ERRORS.FETCH_BODY_IMAGE)
     } finally {
       setUploadingBodyImage(false)
       e.target.value = ''
     }
   }
 
-  const handleSave = async () => {
+  const handleSaveStory = async (status: BlogStatus = form.status) => {
     const title = form.title.trim()
     const content = form.content.trim()
 
     if (!title) {
-      setLocalError('Title is required')
+      setLocalError(BLOG_ERRORS.TITLE_REQUIRED)
       return
     }
     if (!content) {
-      setLocalError('Content is required')
+      setLocalError(BLOG_ERRORS.CONTENT_REQUIRED)
       return
     }
 
@@ -195,6 +197,7 @@ export default function MagazineAdmin() {
       plainText.length > 220 ? `${plainText.slice(0, 220).trimEnd()}...` : plainText
 
     setLocalError(null)
+    setSuccessMessage(null)
 
     try {
       if (mode === 'create') {
@@ -205,9 +208,11 @@ export default function MagazineAdmin() {
           excerpt,
           content,
           is_pinned: form.is_pinned,
-          status: form.status,
+          status,
         })
         if (created) {
+          setSuccessMessage(`Post ${status === 'draft' ? 'saved as draft' : 'published'}!`)
+          setTimeout(() => setSuccessMessage(null), 3000)
           resetForm()
           setMode('list')
         }
@@ -219,21 +224,32 @@ export default function MagazineAdmin() {
           excerpt,
           content,
           is_pinned: form.is_pinned,
-          status: form.status,
+          status,
         })
         if (updated) {
+          setSuccessMessage(`Post ${status === 'draft' ? 'saved as draft' : 'published'}!`)
+          setTimeout(() => setSuccessMessage(null), 3000)
           setSelectedStory(updated)
           setMode('list')
         }
       }
     } catch (err: any) {
-      setLocalError(err.message ?? 'Failed to save story')
+      console.error('[BlogsAndStories] Save error:', err)
+      setLocalError(err.message ?? BLOG_ERRORS.SAVE_STORY)
     }
+  }
+
+  const handleSave = async () => {
+    await handleSaveStory(form.status)
   }
 
   const handleCancelEdit = () => {
     resetForm()
     setMode('list')
+  }
+
+  const handleSaveDraft = async () => {
+    await handleSaveStory('draft')
   }
 
   const handleDeleteCurrentFromEditor = async () => {
@@ -280,6 +296,7 @@ export default function MagazineAdmin() {
           onCoverUpload={handleCoverUpload}
           onBodyImageUpload={handleBodyImageUpload}
           onSave={handleSave}
+          onSaveDraft={handleSaveDraft}
           onCancel={handleCancelEdit}
           onDeleteCurrent={mode === 'edit' ? handleDeleteCurrentFromEditor : undefined}
           selectedStoryId={selectedStory?.id}
@@ -288,10 +305,10 @@ export default function MagazineAdmin() {
 
       <ConfirmModal
         isOpen={showDeleteModal}
-        title="Delete post"
-        message="Delete this post? This action cannot be undone."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        title={BLOG_LABELS.DELETE_TITLE}
+        message={BLOG_ERRORS.DELETE_POST}
+        confirmLabel={BLOG_LABELS.DELETE_CONFIRM}
+        cancelLabel={BLOG_LABELS.DELETE_CANCEL}
         loading={deleting}
         onConfirm={handleDeleteConfirmed}
         onCancel={handleDeleteCancel}
@@ -306,6 +323,12 @@ export default function MagazineAdmin() {
       {localError && isEditing && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {localError}
+        </div>
+      )}
+
+      {successMessage && isEditing && (
+        <div className="rounded-lg border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-700">
+          <p className="font-medium">✓ {successMessage}</p>
         </div>
       )}
     </section>

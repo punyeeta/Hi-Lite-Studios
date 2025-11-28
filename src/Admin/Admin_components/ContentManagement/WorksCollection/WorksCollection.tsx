@@ -6,10 +6,12 @@ import {
   updateWork,
   addWorkMedia,
   deleteWorkMedia,
+  deleteWork,
   uploadWorkImage,
   type Work,
   type WorkMedia,
   type WorkLabel,
+  type WorkStatus,
 } from '@/supabase/supabase_services/Content_Management/WorksCollection_Service/WorksCollection'
 import WorksListView from './WorksListView'
 import WorksEditorView from './WorksEditorView'
@@ -21,6 +23,7 @@ const emptyForm = {
   description: '',
   label_1: '' as WorkLabel | '',
   date: null as Date | null,
+  status: 'draft' as WorkStatus,
 }
 
 export default function WorksCollection() {
@@ -28,6 +31,7 @@ export default function WorksCollection() {
   const [works, setWorks] = useState<Work[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [selectedWork, setSelectedWork] = useState<Work | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -36,6 +40,8 @@ export default function WorksCollection() {
   const [selectedWorkMedia, setSelectedWorkMedia] = useState<WorkMedia[]>([])
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null)
   const [pendingMedia, setPendingMedia] = useState<{ id: string; image_url: string }[]>([])
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     loadWorks()
@@ -69,6 +75,7 @@ export default function WorksCollection() {
   const handleChange = (field: keyof typeof emptyForm | string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     setError(null)
+    setSuccess(null)
   }
 
   const handleNewWork = () => {
@@ -84,6 +91,7 @@ export default function WorksCollection() {
       description: work.description || '',
       label_1: (work.label_1 as WorkLabel) || '',
       date: work.date ? new Date(work.date) : null,
+      status: work.status || 'draft',
     })
     // Load media immediately here instead of waiting for useEffect
     try {
@@ -182,7 +190,38 @@ export default function WorksCollection() {
     }
   }
 
-  const handleSave = async () => {
+  const handleDeleteCurrent = () => {
+    if (!selectedWork) return
+    setShowDeleteModal(true)
+  }
+
+  const handleDeleteConfirmed = async () => {
+    if (!selectedWork) return
+    setDeleting(true)
+    setError(null)
+
+    try {
+      await deleteWork(selectedWork.id)
+      // Remove from local state
+      setWorks((prev) => prev.filter((w) => w.id !== selectedWork.id))
+      setSuccess('Work deleted successfully')
+      setTimeout(() => setSuccess(null), 3000)
+      resetForm()
+      setMode('list')
+    } catch (err) {
+      console.error('[WorksCollection] Delete error:', err)
+      setError(err instanceof Error ? err.message : 'Failed to delete work')
+    } finally {
+      setDeleting(false)
+      setShowDeleteModal(false)
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false)
+  }
+
+  const handleSaveWork = async (status: WorkStatus) => {
     if (!form.main_image_url && !form.description) {
       setError('Please provide at least an image or description')
       return
@@ -190,6 +229,7 @@ export default function WorksCollection() {
 
     setSubmitting(true)
     setError(null)
+    setSuccess(null)
 
     try {
       const workData = {
@@ -198,78 +238,48 @@ export default function WorksCollection() {
         label_1: (form.label_1 as WorkLabel) || null,
         label_2: null,
         date: form.date ? form.date.toISOString().split('T')[0] : null,
+        status,
       }
 
       if (mode === 'edit' && selectedWork) {
-        await updateWork(selectedWork.id, workData)
-        await loadWorks()
-        // Go back to list after saving
+        const updated = await updateWork(selectedWork.id, workData)
+        // ✅ Update local state instead of re-fetching
+        setWorks((prev) =>
+          prev.map((w) => (w.id === updated.id ? updated : w))
+        )
+        setSuccess(`Work ${status === 'draft' ? 'saved as draft' : 'published'}!`)
+        setTimeout(() => setSuccess(null), 3000)
         resetForm()
         setMode('list')
       } else if (mode === 'create') {
         const newWork = await createWork(workData)
+        // ✅ Add to local state instead of re-fetching
+        setWorks((prev) => [newWork, ...prev])
 
         // Add all pending media items to the database
         for (const item of pendingMedia) {
           await addWorkMedia(newWork.id, item.image_url)
         }
 
-        await loadWorks()
-        // Clear form and go back to list
+        setSuccess(`Work ${status === 'draft' ? 'saved as draft' : 'published'}!`)
+        setTimeout(() => setSuccess(null), 3000)
         resetForm()
-        setPendingMedia([])
         setMode('list')
       }
     } catch (err) {
+      console.error('[WorksCollection] Save error:', err)
       setError(err instanceof Error ? err.message : 'Failed to save work')
     } finally {
       setSubmitting(false)
     }
   }
 
+  const handleSave = async () => {
+    await handleSaveWork('published')
+  }
+
   const handleSaveDraft = async () => {
-    // Save without navigating back to list; stay in editor
-    if (!form.main_image_url && !form.description) {
-      setError('Please provide at least an image or description')
-      return
-    }
-
-    setSubmitting(true)
-    setError(null)
-
-    try {
-      const workData = {
-        main_image_url: form.main_image_url || null,
-        description: form.description || null,
-        label_1: (form.label_1 as WorkLabel) || null,
-        label_2: null,
-        date: form.date ? form.date.toISOString().split('T')[0] : null,
-      }
-
-      if (mode === 'edit' && selectedWork) {
-        const updated = await updateWork(selectedWork.id, workData)
-        // Refresh media quietly
-        await loadWorkMedia(updated.id)
-        setSelectedWork(updated)
-        // stay in edit mode
-      } else if (mode === 'create') {
-        const newWork = await createWork(workData)
-        setSelectedWork(newWork)
-        setSelectedWorkId(newWork.id)
-        // Persist any pending media now
-        for (const item of pendingMedia) {
-          await addWorkMedia(newWork.id, item.image_url)
-        }
-        await loadWorkMedia(newWork.id)
-        // Switch to edit mode and clear pending
-        setPendingMedia([])
-        setMode('edit')
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save draft')
-    } finally {
-      setSubmitting(false)
-    }
+    await handleSaveWork('draft')
   }
 
   // Kept for potential future use in delete functionality
@@ -297,6 +307,7 @@ export default function WorksCollection() {
           uploadingImage={uploadingImage}
           uploadingMedia={uploadingMedia}
           error={error}
+          success={success}
           onChangeField={handleChange}
           onMainImageUpload={handleMainImageUpload}
           onMediaUpload={handleMediaUpload}
@@ -304,6 +315,11 @@ export default function WorksCollection() {
           onSave={handleSave}
           onSaveDraft={handleSaveDraft}
           onCancel={handleCancelEdit}
+          onDeleteCurrent={mode === 'edit' ? handleDeleteCurrent : undefined}
+          showDeleteModal={showDeleteModal}
+          deleting={deleting}
+          onConfirmDelete={handleDeleteConfirmed}
+          onCancelDelete={handleDeleteCancel}
         />
       )}
     </section>
