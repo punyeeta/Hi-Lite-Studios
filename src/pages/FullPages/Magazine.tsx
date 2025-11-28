@@ -3,12 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import MagazineCard from '@/components/cards/MagazineCard'
 import MagazineCardSkeleton from '@/components/cards/MagazineCardSkeleton'
+import MagazineFeatured from '@/components/sections/MagazineFeatured'
+import MagazineGrid from '@/components/sections/MagazineGrid'
+import MagazineSearchResults from '@/components/sections/MagazineSearchResults'
 import { EngagementForm } from '@/components/common/EngagementForm'
 import { EngagementItem } from '@/components/common/EngagementItem'
 import StarBlack from '@/assets/images/StarBlack.png'
 import { useMagazineStore } from '@/store/magazineStore'
 import { useMagazineEngagement } from '@/utils/useMagazineEngagement'
-import { useDebouncedRequest } from '@/utils/useDedupRequest'
 
 const Magazine = () => {
   const { id } = useParams<{ id?: string }>()
@@ -24,18 +26,31 @@ const Magazine = () => {
   })
 
   const [isSubmittingEngagement, setIsSubmittingEngagement] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const [pinnedItem, setPinnedItem] = useState<any>(null)
 
-  // Debounced search to prevent excessive API calls
-  const debouncedSearch = useDebouncedRequest(
-    async (query: string) => {
-      if (query.trim()) {
-        await searchItems(query, 1)
-      } else {
-        await fetchItems(1)
-      }
-    },
-    300,
-  )
+  // Search only on Enter or button click
+  const handleSearchSubmit = useCallback(async () => {
+    if (inputValue.trim()) {
+      setSearchQuery(inputValue)
+      await searchItems(inputValue, 1)
+    } else {
+      setSearchQuery('')
+      await fetchItems(1)
+    }
+  }, [inputValue, searchItems, fetchItems, setSearchQuery])
+
+  // Handle typing - just update input, no search
+  const handleInputChange = useCallback((value: string) => {
+    setInputValue(value)
+  }, [])
+
+  // Handle Enter key
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit()
+    }
+  }, [handleSearchSubmit])
 
   // Fetch all items on mount
   useEffect(() => {
@@ -58,6 +73,18 @@ const Magazine = () => {
     }
   }, [id])
 
+  // Cache the pinned item when items first load
+  useEffect(() => {
+    if (!searchQuery && items.length > 0) {
+      const pinned = items.find((item: any) => item.is_pinned)
+      if (pinned) {
+        setPinnedItem(pinned)
+      }
+    }
+  }, [items, searchQuery])
+
+
+
   const handleEngagementSubmit = async (reactionType: any, content: string) => {
     setIsSubmittingEngagement(true)
     try {
@@ -73,17 +100,14 @@ const Magazine = () => {
     }
   }
 
-  const handleSearch = useCallback((value: string) => {
-    setSearchQuery(value)
-    debouncedSearch(value)
-  }, [setSearchQuery, debouncedSearch])
-
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page)
   }, [setCurrentPage])
 
-  const featuredItem = items.length > 0 ? items[0] : null
-  const gridItems = items.slice(1, 4)
+  // Use cached pinned item, or find from current items
+  const featuredItem = pinnedItem || (items.find((item: any) => item.is_pinned) || (items.length > 0 ? items[0] : null))
+  // Grid items exclude the featured item
+  const gridItems = items.filter((item: any) => item.id !== featuredItem?.id).slice(0, 3)
 
   return (
     <div className="min-h-screen bg-white py-12 pb-50">
@@ -285,8 +309,8 @@ const Magazine = () => {
                 </ div>
             </div>
 
-            {loading ? (
-              // Show skeleton loaders while loading
+            {loading && !pinnedItem ? (
+              // Show skeleton loaders only during initial load (when no pinned item yet)
               <section className="grid gap-6 md:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, index) => (
                   <MagazineCardSkeleton key={`skeleton-${index}`} />
@@ -294,34 +318,8 @@ const Magazine = () => {
               </section>
             ) : (
               <>
-                {/* Featured Story Card */}
-                {featuredItem && (
-                  <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-                    <div className="md:w-2/5 overflow-hidden rounded-2xl aspect-video">
-                      <img
-                        src={featuredItem.cover_image || ''}
-                        alt={featuredItem.title}
-                        className="h-full w-full object-cover rounded-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
-                        onClick={() => navigate(`/magazine/${featuredItem.id}`)}
-                      />
-                    </div>
-                    <div className="md:w-3/5 flex flex-col justify-center gap-4">
-                      <h2 className="text-3xl md:text-4xl font-bold text-[#333333]">
-                        {featuredItem.title}
-                      </h2>
-                      <p className="text-base md:text-lg text-[#666666] line-clamp-3">
-                        {featuredItem.excerpt}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => navigate(`/magazine/${featuredItem.id}`)}
-                        className="self-start px-8 py-2 bg-[#222222] text-white font-semibold rounded-ee-2xl rounded-tl-2xl hover:bg-[#444444] transition"
-                      >
-                        Read More →
-                      </button>
-                    </div>
-                  </div>
-                )}
+                {/* Featured Story Card - Isolated Component */}
+                <MagazineFeatured pinnedItem={featuredItem} />
 
                 {/* Search Bar and Grid Title */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 ml-4 mt-6">
@@ -330,33 +328,29 @@ const Magazine = () => {
                     <input
                       type="text"
                       placeholder="Search stories..."
-                      value={searchQuery}
-                      onChange={(e) => handleSearch(e.target.value)}
+                      value={inputValue}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      onKeyDown={handleKeyDown}
                       className="w-full px-4 py-2 border-2 border-[#222222] rounded-full focus:outline-none focus:ring-2 focus:ring-[#c21205] focus:ring-offset-2"
                     />
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#666666]" />
+                    <button
+                      type="button"
+                      onClick={handleSearchSubmit}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:text-[#333333] transition"
+                    >
+                      <Search className="w-5 h-5 text-[#666666]" />
+                    </button>
                   </div>
                 </div>
 
                 {/* Grid Section */}
-                <section className="grid gap-6 md:grid-cols-3 -mt-4">
-
-                  {gridItems.length > 0 ? (
-                    gridItems.map((item) => (
-                      <MagazineCard
-                        key={item.id}
-                        title={item.title}
-                        image={item.cover_image || ''}
-                        excerpt={item.excerpt || ''}
-                        onClick={() => navigate(`/magazine/${item.id}`)}
-                      />
-                    ))
-                  ) : (
-                    <div className="col-span-3 text-center py-12">
-                      <p className="text-lg text-[#666666]">No stories found matching your search.</p>
-                    </div>
-                  )}
-                </section>
+                {searchQuery ? (
+                  // Show search results in isolated component
+                  <MagazineSearchResults />
+                ) : (
+                  // Show regular grid in isolated component
+                  <MagazineGrid gridItems={gridItems} />
+                )}
 
                 {/* Pagination */}
                 {!searchQuery && totalPages > 1 && (
