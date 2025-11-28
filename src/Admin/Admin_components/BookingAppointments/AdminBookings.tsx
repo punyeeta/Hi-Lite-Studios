@@ -6,6 +6,7 @@ import CancelledIcon from '../../../assets/images/Adminbuttons/bookings_buttons/
 import DeclinedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Declinebutton.png'
 import { useBookings, BOOKING_TABS } from '../../../utils'
 import { BookingsTable, BookingsHeader } from '../shared'
+import HeroStar from '@/assets/images/HeroStar.png'
 
 type Tab = BookingStatus
 
@@ -102,7 +103,12 @@ export default function AdminBookings() {
       : bookings
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 relative">
+      <img
+        src={HeroStar}
+        alt="Admin Star Graphic"
+        className="absolute right-0 -top-50 -translate-y-8 w-[550px] pointer-events-none select-none -z-10"
+      />
       <header className="space-y-3">
         <p className="text-3xl font-bold text-[#D42724]">Welcome, Admin.</p>
         <h1 className="text-5xl font-extrabold tracking-tight text-gray-900">
@@ -116,7 +122,7 @@ export default function AdminBookings() {
             <button
               key={tab.id}
               type="button"
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setActiveTab(tab.id as BookingStatus)}
               className={`group px-3 py-2 text-xs font-semibold uppercase tracking-wide rounded-md transition-all duration-200 ease-in-out 
                           ${activeTab === tab.id
                             ? 'bg-[#E2E2E2] text-[#291471] shadow-md scale-105'
