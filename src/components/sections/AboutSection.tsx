@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import AboutBackground from '@/assets/images/AboutBackground.png';
 import AboutHeader from '@/assets/images/AboutHeader.png';
 import BlueBorder from '@/assets/images/BorderBlue.png';
@@ -5,6 +6,7 @@ import LearnButton from '@/assets/images/LearnButton.png';
 import Subtract from '@/assets/images/Subtract.png';
 
 const AboutSection = () => {
+  const navigate = useNavigate()
   return (
     <section id="about" className="relative w-full bg-white overflow-hidden">
       {/* Top Accent Border */}
@@ -57,7 +59,11 @@ const AboutSection = () => {
                 visuals.
               </p>
 
-              <button className="relative mt-4 inline-flex w-32">
+              <button 
+                type="button"
+                onClick={() => navigate('/about')}
+                className="relative mt-4 inline-flex w-32 hover:opacity-80 transition"
+              >
                 <img
                   src={LearnButton}
                   alt="Learn more button"

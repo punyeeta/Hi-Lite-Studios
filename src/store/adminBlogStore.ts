@@ -172,27 +172,49 @@ export const useAdminBlogStore = create<AdminBlogState>()(
       }
     },
 
-    // Toggle pin status
+    // Toggle pin status with optimistic update
     togglePin: async (id: number, isPinned: boolean) => {
-      set({ saving: true, error: null })
+      set({ error: null })
+      
+      // Optimistic update: immediately flip the pin status in UI
+      const optimisticStory = {
+        newIsPinned: !isPinned,
+      }
+      
+      set((state) => ({
+        stories: state.stories.map((s) => 
+          s.id === id ? { ...s, is_pinned: !s.is_pinned } : s
+        ),
+        editingStory: state.editingStory?.id === id 
+          ? { ...state.editingStory, is_pinned: !state.editingStory.is_pinned }
+          : state.editingStory,
+      }))
+
       try {
+        // Make the API call in the background
         const updatedStory = isPinned
           ? await unpinBlogStory(id)
           : await pinBlogStory(id)
 
+        // Confirm update with server response
         set((state) => ({
           stories: state.stories.map((s) => (s.id === id ? updatedStory : s)),
           editingStory: state.editingStory?.id === id ? updatedStory : state.editingStory,
-          saving: false,
         }))
-        // Sync with magazine store and invalidate cache
+        // Sync with magazine store
         useMagazineStore.getState().updateItem(id.toString(), updatedStory)
         return true
       } catch (err: any) {
-        set({
+        // Rollback on error
+        set((state) => ({
+          stories: state.stories.map((s) => 
+            s.id === id ? { ...s, is_pinned: isPinned } : s
+          ),
+          editingStory: state.editingStory?.id === id 
+            ? { ...state.editingStory, is_pinned: isPinned }
+            : state.editingStory,
           error: err.message ?? 'Failed to update pin status',
-          saving: false,
-        })
+        }))
         return false
       }
     },

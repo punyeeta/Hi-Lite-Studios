@@ -81,12 +81,11 @@ const StoryCard = memo(function StoryCard({
           <button
             type="button"
             onClick={() => onPinToggle(story)}
-            disabled={saving}
-            className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm ${
+            className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm transition-all ${
               story.is_pinned
                 ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 : 'bg-[#F2322E] text-white hover:bg-[#d51e1a]'
-            } disabled:cursor-not-allowed disabled:bg-gray-300`}
+            }`}
           >
             {story.is_pinned ? 'Remove Pin' : 'Pin'}
           </button>
