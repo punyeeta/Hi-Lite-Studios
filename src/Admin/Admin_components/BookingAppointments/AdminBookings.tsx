@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from 'react'
-import type { BookingStatus } from '@/supabase/supabase_services/admin_boooking/bookings'
+import type { Booking, BookingStatus } from '@/supabase/supabase_services/admin_boooking/bookings'
+import { fetchBookingById } from '@/supabase/supabase_services/admin_boooking/bookings'
 import PendingIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Pending_Button.png'
 import ConfirmedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/ConfirmedButton.png'
 import CancelledIcon from '../../../assets/images/Adminbuttons/bookings_buttons/CancellButton.png'
 import DeclinedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Declinebutton.png'
 import { useBookings, BOOKING_TABS } from '../../../utils'
 import { BookingsTable, BookingsHeader } from '../shared'
+import BookingDetailsModal from '../shared/BookingDetailsModal'
 
 type Tab = BookingStatus
 
@@ -31,6 +33,8 @@ export default function AdminBookings() {
 
   // Use custom hook for all booking logic
   const { bookings, loading, error, updateStatus, updateManyStatus } = useBookings({ activeTab })
+  const [detailsOpen, setDetailsOpen] = useState(false)
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
 
   const toggleSelectAll = useCallback(() => {
     const allSelected = bookings.length > 0 && selectedIds.length === bookings.length
@@ -65,6 +69,18 @@ export default function AdminBookings() {
   const handleDeclineSelected = useCallback(() => {
     handleBulkStatusChange('declined')
   }, [handleBulkStatusChange])
+
+  const handleRowClick = useCallback(async (booking: Booking) => {
+    try {
+      setDetailsOpen(true)
+      // Fetch full details including notes/description
+      const full = await fetchBookingById(booking.id)
+      setSelectedBooking(full)
+    } catch (e) {
+      // Fallback to partial booking if fetch fails
+      setSelectedBooking(booking)
+    }
+  }, [])
 
   const renderStatusBadge = useCallback((status: BookingStatus) => {
     const colors: Record<BookingStatus, string> = {
@@ -191,6 +207,7 @@ export default function AdminBookings() {
               onSelect={toggleSelect}
               onStatusChange={handleStatusChange}
               renderStatusBadge={renderStatusBadge}
+              onRowClick={handleRowClick}
             />
 
             {displayedBookings.length > 0 && (
@@ -201,6 +218,12 @@ export default function AdminBookings() {
                 </span>
               </div>
             )}
+
+            <BookingDetailsModal
+              booking={selectedBooking}
+              isOpen={detailsOpen}
+              onClose={() => setDetailsOpen(false)}
+            />
           </>
         )}
       </>

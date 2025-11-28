@@ -88,3 +88,15 @@ export async function updateManyBookingStatus(ids: number[], status: BookingStat
   return (data ?? []) as Booking[]
 }
 
+// Fetch full booking by id (includes notes/description and all fields)
+export async function fetchBookingById(id: number) {
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) throw error
+  return data as Booking
+}
+

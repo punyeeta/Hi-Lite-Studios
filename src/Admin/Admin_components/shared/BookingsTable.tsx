@@ -11,6 +11,7 @@ export interface BookingsTableProps {
   onSelect: (id: number) => void
   onStatusChange: (id: number, status: BookingStatus) => Promise<void> | void
   renderStatusBadge: (status: BookingStatus) => React.ReactNode
+  onRowClick?: (booking: Booking) => void
 }
 
 export default memo(function BookingsTable({
@@ -22,6 +23,7 @@ export default memo(function BookingsTable({
   onSelect,
   onStatusChange,
   renderStatusBadge,
+  onRowClick,
 }: BookingsTableProps) {
   const allSelected = bookings.length > 0 && selectedIds.length === bookings.length
 
@@ -115,6 +117,7 @@ export default memo(function BookingsTable({
                   onSelect={onSelect}
                   onStatusChange={onStatusChange}
                   renderStatusBadge={renderStatusBadge}
+                  onRowClick={onRowClick}
                 />
               ))
             )}

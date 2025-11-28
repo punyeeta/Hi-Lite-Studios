@@ -10,6 +10,7 @@ export interface BookingRowProps {
   onSelect: (id: number) => void
   onStatusChange: (id: number, status: BookingStatus) => Promise<void> | void
   renderStatusBadge: (status: BookingStatus) => React.ReactNode
+  onRowClick?: (booking: Booking) => void
 }
 
 export default memo(function BookingRow({
@@ -19,6 +20,7 @@ export default memo(function BookingRow({
   onSelect,
   onStatusChange,
   renderStatusBadge,
+  onRowClick,
 }: BookingRowProps) {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
 
@@ -34,6 +36,13 @@ export default memo(function BookingRow({
     await sendCustomBookingEmail(booking.email, booking.client_first_name, message, booking.status)
   }
 
+  const clickable = (e: React.MouseEvent) => {
+    if (!onRowClick) return
+    // Prevent click from selecting text or interacting with inputs
+    e.preventDefault()
+    onRowClick(booking)
+  }
+
   return (
     <tr className={isSelected ? 'bg-violet-50' : undefined}>
       <td className="px-6 py-4">
@@ -44,19 +53,19 @@ export default memo(function BookingRow({
           className="h-4 w-4 rounded border-gray-300 text-[#291471] focus:ring-[#291471]"
         />
       </td>
-      <td className="px-4 py-3 text-xs font-mono text-gray-700">
+      <td className="px-4 py-3 text-xs font-mono text-gray-700 cursor-pointer hover:underline" onClick={clickable}>
         {String(booking.id).padStart(8, '0')}
       </td>
-      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+      <td className="px-4 py-3 text-sm font-medium text-gray-900 cursor-pointer hover:underline" onClick={clickable}>
         {fullName}
       </td>
-      <td className="px-4 py-3 text-sm text-gray-700">
+      <td className="px-4 py-3 text-sm text-gray-700 cursor-pointer hover:underline" onClick={clickable}>
         {booking.type}
       </td>
-      <td className="px-4 py-3 text-sm text-gray-700">
+      <td className="px-4 py-3 text-sm text-gray-700 cursor-pointer hover:underline" onClick={clickable}>
         {new Date(booking.event_date).toLocaleDateString()}
       </td>
-      <td className="px-4 py-3 text-sm text-gray-700">
+      <td className="px-4 py-3 text-sm text-gray-700 cursor-pointer hover:underline" onClick={clickable}>
         {booking.email}
       </td>
       <td className="px-4 py-3 text-right space-x-2">
