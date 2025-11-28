@@ -5,14 +5,18 @@ import Card from '@/components/cards/RecentCards'
 import StarTopLeft from '@/assets/images/StarTL.png'
 import StarBottomRight from '@/assets/images/StarBR.png'
 import { useWorksStore } from '@/store/worksStore'
+import { useIntersectionObserver } from '@/utils/useIntersectionObserver'
 
 const WorksSection = () => {
   const navigate = useNavigate()
   const { items, loading, error, hasMore, fetchItems, loadMore } = useWorksStore()
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 })
 
   useEffect(() => {
-    fetchItems(8)
-  }, [fetchItems])
+    if (isVisible) {
+      fetchItems(8)
+    }
+  }, [isVisible, fetchItems])
 
   const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%236b7280" font-size="16" font-family="sans-serif"%3EImage Placeholder%3C/text%3E%3C/svg%3E'
 
@@ -37,7 +41,7 @@ const WorksSection = () => {
   }
 
   return (
-    <section id="works" className="relative w-full bg-white md:px-8 py-8 overflow-hidden">
+    <section ref={ref} id="works" className="relative w-full bg-white md:px-8 py-8 overflow-hidden">
       {/* Decorative Top Left */}
       <div className="absolute top-[-150px] left-[-275px] w-[600px] h-[600px] object-contain">
         <img

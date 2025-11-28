@@ -71,7 +71,7 @@ const RecentWorks = () => {
           {/* Loading State */}
           {loading && works.length === 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {Array.from({ length: 8 }).map((_, index) => (
+              {Array.from({ length: 12 }).map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
                   className="aspect-square bg-gray-200 rounded-lg animate-pulse"
