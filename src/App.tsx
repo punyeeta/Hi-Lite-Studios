@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import Navbar from './components/common/Navbar';
 import ContactSection from './components/sections/ContactSection';
 import Footer from './components/common/Footer';
@@ -17,6 +18,17 @@ import RequireAuth from './routes/RequireAuth';
 import AdminFAQ from './Admin/Admin_components/ContentManagement/AdminFAQs/AdminFAQ';
 import AddNewProject from './Admin/Admin_components/ContentManagement/WorksCollection/AddNewProject';
 
+// Component that scrolls to top on every route change
+function ScrollToTopOnNavigate() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 // Public layout wrapper (UserLayout)
 function UserLayout() {
   return (
@@ -32,8 +44,18 @@ function UserLayout() {
 }
 
 function App() {
+  // Always start at top when visiting a page, don't remember scroll position
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    // Scroll to top on page load
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <BrowserRouter>
+      <ScrollToTopOnNavigate />
       <Routes>
 
         {/* Public Pages */}

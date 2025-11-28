@@ -182,7 +182,7 @@ button {
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Subtle page fade/slide on route mount (respects reduced motion) */

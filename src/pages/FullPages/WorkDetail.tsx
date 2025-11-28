@@ -20,17 +20,7 @@ const WorkDetail = () => {
     fetchWorkById(id)
   }, [id, navigate, fetchWorkById])
 
-  // Ensure detail page opens at top without animation
-  useEffect(() => {
-    const docEl = document.documentElement
-    const prev = docEl.style.scrollBehavior
-    try {
-      docEl.style.scrollBehavior = 'auto'
-      window.scrollTo(0, 0)
-    } finally {
-      docEl.style.scrollBehavior = prev
-    }
-  }, [])
+
 
   const MAX_DESCRIPTION_LENGTH = 150
   const shouldTruncate = work?.description && work.description.length > MAX_DESCRIPTION_LENGTH

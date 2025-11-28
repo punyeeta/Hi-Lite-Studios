@@ -52,17 +52,7 @@ const Magazine = () => {
     }
   }, [handleSearchSubmit])
 
-  // Ensure page starts at top (no animated scroll) on mount
-  useEffect(() => {
-    const docEl = document.documentElement
-    const prev = docEl.style.scrollBehavior
-    try {
-      docEl.style.scrollBehavior = 'auto'
-      window.scrollTo(0, 0)
-    } finally {
-      docEl.style.scrollBehavior = prev
-    }
-  }, [])
+
 
   // Fetch all items on mount
   useEffect(() => {
