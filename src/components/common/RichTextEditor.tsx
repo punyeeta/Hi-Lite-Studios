@@ -1,10 +1,11 @@
-import { useEffect, useRef, useCallback, memo } from 'react'
+import { useEffect, useRef, memo } from 'react'
 import { useQuill } from 'react-quilljs'
 import 'quill/dist/quill.snow.css'
 
 interface RichTextEditorProps {
   value: string
   onChange: (value: string) => void
+  onReady?: (quill: any) => void
 }
 
 const modules = {
@@ -26,7 +27,7 @@ const formats = [
   'image',
 ]
 
-function RichTextEditor({ value, onChange }: RichTextEditorProps) {
+function RichTextEditor({ value, onChange, onReady }: RichTextEditorProps) {
   const { quill, quillRef } = useQuill({
     modules,
     formats,
@@ -63,6 +64,9 @@ function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   useEffect(() => {
     if (!quill) return
 
+    // Expose quill to parent if requested
+    if (onReady) onReady(quill)
+
     const handler = () => {
       const newContent = quill.root.innerHTML
       lastValueRef.current = newContent
@@ -73,7 +77,7 @@ function RichTextEditor({ value, onChange }: RichTextEditorProps) {
     return () => {
       quill.off('text-change', handler)
     }
-  }, [quill, onChange])
+  }, [quill, onChange, onReady])
 
   return <div ref={quillRef} />
 }

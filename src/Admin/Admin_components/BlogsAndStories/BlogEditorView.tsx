@@ -177,7 +177,7 @@ export default memo(function BlogEditorView({
             />
           </label>
         </div>
-        <div className="rounded-lg border border-gray-300 bg-white">
+        <div className="rounded-lg border border-gray-300 bg-white relative overflow-visible">
           <RichTextEditor
             value={form.content}
             onChange={(value) =>
