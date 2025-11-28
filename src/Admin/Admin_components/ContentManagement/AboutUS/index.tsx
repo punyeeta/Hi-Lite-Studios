@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer } from 'react'
 import MainDetailsForm from './components/MainDetailsForm'
 import MeetTeamForm from './components/MeetTeamForm'
 import WhatWeDoForm from './components/WhatWeDoForm'
@@ -28,6 +28,110 @@ type WhatWeDoFormState = {
   description: string
 }
 
+interface State {
+  aboutUs: AboutUsType | null
+  staff: AboutUsStaff[]
+  mainForm: MainFormState
+  meetTeamForm: MeetTeamFormState
+  whatWeDoForm: WhatWeDoFormState
+  editing: { main: boolean; meetTeam: boolean; whatWeDo: boolean }
+  newStaffName: string
+  loading: boolean
+  error: string | null
+  saving: { main: boolean; team: boolean; what: boolean; uploading: boolean; addingStaff: boolean }
+}
+
+type Action =
+  | { type: 'SET_ABOUT_US'; payload: AboutUsType }
+  | { type: 'SET_STAFF'; payload: AboutUsStaff[] }
+  | { type: 'ADD_STAFF'; payload: AboutUsStaff }
+  | { type: 'DELETE_STAFF'; payload: string }
+  | { type: 'SET_MAIN_FORM'; payload: Partial<MainFormState> }
+  | { type: 'SET_MEET_TEAM_FORM'; payload: Partial<MeetTeamFormState> }
+  | { type: 'SET_WHAT_WE_DO_FORM'; payload: Partial<WhatWeDoFormState> }
+  | { type: 'SET_EDITING'; payload: { section: 'main' | 'meetTeam' | 'whatWeDo'; value: boolean } }
+  | { type: 'SET_NEW_STAFF_NAME'; payload: string }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'SET_SAVING'; payload: { section: 'main' | 'team' | 'what' | 'uploading' | 'addingStaff'; value: boolean } }
+  | { type: 'RESET_MAIN_FORM'; payload: AboutUsType }
+  | { type: 'RESET_MEET_TEAM_FORM'; payload: AboutUsType }
+  | { type: 'RESET_WHAT_WE_DO_FORM'; payload: AboutUsType }
+
+const initialState: State = {
+  aboutUs: null,
+  staff: [],
+  mainForm: { main_image_url: '', description: '' },
+  meetTeamForm: { title: '', subtitle: '' },
+  whatWeDoForm: { title: '', description: '' },
+  editing: { main: false, meetTeam: false, whatWeDo: false },
+  newStaffName: '',
+  loading: true,
+  error: null,
+  saving: { main: false, team: false, what: false, uploading: false, addingStaff: false },
+}
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'SET_ABOUT_US':
+      return { ...state, aboutUs: action.payload }
+    case 'SET_STAFF':
+      return { ...state, staff: action.payload }
+    case 'ADD_STAFF':
+      return { ...state, staff: [...state.staff, action.payload] }
+    case 'DELETE_STAFF':
+      return { ...state, staff: state.staff.filter((s) => s.id !== action.payload) }
+    case 'SET_MAIN_FORM':
+      return { ...state, mainForm: { ...state.mainForm, ...action.payload } }
+    case 'SET_MEET_TEAM_FORM':
+      return { ...state, meetTeamForm: { ...state.meetTeamForm, ...action.payload } }
+    case 'SET_WHAT_WE_DO_FORM':
+      return { ...state, whatWeDoForm: { ...state.whatWeDoForm, ...action.payload } }
+    case 'SET_EDITING':
+      return {
+        ...state,
+        editing: { ...state.editing, [action.payload.section]: action.payload.value },
+      }
+    case 'SET_NEW_STAFF_NAME':
+      return { ...state, newStaffName: action.payload }
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload }
+    case 'SET_ERROR':
+      return { ...state, error: action.payload }
+    case 'SET_SAVING':
+      return {
+        ...state,
+        saving: { ...state.saving, [action.payload.section]: action.payload.value },
+      }
+    case 'RESET_MAIN_FORM':
+      return {
+        ...state,
+        mainForm: {
+          main_image_url: action.payload.main_image_url || '',
+          description: action.payload.description || '',
+        },
+      }
+    case 'RESET_MEET_TEAM_FORM':
+      return {
+        ...state,
+        meetTeamForm: {
+          title: action.payload.meet_team_title || '',
+          subtitle: action.payload.meet_team_subtitle || '',
+        },
+      }
+    case 'RESET_WHAT_WE_DO_FORM':
+      return {
+        ...state,
+        whatWeDoForm: {
+          title: action.payload.what_we_do_title || '',
+          description: action.payload.what_we_do_description || '',
+        },
+      }
+    default:
+      return state
+  }
+}
+
 const LoadingState = () => (
   <div className="space-y-4">
     <div className="h-6 w-40 rounded bg-gray-200 animate-pulse" />
@@ -36,232 +140,232 @@ const LoadingState = () => (
 )
 
 export default function AboutUsTab() {
-  const [aboutUs, setAboutUs] = useState<AboutUsType | null>(null)
-  const [staff, setStaff] = useState<AboutUsStaff[]>([])
-  const [mainForm, setMainForm] = useState<MainFormState>({ main_image_url: '', description: '' })
-  const [meetTeamForm, setMeetTeamForm] = useState<MeetTeamFormState>({ title: '', subtitle: '' })
-  const [whatWeDoForm, setWhatWeDoForm] = useState<WhatWeDoFormState>({
-    title: '',
-    description: '',
-  })
-  const [editingStates, setEditingStates] = useState({
-    main: false,
-    meetTeam: false,
-    whatWeDo: false,
-  })
-  const [newStaffName, setNewStaffName] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [savingMain, setSavingMain] = useState(false)
-  const [savingTeam, setSavingTeam] = useState(false)
-  const [savingWhat, setSavingWhat] = useState(false)
-  const [uploadingImage, setUploadingImage] = useState(false)
-  const [addingStaff, setAddingStaff] = useState(false)
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
     void loadData()
   }, [])
 
   const loadData = async () => {
-    setLoading(true)
-    setError(null)
+    dispatch({ type: 'SET_LOADING', payload: true })
+    dispatch({ type: 'SET_ERROR', payload: null })
     try {
       const [aboutData, staffData] = await Promise.all([fetchAboutUs(), fetchStaff()])
-      setAboutUs(aboutData)
-      setStaff(staffData)
-      setMainForm({
-        main_image_url: aboutData.main_image_url || '',
-        description: aboutData.description || '',
+      dispatch({ type: 'SET_ABOUT_US', payload: aboutData })
+      dispatch({ type: 'SET_STAFF', payload: staffData })
+      dispatch({
+        type: 'SET_MAIN_FORM',
+        payload: {
+          main_image_url: aboutData.main_image_url || '',
+          description: aboutData.description || '',
+        },
       })
-      setMeetTeamForm({
-        title: aboutData.meet_team_title || '',
-        subtitle: aboutData.meet_team_subtitle || '',
+      dispatch({
+        type: 'SET_MEET_TEAM_FORM',
+        payload: {
+          title: aboutData.meet_team_title || '',
+          subtitle: aboutData.meet_team_subtitle || '',
+        },
       })
-      setWhatWeDoForm({
-        title: aboutData.what_we_do_title || '',
-        description: aboutData.what_we_do_description || '',
+      dispatch({
+        type: 'SET_WHAT_WE_DO_FORM',
+        payload: {
+          title: aboutData.what_we_do_title || '',
+          description: aboutData.what_we_do_description || '',
+        },
       })
-      setEditingStates({ main: false, meetTeam: false, whatWeDo: false })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load About Us data.')
+      dispatch({
+        type: 'SET_ERROR',
+        payload: err instanceof Error ? err.message : 'Failed to load About Us data.',
+      })
     } finally {
-      setLoading(false)
+      dispatch({ type: 'SET_LOADING', payload: false })
     }
   }
 
   const handleMainSubmit = async () => {
-    setSavingMain(true)
-    setError(null)
+    dispatch({ type: 'SET_SAVING', payload: { section: 'main', value: true } })
+    dispatch({ type: 'SET_ERROR', payload: null })
     try {
       const updated = await updateAboutUs({
-        main_image_url: mainForm.main_image_url || null,
-        description: mainForm.description || null,
+        main_image_url: state.mainForm.main_image_url || null,
+        description: state.mainForm.description || null,
       })
-      setAboutUs(updated)
-      setEditingStates((prev) => ({ ...prev, main: false }))
+      dispatch({ type: 'SET_ABOUT_US', payload: updated })
+      dispatch({ type: 'SET_EDITING', payload: { section: 'main', value: false } })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save main section.')
+      dispatch({
+        type: 'SET_ERROR',
+        payload: err instanceof Error ? err.message : 'Failed to save main section.',
+      })
     } finally {
-      setSavingMain(false)
+      dispatch({ type: 'SET_SAVING', payload: { section: 'main', value: false } })
     }
   }
 
   const handleMeetTeamSubmit = async () => {
-    setSavingTeam(true)
-    setError(null)
+    dispatch({ type: 'SET_SAVING', payload: { section: 'team', value: true } })
+    dispatch({ type: 'SET_ERROR', payload: null })
     try {
       const updated = await updateAboutUs({
-        meet_team_title: meetTeamForm.title || null,
-        meet_team_subtitle: meetTeamForm.subtitle || null,
+        meet_team_title: state.meetTeamForm.title || null,
+        meet_team_subtitle: state.meetTeamForm.subtitle || null,
       })
-      setAboutUs(updated)
-      setEditingStates((prev) => ({ ...prev, meetTeam: false }))
+      dispatch({ type: 'SET_ABOUT_US', payload: updated })
+      dispatch({ type: 'SET_EDITING', payload: { section: 'meetTeam', value: false } })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save meet the team section.')
+      dispatch({
+        type: 'SET_ERROR',
+        payload: err instanceof Error ? err.message : 'Failed to save meet the team section.',
+      })
     } finally {
-      setSavingTeam(false)
+      dispatch({ type: 'SET_SAVING', payload: { section: 'team', value: false } })
     }
   }
 
   const handleWhatWeDoSubmit = async () => {
-    setSavingWhat(true)
-    setError(null)
+    dispatch({ type: 'SET_SAVING', payload: { section: 'what', value: true } })
+    dispatch({ type: 'SET_ERROR', payload: null })
     try {
       const updated = await updateAboutUs({
-        what_we_do_title: whatWeDoForm.title || null,
-        what_we_do_description: whatWeDoForm.description || null,
+        what_we_do_title: state.whatWeDoForm.title || null,
+        what_we_do_description: state.whatWeDoForm.description || null,
       })
-      setAboutUs(updated)
-      setEditingStates((prev) => ({ ...prev, whatWeDo: false }))
+      dispatch({ type: 'SET_ABOUT_US', payload: updated })
+      dispatch({ type: 'SET_EDITING', payload: { section: 'whatWeDo', value: false } })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save what we do section.')
+      dispatch({
+        type: 'SET_ERROR',
+        payload: err instanceof Error ? err.message : 'Failed to save what we do section.',
+      })
     } finally {
-      setSavingWhat(false)
+      dispatch({ type: 'SET_SAVING', payload: { section: 'what', value: false } })
     }
   }
 
   const handleImageUpload = async (file: File) => {
-    setUploadingImage(true)
-    setError(null)
+    dispatch({ type: 'SET_SAVING', payload: { section: 'uploading', value: true } })
+    dispatch({ type: 'SET_ERROR', payload: null })
     try {
       const { publicUrl } = await uploadAboutUsImage(file)
-      setMainForm((prev) => ({ ...prev, main_image_url: publicUrl }))
+      dispatch({ type: 'SET_MAIN_FORM', payload: { main_image_url: publicUrl } })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to upload image.')
+      dispatch({
+        type: 'SET_ERROR',
+        payload: err instanceof Error ? err.message : 'Failed to upload image.',
+      })
     } finally {
-      setUploadingImage(false)
+      dispatch({ type: 'SET_SAVING', payload: { section: 'uploading', value: false } })
     }
   }
 
   const handleAddStaff = async () => {
-    if (!newStaffName.trim()) return
-    setAddingStaff(true)
-    setError(null)
+    if (!state.newStaffName.trim()) return
+    dispatch({ type: 'SET_SAVING', payload: { section: 'addingStaff', value: true } })
+    dispatch({ type: 'SET_ERROR', payload: null })
     try {
-      const created = await addStaff({ name: newStaffName.trim() })
-      setStaff((prev) => [...prev, created])
-      setNewStaffName('')
+      const created = await addStaff({ name: state.newStaffName.trim() })
+      dispatch({ type: 'ADD_STAFF', payload: created })
+      dispatch({ type: 'SET_NEW_STAFF_NAME', payload: '' })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add staff.')
+      dispatch({
+        type: 'SET_ERROR',
+        payload: err instanceof Error ? err.message : 'Failed to add staff.',
+      })
     } finally {
-      setAddingStaff(false)
+      dispatch({ type: 'SET_SAVING', payload: { section: 'addingStaff', value: false } })
     }
   }
 
   const handleDeleteStaff = async (id: string) => {
     try {
       await deleteStaff(id)
-      setStaff((prev) => prev.filter((member) => member.id !== id))
+      dispatch({ type: 'DELETE_STAFF', payload: id })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete staff.')
+      dispatch({
+        type: 'SET_ERROR',
+        payload: err instanceof Error ? err.message : 'Failed to delete staff.',
+      })
     }
   }
 
   const resetMainForm = () => {
-    if (!aboutUs) return
-    setMainForm({
-      main_image_url: aboutUs.main_image_url || '',
-      description: aboutUs.description || '',
-    })
+    if (!state.aboutUs) return
+    dispatch({ type: 'RESET_MAIN_FORM', payload: state.aboutUs })
   }
 
   const resetMeetTeamForm = () => {
-    if (!aboutUs) return
-    setMeetTeamForm({
-      title: aboutUs.meet_team_title || '',
-      subtitle: aboutUs.meet_team_subtitle || '',
-    })
+    if (!state.aboutUs) return
+    dispatch({ type: 'RESET_MEET_TEAM_FORM', payload: state.aboutUs })
   }
 
   const resetWhatWeDoForm = () => {
-    if (!aboutUs) return
-    setWhatWeDoForm({
-      title: aboutUs.what_we_do_title || '',
-      description: aboutUs.what_we_do_description || '',
-    })
+    if (!state.aboutUs) return
+    dispatch({ type: 'RESET_WHAT_WE_DO_FORM', payload: state.aboutUs })
   }
 
-  if (loading) {
+  if (state.loading) {
     return <LoadingState />
   }
 
   return (
     <section className="space-y-10">
-      {error && (
+      {state.error && (
         <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-medium">Error:</p>
-          <p>{error}</p>
+          <p>{state.error}</p>
         </div>
       )}
 
       <MainDetailsForm
-        values={mainForm}
-        onChange={(changes) => setMainForm((prev) => ({ ...prev, ...changes }))}
+        values={state.mainForm}
+        onChange={(changes) => dispatch({ type: 'SET_MAIN_FORM', payload: changes })}
         onSubmit={handleMainSubmit}
         onImageUpload={handleImageUpload}
-        submitting={savingMain}
-        uploadingImage={uploadingImage}
-        editing={editingStates.main}
-        onEditToggle={() => setEditingStates((prev) => ({ ...prev, main: true }))}
+        submitting={state.saving.main}
+        uploadingImage={state.saving.uploading}
+        editing={state.editing.main}
+        onEditToggle={() => dispatch({ type: 'SET_EDITING', payload: { section: 'main', value: true } })}
         onCancel={() => {
           resetMainForm()
-          setEditingStates((prev) => ({ ...prev, main: false }))
+          dispatch({ type: 'SET_EDITING', payload: { section: 'main', value: false } })
         }}
       />
 
       <hr className="border-gray-200" />
 
       <MeetTeamForm
-        values={meetTeamForm}
-        newStaffName={newStaffName}
-        submitting={savingTeam}
-        addingStaff={addingStaff}
-        staff={staff}
-        onChange={(changes) => setMeetTeamForm((prev) => ({ ...prev, ...changes }))}
+        values={state.meetTeamForm}
+        newStaffName={state.newStaffName}
+        submitting={state.saving.team}
+        addingStaff={state.saving.addingStaff}
+        staff={state.staff}
+        onChange={(changes) => dispatch({ type: 'SET_MEET_TEAM_FORM', payload: changes })}
         onSubmit={handleMeetTeamSubmit}
         onAddStaff={handleAddStaff}
-        onNewStaffNameChange={setNewStaffName}
+        onNewStaffNameChange={(name) => dispatch({ type: 'SET_NEW_STAFF_NAME', payload: name })}
         onDeleteStaff={handleDeleteStaff}
-        editing={editingStates.meetTeam}
-        onEditToggle={() => setEditingStates((prev) => ({ ...prev, meetTeam: true }))}
+        editing={state.editing.meetTeam}
+        onEditToggle={() => dispatch({ type: 'SET_EDITING', payload: { section: 'meetTeam', value: true } })}
         onCancel={() => {
           resetMeetTeamForm()
-          setEditingStates((prev) => ({ ...prev, meetTeam: false }))
+          dispatch({ type: 'SET_EDITING', payload: { section: 'meetTeam', value: false } })
         }}
       />
 
       <hr className="border-gray-200" />
 
       <WhatWeDoForm
-        values={whatWeDoForm}
-        submitting={savingWhat}
-        onChange={(changes) => setWhatWeDoForm((prev) => ({ ...prev, ...changes }))}
+        values={state.whatWeDoForm}
+        submitting={state.saving.what}
+        onChange={(changes) => dispatch({ type: 'SET_WHAT_WE_DO_FORM', payload: changes })}
         onSubmit={handleWhatWeDoSubmit}
-        editing={editingStates.whatWeDo}
-        onEditToggle={() => setEditingStates((prev) => ({ ...prev, whatWeDo: true }))}
+        editing={state.editing.whatWeDo}
+        onEditToggle={() => dispatch({ type: 'SET_EDITING', payload: { section: 'whatWeDo', value: true } })}
         onCancel={() => {
           resetWhatWeDoForm()
-          setEditingStates((prev) => ({ ...prev, whatWeDo: false }))
+          dispatch({ type: 'SET_EDITING', payload: { section: 'whatWeDo', value: false } })
         }}
       />
     </section>

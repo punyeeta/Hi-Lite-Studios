@@ -64,7 +64,7 @@ export function FAQProvider({ children }: { children: ReactNode }) {
   const updateItem: FAQContextValue['updateItem'] = async (id, input) => {
     try {
       setError(null)
-      const updated = await updateFAQ(id, input)
+      await updateFAQ(id, input)
       // Update local state instead of refetching all
       setItems((prev) =>
         prev.map((item) =>

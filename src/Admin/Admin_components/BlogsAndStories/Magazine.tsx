@@ -3,7 +3,6 @@ import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs
 import {
   uploadBlogImage,
 } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
-import { useMagazine } from '@/components/sections/context/MagazineContext'
 import { useAdminBlogStore } from '@/store/adminBlogStore'
 import BlogListView from './BlogListView'
 import BlogEditorView, {
@@ -29,7 +28,6 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)+/g, '')
 
 export default function MagazineAdmin() {
-  const { refreshItems } = useMagazine()
   const { stories, loading, error, saving, fetchStories, fetchStoryById, createStory, updateStory, deleteStory, togglePin } = useAdminBlogStore()
   
   const [mode, setMode] = useState<Mode>('list')
@@ -101,16 +99,12 @@ export default function MagazineAdmin() {
         resetForm()
         setMode('list')
       }
-      // Refresh context in background without blocking UI
-      refreshItems().catch(() => {})
     }
-  }, [deleteStory, selectedStory, refreshItems])
+  }, [deleteStory, selectedStory])
 
   const handlePinToggle = useCallback(async (story: BlogStory) => {
     await togglePin(story.id, story.is_pinned)
-    // Refresh context in background without blocking UI
-    refreshItems().catch(() => {})
-  }, [togglePin, refreshItems])
+  }, [togglePin])
 
   const handleChange =
     (field: keyof BlogFormState) =>
@@ -195,8 +189,6 @@ export default function MagazineAdmin() {
         if (created) {
           resetForm()
           setMode('list')
-          // Refresh context in background without blocking UI
-          refreshItems().catch(() => {})
         }
       } else if (mode === 'edit' && selectedStory) {
         const updated = await updateStory(selectedStory.id, {
@@ -211,8 +203,6 @@ export default function MagazineAdmin() {
         if (updated) {
           setSelectedStory(updated)
           setMode('list')
-          // Refresh context in background without blocking UI
-          refreshItems().catch(() => {})
         }
       }
     } catch (err: any) {
