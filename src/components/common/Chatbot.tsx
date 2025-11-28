@@ -80,7 +80,7 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
       {/* Header */}
       <div className="px-4 py-4 border-b border-gray-200 bg-white flex items-center gap-3">
         <img 
-          src="/src/assets/images/ChatbotLOgo.png" 
+          src="/src/assets/images/chatbotlogo.svg" 
           alt="Litebot" 
           className="h-10 w-10 object-contain"
         />
@@ -95,6 +95,11 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-gray-50">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full gap-6">
+            <img 
+              src="/src/assets/images/chatbotlogo.svg" 
+              alt="Litebot" 
+              className="h-20 w-20 object-contain"
+            />
             <p className="text-center text-gray-500 text-sm font-medium">
               Ask anything about Hi-Lite Studios!
             </p>
@@ -123,7 +128,7 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
             {loading && (
               <div className="flex justify-start">
                 <img 
-                  src="/src/assets/images/ChatbotLOgo.png" 
+                  src="/src/assets/images/chatbotlogo.svg" 
                   alt="Litebot Loading" 
                   className="h-6 w-6 object-contain animate-wave"
                 />
