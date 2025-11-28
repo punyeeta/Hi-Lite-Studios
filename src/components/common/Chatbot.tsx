@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useChatbot } from "../../utils/useChatbot";
 
-const SYSTEM_CONTEXT = `You are a helpful and professional assistant for Hi-Lite Studios, a photography and videography studio.
+const SYSTEM_CONTEXT = `You are a helpful and professional assistant for Hi-Lite Studio, a photography and videography studio.
 
 CRITICAL FORMATTING RULES:
 - ABSOLUTELY NO asterisks (*) - never use them for any reason
@@ -33,7 +33,7 @@ LEFT SIDE:
 - Magazine: Read our creative insights and industry articles
 
 RIGHT SIDE:
-- About Us: Learn about Hi-Lite Studios, our mission, and meet our team
+- About Us: Learn about Hi-Lite Studio, our mission, and meet our team
 - FAQs: Get answers to common questions
 - Capture with Us: Book an appointment
 
@@ -101,7 +101,7 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
               className="h-20 w-20 object-contain"
             />
             <p className="text-center text-gray-500 text-sm font-medium">
-              Ask anything about Hi-Lite Studios!
+              Ask anything about Hi-Lite Studio!
             </p>
           </div>
         )}
