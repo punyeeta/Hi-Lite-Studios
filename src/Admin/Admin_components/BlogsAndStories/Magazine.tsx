@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from 'react'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import {
   uploadBlogImage,
@@ -88,19 +89,39 @@ export default function MagazineAdmin() {
     }
   }, [fetchStoryById])
 
-  const handleDeleteStory = useCallback(async (story: BlogStory) => {
-    if (!window.confirm('Delete this post? This action cannot be undone.'))
-      return
+  // Delete flow using ConfirmModal
+  const [deleteTarget, setDeleteTarget] = useState<BlogStory | null>(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
-    const success = await deleteStory(story.id)
-    if (success) {
-      setSelectedStory((current) => current?.id === story.id ? null : current)
-      if (selectedStory?.id === story.id) {
-        resetForm()
-        setMode('list')
+  const handleDeleteStory = useCallback(async (story: BlogStory) => {
+    setDeleteTarget(story)
+    setShowDeleteModal(true)
+  }, [])
+
+  const handleDeleteConfirmed = useCallback(async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      const success = await deleteStory(deleteTarget.id)
+      if (success) {
+        setSelectedStory((current) => current?.id === deleteTarget.id ? null : current)
+        if (selectedStory?.id === deleteTarget.id) {
+          resetForm()
+          setMode('list')
+        }
       }
+    } finally {
+      setDeleting(false)
+      setShowDeleteModal(false)
+      setDeleteTarget(null)
     }
-  }, [deleteStory, selectedStory])
+  }, [deleteTarget, deleteStory, selectedStory])
+
+  const handleDeleteCancel = useCallback(() => {
+    setShowDeleteModal(false)
+    setDeleteTarget(null)
+  }, [])
 
   const handlePinToggle = useCallback(async (story: BlogStory) => {
     await togglePin(story.id, story.is_pinned)
@@ -217,7 +238,9 @@ export default function MagazineAdmin() {
 
   const handleDeleteCurrentFromEditor = async () => {
     if (!selectedStory) return
-    await handleDeleteStory(selectedStory)
+    // open modal for the currently selected story
+    setDeleteTarget(selectedStory)
+    setShowDeleteModal(true)
   }
 
   const isEditing = mode === 'edit' || mode === 'create'
@@ -262,6 +285,17 @@ export default function MagazineAdmin() {
           selectedStoryId={selectedStory?.id}
         />
       )}
+
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete post"
+        message="Delete this post? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={deleting}
+        onConfirm={handleDeleteConfirmed}
+        onCancel={handleDeleteCancel}
+      />
 
       {error && !isEditing && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

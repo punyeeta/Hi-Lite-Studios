@@ -227,6 +227,51 @@ export default function WorksCollection() {
     }
   }
 
+  const handleSaveDraft = async () => {
+    // Save without navigating back to list; stay in editor
+    if (!form.main_image_url && !form.description) {
+      setError('Please provide at least an image or description')
+      return
+    }
+
+    setSubmitting(true)
+    setError(null)
+
+    try {
+      const workData = {
+        main_image_url: form.main_image_url || null,
+        description: form.description || null,
+        label_1: (form.label_1 as WorkLabel) || null,
+        label_2: null,
+        date: form.date ? form.date.toISOString().split('T')[0] : null,
+      }
+
+      if (mode === 'edit' && selectedWork) {
+        const updated = await updateWork(selectedWork.id, workData)
+        // Refresh media quietly
+        await loadWorkMedia(updated.id)
+        setSelectedWork(updated)
+        // stay in edit mode
+      } else if (mode === 'create') {
+        const newWork = await createWork(workData)
+        setSelectedWork(newWork)
+        setSelectedWorkId(newWork.id)
+        // Persist any pending media now
+        for (const item of pendingMedia) {
+          await addWorkMedia(newWork.id, item.image_url)
+        }
+        await loadWorkMedia(newWork.id)
+        // Switch to edit mode and clear pending
+        setPendingMedia([])
+        setMode('edit')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save draft')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   // Kept for potential future use in delete functionality
 
   const isEditing = mode === 'edit' || mode === 'create'
@@ -257,6 +302,7 @@ export default function WorksCollection() {
           onMediaUpload={handleMediaUpload}
           onDeleteMedia={handleDeleteMedia}
           onSave={handleSave}
+          onSaveDraft={handleSaveDraft}
           onCancel={handleCancelEdit}
         />
       )}

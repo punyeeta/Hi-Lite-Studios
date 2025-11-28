@@ -142,6 +142,21 @@
   margin-right: auto;
 }
 
+/* Quill toolbar: keep on one line and avoid growing rows */
+.ql-toolbar.ql-snow {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* Ensure the editor container doesn't shrink causing toolbar wrap */
+.ql-container.ql-snow {
+  min-width: 0; /* allow flex parent sizing without overflow */
+}
+
 button {
   cursor: pointer;
 }

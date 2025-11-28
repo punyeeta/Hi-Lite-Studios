@@ -31,6 +31,7 @@ interface BlogEditorViewProps {
   onCoverUpload: (e: ChangeEvent<HTMLInputElement>) => Promise<void> | void
   onBodyImageUpload: (e: ChangeEvent<HTMLInputElement>) => Promise<void> | void
   onSave: () => Promise<void> | void
+  onSaveDraft?: () => Promise<void> | void
   onCancel: () => void
   onDeleteCurrent?: () => Promise<void> | void
   selectedStoryId?: number
@@ -46,12 +47,13 @@ export default memo(function BlogEditorView({
   onCoverUpload,
   onBodyImageUpload,
   onSave,
+  onSaveDraft,
   onCancel,
   onDeleteCurrent,
   selectedStoryId,
 }: BlogEditorViewProps) {
   return (
-    <div className="mt-6 space-y-4">
+    <div className="mt-6 space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
@@ -61,14 +63,37 @@ export default memo(function BlogEditorView({
             {mode === 'create' ? 'Create New Post' : form.title || 'Edit Post'}
           </h2>
         </div>
-        {mode === 'edit' && onDeleteCurrent && (
-          <button
-            type="button"
-            onClick={() => onDeleteCurrent()}
-            className="rounded-full bg-[#F2322E] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#d51e1a]"
-          >
-            Delete Post
-          </button>
+        {mode === 'edit' && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition-all duration-150 hover:bg-gray-100 hover:shadow-sm hover:scale-105"
+            >
+              Back to list
+            </button>
+            {onDeleteCurrent && (
+              <button
+                type="button"
+                onClick={() => onDeleteCurrent()}
+                className="rounded-lg px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105"
+                style={{ background: 'linear-gradient(to right, #F2322E 0%, #AA1815 100%)' }}
+              >
+                Delete Post
+              </button>
+            )}
+          </div>
+        )}
+        {mode === 'create' && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition-all duration-150 hover:bg-gray-100 hover:shadow-sm hover:scale-105"
+            >
+              Back to list
+            </button>
+          </div>
         )}
       </div>
 
@@ -84,7 +109,7 @@ export default memo(function BlogEditorView({
                 placeholder="https://.../blog-images/covers/post-1.jpg"
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#291471] focus:outline-none focus:ring-1 focus:ring-[#291471]"
               />
-              <label className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-gray-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-black">
+              <label className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-gray-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-black hover:shadow-lg hover:scale-105">
                 <span>{uploadingCover ? 'Uploading...' : 'Upload'}</span>
                 <input
                   type="file"
@@ -101,8 +126,8 @@ export default memo(function BlogEditorView({
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-            <div className="aspect-video w-full bg-gray-100 flex items-center justify-center">
+          <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50 mx-auto max-w-xl w-full">
+            <div className="aspect-video w-full bg-gray-100 flex items-center justify-center p-6">
               {form.cover_image ? (
                 <img
                   src={form.cover_image}
@@ -139,7 +164,7 @@ export default memo(function BlogEditorView({
         </p>
         <div className="flex items-center justify-between pb-2 text-xs text-gray-500">
           <span>Article content</span>
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 font-medium hover:bg-gray-50">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1 font-medium transition-all duration-150 hover:bg-gray-50 hover:shadow-sm hover:scale-105">
             <span>
               {uploadingBodyImage ? 'Uploading image...' : 'Upload image for content'}
             </span>
@@ -154,7 +179,6 @@ export default memo(function BlogEditorView({
         </div>
         <div className="rounded-lg border border-gray-300 bg-white">
           <RichTextEditor
-            key={`editor-${form.title}`}
             value={form.content}
             onChange={(value) =>
               onChangeField('content')({
@@ -169,16 +193,26 @@ export default memo(function BlogEditorView({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-full border border-gray-300 bg-white px-5 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:bg-gray-100"
+          className="rounded-lg border border-gray-300 bg-white px-5 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition-all duration-150 hover:bg-gray-100 hover:shadow-sm hover:scale-105"
         >
           Back to list
         </button>
         <div className="flex items-center gap-3">
           <button
+            type="button"
+            onClick={() => onSaveDraft ? onSaveDraft() : undefined}
+            disabled={saving}
+            title="Save as draft"
+            className="rounded-lg px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed"
+            style={{ background: 'linear-gradient(to right, #9CA3AF 0%, #6B7280 100%)' }}
+          >
+            {saving ? 'Saving...' : 'Save as Draft'}
+          </button>
+          <button
             type="submit"
             onClick={onSave}
             disabled={saving}
-            className="rounded-full bg-[#291471] px-6 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#1e0f55] disabled:cursor-not-allowed disabled:bg-gray-400"
+            className="rounded-lg bg-[#291471] px-6 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-[#1e0f55] hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed disabled:bg-gray-400"
           >
             {saving
               ? mode === 'create'

@@ -36,6 +36,7 @@ interface AdminBlogState {
   fetchStoryById: (id: number) => Promise<BlogStory | null>
   createStory: (input: NewBlogStoryInput) => Promise<BlogStory | null>
   updateStory: (id: number, updates: UpdateBlogStoryInput) => Promise<BlogStory | null>
+  saveDraft: (id: number, updates?: UpdateBlogStoryInput) => Promise<BlogStory | null>
   deleteStory: (id: number) => Promise<boolean>
   togglePin: (id: number, isPinned: boolean) => Promise<boolean>
   setEditingStory: (story: BlogStory | null) => void
@@ -144,6 +145,27 @@ export const useAdminBlogStore = create<AdminBlogState>()(
       } catch (err: any) {
         set({
           error: err.message ?? 'Failed to update story',
+          saving: false,
+        })
+        return null
+      }
+    },
+
+    // Save as draft (sets status='draft')
+    saveDraft: async (id: number, updates: UpdateBlogStoryInput = {}) => {
+      set({ saving: true, error: null })
+      try {
+        const updatedStory = await updateBlogStory(id, { ...updates, status: 'draft' })
+        set((state) => ({
+          stories: state.stories.map((s) => (s.id === id ? updatedStory : s)),
+          editingStory: updatedStory,
+          saving: false,
+        }))
+        useMagazineStore.getState().updateItem(id.toString(), updatedStory)
+        return updatedStory
+      } catch (err: any) {
+        set({
+          error: err.message ?? 'Failed to save draft',
           saving: false,
         })
         return null

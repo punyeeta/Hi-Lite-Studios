@@ -26,6 +26,7 @@ interface WorksEditorViewProps {
   onMediaUpload: (e: ChangeEvent<HTMLInputElement>) => Promise<void> | void
   onDeleteMedia: (mediaId: string) => Promise<void> | void
   onSave: () => Promise<void> | void
+  onSaveDraft?: () => Promise<void> | void
   onCancel: () => void
 }
 
@@ -42,10 +43,41 @@ export default function WorksEditorView({
   onMediaUpload,
   onDeleteMedia,
   onSave,
+  onSaveDraft,
   onCancel,
 }: WorksEditorViewProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-1">
+      {/* Top Action Bar */}
+      <div className="flex items-center justify-end gap-3 mr-6">
+        <button
+          type="button"
+          onClick={() => (onSaveDraft ? onSaveDraft() : undefined)}
+          disabled={submitting}
+          className="rounded-full px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ background: 'linear-gradient(to right, #9CA3AF 0%, #6B7280 100%)' }}
+          title="Save as draft"
+        >
+          {submitting ? 'Saving...' : 'Save as Draft'}
+        </button>
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={submitting || !form.main_image_url}
+          className="rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          style={{ backgroundColor: RED_LIGHT }}
+        >
+          {submitting ? 'Saving...' : 'Save'}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={submitting}
+          className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:shadow-md hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+        >
+          Cancel
+        </button>
+      </div>
       {error && (
         <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-medium">Error:</p>
@@ -136,27 +168,7 @@ export default function WorksEditorView({
             onUpload={onMediaUpload}
             buttonText={uploadingMedia ? 'Uploading...' : 'Add Media'}
           />
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onSave}
-              disabled={submitting || !form.main_image_url}
-              className="rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              style={{
-                backgroundColor: RED_LIGHT,
-              }}
-            >
-              {submitting ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              type="button"
-              onClick={onCancel}
-              disabled={submitting}
-              className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:shadow-md hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-            >
-              Cancel
-            </button>
-          </div>
+          <div />
         </div>
 
         <MediaGallery

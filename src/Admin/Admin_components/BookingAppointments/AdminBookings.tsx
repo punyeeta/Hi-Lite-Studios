@@ -110,7 +110,7 @@ export default function AdminBookings() {
       </header>
 
       <div className="flex items-center justify-between gap-4">
-        <div className="inline-flex rounded-full bg-gray-100 p-1">
+        <div className="inline-flex p-1">
           {TABS.map((tab) => (
             <button
               key={tab.id}

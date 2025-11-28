@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 import { useMagazineEngagement } from '@/utils/useMagazineEngagement'
 
 const EMOJI_MAP = {
@@ -31,10 +32,30 @@ export const AdminEngagementPanel = ({ blogStoryId }: AdminEngagementPanelProps)
     return null
   }
 
-  const handleDeleteEngagement = async (engagementId: number) => {
-    if (confirm('Delete this feedback?')) {
-      await engagement.deleteEngagement(engagementId)
+  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  const openDelete = (engagementId: number) => {
+    setDeleteId(engagementId)
+    setShowDeleteModal(true)
+  }
+
+  const handleDeleteConfirmed = async () => {
+    if (!deleteId) return
+    setDeleting(true)
+    try {
+      await engagement.deleteEngagement(deleteId)
+    } finally {
+      setDeleting(false)
+      setShowDeleteModal(false)
+      setDeleteId(null)
     }
+  }
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false)
+    setDeleteId(null)
   }
 
   const handleSaveEdit = async (engagementId: number) => {
@@ -98,21 +119,22 @@ export const AdminEngagementPanel = ({ blogStoryId }: AdminEngagementPanelProps)
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleSaveEdit(item.id)}
-                          className="rounded bg-green-100 px-3 py-1 text-xs font-semibold text-green-600 hover:bg-green-200"
+                          className="rounded-lg bg-green-100 px-3 py-1 text-xs font-semibold text-green-600 transition-all duration-150 hover:bg-green-200 hover:shadow-sm hover:scale-105"
                         >
                           Save
                         </button>
                         <button
                           onClick={handleCancelEdit}
-                          className="rounded bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-200"
+                          className="rounded-lg bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600 transition-all duration-150 hover:bg-gray-200 hover:shadow-sm hover:scale-105"
                         >
                           Cancel
                         </button>
                       </div>
                     ) : (
                       <button
-                        onClick={() => handleDeleteEngagement(item.id)}
-                        className="rounded bg-[#D42724] px-3 py-1 text-xs font-semibold text-white hover:bg-[#b91f1a]"
+                        onClick={() => openDelete(item.id)}
+                        className="rounded-lg px-3 py-1 text-xs font-semibold text-white transition-all duration-150 hover:shadow-lg hover:scale-105"
+                        style={{ background: 'linear-gradient(to right, #F2322E 0%, #AA1815 100%)' }}
                       >
                         Delete Comment
                       </button>
@@ -133,6 +155,20 @@ export const AdminEngagementPanel = ({ blogStoryId }: AdminEngagementPanelProps)
           ))
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete feedback"
+        message="Delete this feedback? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={deleting}
+        onConfirm={handleDeleteConfirmed}
+        onCancel={handleDeleteCancel}
+      />
     </div>
   )
 }
+
+// Modal
+{/* Render ConfirmModal at the bottom to avoid returning multiple roots */}

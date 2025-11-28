@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useState, useRef } from 'react'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 import { useFAQ, type FAQItem } from '@/components/sections/context/FAQContext'
 import FAQCard from '@/components/cards/FAQCards'
 
@@ -21,7 +21,6 @@ export default function AdminFAQ() {
   }
 
   const formRef = useRef<HTMLFormElement | null>(null)
-  const scrollYRef = useRef(0)
 
   const startEdit = (item: FAQItem) => {
     setEditingId(item.id)
@@ -152,34 +151,7 @@ export default function AdminFAQ() {
     setDeleteId(null)
   }
 
-  // Prevent background scroll and layout shift when modal is open
-  useEffect(() => {
-    if (!showDeleteModal) return
-    // when modal opens
-    scrollYRef.current = window.scrollY || window.pageYOffset
-    document.body.style.position = 'fixed'
-    document.body.style.top = `-${scrollYRef.current}px`
-    document.body.style.left = '0'
-    document.body.style.right = '0'
-
-    return () => {
-      // restore when modal closes
-      const y = scrollYRef.current || 0
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.left = ''
-      document.body.style.right = ''
-      // Temporarily disable smooth scrolling to restore instantly
-      const docEl = document.documentElement
-      const prev = docEl.style.scrollBehavior
-      try {
-        docEl.style.scrollBehavior = 'auto'
-        window.scrollTo(0, y)
-      } finally {
-        docEl.style.scrollBehavior = prev
-      }
-    }
-  }, [showDeleteModal])
+  // ConfirmModal handles scroll lock and restore internally
 
   return (
     <section className="space-y-8">
@@ -274,36 +246,16 @@ export default function AdminFAQ() {
         )}
       </section>
 
-      {/* Delete Confirmation Modal (rendered via portal so it always overlays) */}
-      {showDeleteModal && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/50" onClick={handleDeleteCancel} />
-          <div className="relative w-full max-w-2xl rounded-xl bg-white p-8 shadow-2xl mx-4">
-            <h3 className="mb-3 text-2xl font-semibold">Confirm delete</h3>
-            <p className="mb-6 text-sm text-gray-600">Are you sure you want to delete this FAQ? This action cannot be undone.</p>
-            <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={handleDeleteCancel}
-                className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-semibold text-gray-700 transition-all duration-150 hover:bg-gray-50 disabled:opacity-50"
-                disabled={deleting}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteConfirmed}
-                className="rounded-lg px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:shadow-xl hover:scale-105 disabled:opacity-50"
-                style={{ background: 'linear-gradient(to right, #F2322E 0%, #AA1815 100%)' }}
-                disabled={deleting}
-              >
-                {deleting ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body,
-      )}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Confirm delete"
+        message="Are you sure you want to delete this FAQ? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        loading={deleting}
+        onConfirm={handleDeleteConfirmed}
+        onCancel={handleDeleteCancel}
+      />
     </section>
   )
 }

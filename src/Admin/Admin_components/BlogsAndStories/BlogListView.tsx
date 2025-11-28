@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useMemo, useState } from 'react'
 import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 
 interface BlogListViewProps {
@@ -31,8 +31,8 @@ const StoryCard = memo(function StoryCard({
 }: StoryCardProps) {
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="p-4">
-        <div className="relative w-full bg-gray-100 overflow-hidden rounded-lg" style={{ aspectRatio: '4/3' }}>
+      <div className="p-3">
+        <div className="relative w-full bg-gray-100 overflow-hidden rounded-lg" style={{ aspectRatio: '16/9' }}>
           {story.cover_image ? (
             <img
               src={story.cover_image}
@@ -81,7 +81,7 @@ const StoryCard = memo(function StoryCard({
           <button
             type="button"
             onClick={() => onPinToggle(story)}
-            className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm transition-all ${
+            className={`rounded-lg px-3 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 ${
               story.is_pinned
                 ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 : 'bg-[#F2322E] text-white hover:bg-[#d51e1a]'
@@ -93,7 +93,7 @@ const StoryCard = memo(function StoryCard({
             <button
               type="button"
               onClick={() => onEdit(story)}
-              className="rounded-full bg-[#291471] px-4 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#1e0f55]"
+              className="rounded-lg bg-[#291471] px-4 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-[#1e0f55] hover:shadow-lg hover:scale-105"
             >
               Edit
             </button>
@@ -101,7 +101,8 @@ const StoryCard = memo(function StoryCard({
               type="button"
               onClick={() => onDelete(story)}
               disabled={saving}
-              className="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-600 shadow-sm hover:bg-gray-200 disabled:cursor-not-allowed"
+              className="rounded-lg px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-700 shadow-sm transition-all duration-150 hover:bg-gray-200 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed"
+              style={{ background: 'linear-gradient(to right, #f3f4f6 0%, #e5e7eb 100%)' }}
             >
               Delete
             </button>
@@ -114,8 +115,8 @@ const StoryCard = memo(function StoryCard({
 
 export default memo(function BlogListView({
   stories,
-  pinnedStories,
-  otherStories,
+  pinnedStories: _pinnedStories,
+  otherStories: _otherStories,
   loading,
   saving,
   error,
@@ -124,24 +125,51 @@ export default memo(function BlogListView({
   onDeleteStory,
   onPinToggle,
 }: BlogListViewProps) {
+  const [filter, setFilter] = useState<'all' | 'published' | 'draft' | 'archived'>('all')
+  const filtered = useMemo(() => {
+    return stories.filter((s) => (filter === 'all' ? true : s.status === filter))
+  }, [stories, filter])
+  const filteredPinned = useMemo(() => filtered.filter((s) => s.is_pinned), [filtered])
+  const filteredOthers = useMemo(() => filtered.filter((s) => !s.is_pinned), [filtered])
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <button
           type="button"
           onClick={onNewStory}
-          className="rounded-full bg-[#291471] px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:bg-[#1e0f55]"
+          className="rounded-lg bg-[#291471] px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-[#1e0f55] hover:shadow-lg hover:scale-105"
         >
           Add New Blog
         </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-gray-600">Filter:</span>
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as any)}
+              className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 shadow-sm focus:border-[#291471] focus:outline-none focus:ring-1 focus:ring-[#291471]"
+            >
+              <option value="all">All</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
 
-        {stories.length > 0 && (
-          <p className="text-xs text-gray-500">
-            Showing <strong>{stories.length}</strong> post
-            {stories.length !== 1 && 's'}
+          {/* Show count for all filters */}
+          <p className="text-s text-[#333333]">
+            Showing <strong>{filtered.length}</strong>{' '}
+            {filter === 'draft'
+              ? 'draft post' + (filtered.length !== 1 ? 's' : '')
+              : filter === 'archived'
+              ? 'archived post' + (filtered.length !== 1 ? 's' : '')
+              : filter === 'published'
+              ? 'published post' + (filtered.length !== 1 ? 's' : '')
+              : 'post' + (filtered.length !== 1 ? 's' : '')}
           </p>
-        )}
+        </div>
       </div>
+
 
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -156,8 +184,8 @@ export default memo(function BlogListView({
               key={`skeleton-${index}`}
               className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm animate-pulse"
             >
-              <div className="p-4">
-                <div className="w-full bg-gray-300 rounded-lg" style={{ aspectRatio: '4/3' }} />
+              <div className="p-3">
+                <div className="w-full bg-gray-300 rounded-lg" style={{ aspectRatio: '16/9' }} />
               </div>
               <div className="flex flex-1 flex-col gap-3 p-4">
                 <div className="space-y-2">
@@ -180,14 +208,27 @@ export default memo(function BlogListView({
             </article>
           ))}
         </div>
-      ) : stories.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-gray-500">
-          No stories yet. Click <span className="font-semibold">Add New Blog</span> to
-          create your first post.
+      ) : filtered.length === 0 ? (
+        <div className="rounded-xl border-dashed px-6 py-12 text-center text-xl text-gray-500">
+          {filter === 'draft' && (
+            <span>No draft posts.</span>
+          )}
+          {filter === 'archived' && (
+            <span>No archived posts.</span>
+          )}
+          {filter === 'published' && (
+            <span>No published posts.</span>
+          )}
+          {filter === 'all' && (
+            <span>
+              No stories yet. Click <span className="font-semibold">Add New Blog</span> to
+              create your first post.
+            </span>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          {pinnedStories.map((story) => (
+          {filteredPinned.map((story) => (
             <StoryCard
               key={story.id}
               story={story}
@@ -197,7 +238,7 @@ export default memo(function BlogListView({
               onPinToggle={onPinToggle}
             />
           ))}
-          {otherStories.map((story) => (
+          {filteredOthers.map((story) => (
             <StoryCard
               key={story.id}
               story={story}
