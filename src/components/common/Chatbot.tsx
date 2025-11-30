@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useChatbot } from "../../utils/useChatbot";
+import ChatbotLogoImg from "@/assets/images/chatbotlogo.svg";
+import SendButtonImg from "@/assets/images/Chatbot_send_button.png";
 
 const SYSTEM_CONTEXT = `You are a helpful and professional assistant for Hi-Lite Studio, a photography and videography studio.
 
@@ -80,7 +82,7 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
       {/* Header */}
       <div className="px-4 py-4 border-b border-gray-200 bg-white flex items-center gap-3">
         <img 
-          src="/src/assets/images/chatbotlogo.svg" 
+          src={ChatbotLogoImg} 
           alt="Litebot" 
           className="h-10 w-10 object-contain"
         />
@@ -96,7 +98,7 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full gap-6">
             <img 
-              src="/src/assets/images/chatbotlogo.svg" 
+              src={ChatbotLogoImg} 
               alt="Litebot" 
               className="h-20 w-20 object-contain"
             />
@@ -128,7 +130,7 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
             {loading && (
               <div className="flex justify-start">
                 <img 
-                  src="/src/assets/images/chatbotlogo.svg" 
+                  src={ChatbotLogoImg} 
                   alt="Litebot Loading" 
                   className="h-6 w-6 object-contain animate-wave"
                 />
@@ -162,7 +164,7 @@ export const Chatbot = ({ onClose }: ChatbotProps) => {
           className="px-4 py-3 bg-transparent hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center border-none"
         >
           <img 
-            src="/src/assets/images/Chatbot_send_button.png" 
+            src={SendButtonImg} 
             alt="Send" 
             className="h-6 w-6 object-contain"
           />
