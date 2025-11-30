@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import { memo } from 'react'
-import { useMagazineStore } from '@/store/magazineStore'
 
 interface MagazineFeaturedProps {
   pinnedItem: any

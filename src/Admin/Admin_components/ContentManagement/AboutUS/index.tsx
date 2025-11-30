@@ -13,10 +13,7 @@ import {
   type AboutUsStaff,
 } from '@/supabase/supabase_services/Content_Management/AboutUs_Servicce/AboutUs'
 import {
-  COLORS,
   ABOUT_US_ERRORS,
-  FORM_SECTIONS,
-  SAVING_STATES,
   EMPTY_FORMS,
 } from '../constants'
 

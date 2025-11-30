@@ -3,8 +3,6 @@ import { fetchAllFAQs, createFAQ, updateFAQ, deleteFAQ } from '@/supabase/supaba
 import {
   getFAQOrder,
   getFeaturedFAQs,
-  saveFAQOrder,
-  saveFeaturedFAQs,
 } from './faqStorageKeys'
 
 export type FAQItem = {

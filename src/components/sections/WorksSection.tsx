@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RecentHeader from '@/assets/images/RecentHeader.png'
-import Card from '@/components/cards/RecentCards'
 import StarTopLeft from '@/assets/images/StarTL.png'
 import StarBottomRight from '@/assets/images/StarBR.png'
 import { useWorksStore } from '@/store/worksStore'
@@ -9,7 +8,7 @@ import { useIntersectionObserver } from '@/utils/useIntersectionObserver'
 
 const WorksSection = () => {
   const navigate = useNavigate()
-  const { items, loading, error, hasMore, fetchItems, loadMore } = useWorksStore()
+  const { items, loading, error, fetchItems } = useWorksStore()
   const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 })
 
   useEffect(() => {
@@ -26,10 +25,6 @@ const WorksSection = () => {
 
   const handleViewMore = () => {
     navigate('/works')
-  }
-
-  const handleLoadMore = () => {
-    loadMore(4)
   }
 
   return (

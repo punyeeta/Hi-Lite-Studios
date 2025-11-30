@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
  * Useful for detecting when a dependency has actually changed
  */
 export function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>()
+  const ref = useRef<T | undefined>(undefined)
 
   useEffect(() => {
     ref.current = value

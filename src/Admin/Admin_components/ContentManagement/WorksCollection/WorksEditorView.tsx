@@ -106,9 +106,8 @@ export default function WorksEditorView({
         confirmLabel="Delete"
         cancelLabel="Cancel"
         loading={deleting}
-        isDangerous={true}
-        onConfirm={onConfirmDelete}
-        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete || (() => {})}
+        onCancel={onCancelDelete || (() => {})}
       />
 
       {/* Main Content Form */}

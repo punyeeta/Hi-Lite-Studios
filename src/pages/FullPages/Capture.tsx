@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import BookingForm from '@/components/booking form/booking _form'
 import StarTL from '@/assets/images/StarTL.png'
 import StarBR from '@/assets/images/StarBR.png'

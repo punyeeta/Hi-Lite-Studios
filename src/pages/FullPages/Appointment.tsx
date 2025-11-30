@@ -1,5 +1,4 @@
 import BookingForm from '@/components/booking form/booking _form'
-import { useEffect } from 'react'
 import StarTL from '@/assets/images/StarTL.png'
 import StarBR from '@/assets/images/StarBR.png'
 import ServiceStar from '@/assets/images/ServiceStar.png'

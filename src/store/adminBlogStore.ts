@@ -199,10 +199,6 @@ export const useAdminBlogStore = create<AdminBlogState>()(
       set({ error: null })
       
       // Optimistic update: immediately flip the pin status in UI
-      const optimisticStory = {
-        newIsPinned: !isPinned,
-      }
-      
       set((state) => ({
         stories: state.stories.map((s) => 
           s.id === id ? { ...s, is_pinned: !s.is_pinned } : s

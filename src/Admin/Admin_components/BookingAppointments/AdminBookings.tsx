@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import type { Booking, BookingStatus } from '@/supabase/supabase_services/admin_boooking/bookings'
 import { fetchBookingById } from '@/supabase/supabase_services/admin_boooking/bookings'
-import { BOOKING_COLORS, BOOKING_LABELS, BOOKING_ERRORS } from './constants'
+import { BOOKING_COLORS, BOOKING_LABELS } from './constants'
 import PendingIcon from '../../../assets/images/Adminbuttons/bookings_buttons/Pending_Button.png'
 import ConfirmedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/ConfirmedButton.png'
 import CancelledIcon from '../../../assets/images/Adminbuttons/bookings_buttons/CancellButton.png'

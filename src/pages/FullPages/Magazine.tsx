@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Search } from 'lucide-react'
-import MagazineCard from '@/components/cards/MagazineCard'
 import MagazineCardSkeleton from '@/components/cards/MagazineCardSkeleton'
 import MagazineFeatured from '@/components/sections/MagazineFeatured'
 import MagazineGrid from '@/components/sections/MagazineGrid'

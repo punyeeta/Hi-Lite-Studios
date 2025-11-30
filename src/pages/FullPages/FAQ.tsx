@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import { useFAQ } from '@/components/sections/context/FAQContext'
 import FAQCard from '@/components/cards/FAQCards'
 
