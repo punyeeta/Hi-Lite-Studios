@@ -35,6 +35,7 @@ interface BlogEditorViewProps {
   onSaveDraft?: () => Promise<void> | void
   onCancel: () => void
   onDeleteCurrent?: () => Promise<void> | void
+  onArchiveCurrent?: () => Promise<void> | void
   selectedStoryId?: number
 }
 
@@ -51,6 +52,7 @@ export default memo(function BlogEditorView({
   onSaveDraft,
   onCancel,
   onDeleteCurrent,
+  onArchiveCurrent,
   selectedStoryId,
 }: BlogEditorViewProps) {
   return (
@@ -66,13 +68,15 @@ export default memo(function BlogEditorView({
         </div>
         {mode === 'edit' && (
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition-all duration-150 hover:bg-gray-100 hover:shadow-sm hover:scale-105"
-            >
-              Back to list
-            </button>
+            {onArchiveCurrent && (
+              <button
+                type="button"
+                onClick={() => onArchiveCurrent()}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition-all duration-150 hover:bg-gray-100 hover:shadow-sm hover:scale-105"
+              >
+                Archive
+              </button>
+            )}
             {onDeleteCurrent && (
               <button
                 type="button"
@@ -92,7 +96,7 @@ export default memo(function BlogEditorView({
               onClick={onCancel}
               className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-700 transition-all duration-150 hover:bg-gray-100 hover:shadow-sm hover:scale-105"
             >
-              Back to list
+              Archive
             </button>
           </div>
         )}

@@ -3,6 +3,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal'
 import type { BlogStory, BlogStatus } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import {
   uploadBlogImage,
+  archiveBlogStory,
 } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import { useAdminBlogStore } from '@/store/adminBlogStore'
 import { BLOG_ERRORS, BLOG_LABELS } from './constants'
@@ -30,7 +31,7 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)+/g, '')
 
 export default function MagazineAdmin() {
-  const { stories, loading, error, saving, fetchStories, fetchStoryById, createStory, updateStory, deleteStory, togglePin } = useAdminBlogStore()
+  const { stories, loading, error, saving, fetchStories, fetchStoryById, createStory, updateStory, deleteStory, togglePin, archiveStory } = useAdminBlogStore()
   
   const [mode, setMode] = useState<Mode>('list')
   const [selectedStory, setSelectedStory] = useState<BlogStory | null>(null)
@@ -261,6 +262,21 @@ export default function MagazineAdmin() {
     setShowDeleteModal(true)
   }
 
+  const handleArchiveStory = useCallback(async () => {
+    if (!selectedStory) return
+    try {
+      const archived = await archiveStory(selectedStory.id)
+      if (archived) {
+        setSuccessMessage('Post archived successfully!')
+        resetForm()
+        setMode('list')
+      }
+    } catch (err: any) {
+      console.error('[BlogsAndStories] Archive error:', err)
+      setLocalError(err.message ?? 'Failed to archive post')
+    }
+  }, [selectedStory, archiveStory])
+
   const isEditing = mode === 'edit' || mode === 'create'
 
   return (
@@ -301,6 +317,7 @@ export default function MagazineAdmin() {
           onSaveDraft={handleSaveDraft}
           onCancel={handleCancelEdit}
           onDeleteCurrent={mode === 'edit' ? handleDeleteCurrentFromEditor : undefined}
+          onArchiveCurrent={mode === 'edit' ? handleArchiveStory : undefined}
           selectedStoryId={selectedStory?.id}
         />
       )}

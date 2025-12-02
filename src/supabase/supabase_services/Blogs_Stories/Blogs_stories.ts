@@ -185,6 +185,18 @@ export async function unpinBlogStory(id: number) {
   return data as BlogStory
 }
 
+export async function archiveBlogStory(id: number) {
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .update({ status: 'archived' })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data as BlogStory
+}
+
 export async function uploadBlogImage(
   file: File,
   folder: 'covers' | 'body' = 'covers',
