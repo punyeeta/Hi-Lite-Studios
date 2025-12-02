@@ -14,14 +14,6 @@ const EMOJI_MAP: Record<ReactionType, string> = {
   shocked: '😱',
 }
 
-const EMOJI_LABELS: Record<ReactionType, string> = {
-  smile: 'Like',
-  surprised: 'Surprised',
-  sad: 'Sad',
-  love: 'Love',
-  shocked: 'Shocked',
-}
-
 export const EngagementForm = ({ onSubmit, isLoading = false }: EngagementFormProps) => {
   const [selectedReaction, setSelectedReaction] = useState<ReactionType | null>(null)
   const [content, setContent] = useState('')
@@ -56,39 +48,49 @@ export const EngagementForm = ({ onSubmit, isLoading = false }: EngagementFormPr
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header - Outside Box */}
+    <div className="space-y-10">
+      {/* Header */}
       <div>
-        <h3 className="text-4xl font-bold text-gray-900">Share Your Thoughts!</h3>
-        <p className="text-base text-gray-600 mt-2">What did you think about the story?</p>
+        <h3 className="text-5xl font-semibold text-gray-900">Share Your Thoughts!</h3>
+        <p className="text-lg text-gray-600 mt-2">What did you think about the story?</p>
       </div>
 
-      {/* Emoji Selection - NO BOX */}
-      <form onSubmit={handleSubmit} className="space-y-2">
-        <div className="flex gap-6 justify-center">
-          {(Object.keys(EMOJI_MAP) as ReactionType[]).map((reactionType) => (
-            <button
-              key={reactionType}
-              type="button"
-              onClick={() => {
-                setSelectedReaction(reactionType)
-                setError('')
-              }}
-              className={`
-                flex items-center justify-center w-20 h-20 rounded-full transition-all
-                ${selectedReaction === reactionType
-                  ? 'bg-blue-600 ring-4 ring-blue-300 shadow-lg scale-110'
-                  : 'bg-white border-2 border-gray-300 hover:border-gray-400 hover:shadow-md'
-                }
-              `}
-              title={EMOJI_LABELS[reactionType]}
-            >
-              <span className="text-5xl">{EMOJI_MAP[reactionType]}</span>
-            </button>
-          ))}
+      {/* Emoji Selection */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="flex gap-6 sm:gap-8 justify-center">
+          {(Object.keys(EMOJI_MAP) as ReactionType[]).map((reactionType) => {
+            const isSelected = selectedReaction === reactionType
+            return (
+              <button
+                key={reactionType}
+                type="button"
+                onClick={() => {
+                  setSelectedReaction(reactionType)
+                  setError('')
+                }}
+                className={`group relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full transition-all duration-200 ease-out
+                  ${isSelected
+                    ? 'bg-linear-to-br from-blue-600 to-blue-500 ring-4 ring-blue-300 shadow-2xl scale-105'
+                    : 'bg-white border border-gray-300 shadow-md hover:shadow-lg hover:border-gray-400'
+                  } hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-300`}
+              >
+                <span className={`text-4xl sm:text-5xl transition-transform duration-200
+                  ${isSelected ? 'drop-shadow-[2px_6px_8px_rgba(59,130,246,0.35)]' : 'drop-shadow-[2px_6px_8px_rgba(0,0,0,0.25)]'}
+                  group-hover:scale-[1.06] group-active:scale-95`}
+                >
+                  {EMOJI_MAP[reactionType]}
+                </span>
+                {/* Label below on hover/selected */}
+                <span className={`absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium transition-opacity duration-200
+                  ${isSelected ? 'opacity-100 text-blue-700' : 'opacity-0 group-hover:opacity-100 text-gray-600'}`}
+                >
+                </span>
+              </button>
+            )
+          })}
         </div>
 
-        {/* Feedback Textarea - NO BOX */}
+        {/* Feedback Textarea */}
         <textarea
           value={content}
           onChange={(e) => {
@@ -99,11 +101,11 @@ export const EngagementForm = ({ onSubmit, isLoading = false }: EngagementFormPr
           disabled={isLoading}
           rows={5}
           maxLength={500}
-          className="w-full px-6 py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:bg-gray-100 placeholder-gray-400 text-base"
+          className="w-full px-6 py-4 border-2 border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:bg-gray-100 placeholder-gray-400 text-base shadow"
         />
         
         {/* Counter and Submit Button Row */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-2">
           <div>
             {error && <p className="text-base text-red-600">{error}</p>}
             {!error && <p className="text-sm text-gray-500">{content.length}/500</p>}
@@ -111,7 +113,7 @@ export const EngagementForm = ({ onSubmit, isLoading = false }: EngagementFormPr
           <button
             type="submit"
             disabled={isLoading || !selectedReaction || !content.trim()}
-            className="px-6 py-2 bg-[#808080] text-white font-semibold rounded-lg hover:bg-[#696969] transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            className="px-8 py-2 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#1E1E1E] to-gray-600 text-white font-semibold shadow hover:shadow-md hover:brightness-105 active:brightness-95 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             {isLoading ? 'Submitting...' : 'Submit'}
           </button>

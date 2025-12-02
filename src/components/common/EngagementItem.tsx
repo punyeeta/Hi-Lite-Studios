@@ -28,17 +28,17 @@ export const EngagementItem = ({
   })
 
   return (
-    <div className="flex gap-6 py-6">
+    <div className="flex gap-6 py-4">
       {/* Emoji - Left */}
       <div className="shrink-0">
-        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-3xl shadow-md">
+        <div className="w-16 h-16 rounded-full bg-white border border-gray-200 flex items-center justify-center text-3xl shadow-xl">
           {EMOJI_MAP[engagement.reaction_type as keyof typeof EMOJI_MAP]}
         </div>
       </div>
 
       {/* Content - Middle/Right */}
       <div className="flex-1 min-w-0">
-        <div className="bg-white border-2 border-gray-300 rounded-lg p-5">
+        <div className="bg-white border-2 border-gray-300 rounded-2xl p-5 shadow-sm">
           <p className="text-base text-gray-800 leading-relaxed wrap-break-word">
             {engagement.content}
           </p>
@@ -53,7 +53,7 @@ export const EngagementItem = ({
           {onEdit && (
             <button
               onClick={() => onEdit(engagement)}
-              className="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition"
+              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition shadow-sm"
             >
               Edit
             </button>
@@ -61,7 +61,7 @@ export const EngagementItem = ({
           {onDelete && (
             <button
               onClick={() => onDelete(engagement.id)}
-              className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200 transition"
+              className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition shadow-sm"
             >
               Delete
             </button>

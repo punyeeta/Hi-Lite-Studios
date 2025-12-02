@@ -64,13 +64,13 @@ const Navbar = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* LEFT LINKS */}
           <div className="flex items-center gap-14">
-            <button onClick={() => goHomeAndScroll('works')} className="font-medium text-[#212121] hover:text-blue-800">
+            <button onClick={() => goHomeAndScroll('works')} className="relative font-medium text-[#212121] hover:text-blue-800 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-800 after:transition-all">
               Works
             </button>
-            <button onClick={() => goHomeAndScroll('services')} className="font-medium text-[#212121] hover:text-blue-800">
+            <button onClick={() => goHomeAndScroll('services')} className="relative font-medium text-[#212121] hover:text-blue-800 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-800 after:transition-all">
               Services
             </button>
-            <button onClick={() => goHomeAndScroll('magazine')} className="font-medium text-[#212121] hover:text-blue-800">
+            <button onClick={() => goHomeAndScroll('magazine')} className="relative font-medium text-[#212121] hover:text-blue-800 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-800 after:transition-all">
               Magazine
             </button>
           </div>
@@ -88,13 +88,13 @@ const Navbar = () => {
 
           {/* RIGHT LINKS */}
           <div className="flex items-center gap-14">
-            <button onClick={() => goHomeAndScroll('about')} className="font-medium text-[#212121] hover:text-blue-800">
+            <button onClick={() => goHomeAndScroll('about')} className="relative font-medium text-[#212121] hover:text-blue-800 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-800 after:transition-all">
               About Us
             </button>
-            <button onClick={() => goHomeAndScroll('faq-section')} className="font-medium text-[#212121] hover:text-blue-800">
+            <button onClick={() => goHomeAndScroll('faq-section')} className="relative font-medium text-[#212121] hover:text-blue-800 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-800 after:transition-all">
               FAQs
             </button>
-            <button onClick={() => navigate('/appointment')} className="font-medium text-[#212121] hover:text-red-700">
+            <button onClick={() => navigate('/appointment')} className="relative font-medium text-[#212121] hover:text-red-700 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 hover:after:w-full after:bg-red-700 after:transition-all">
               Capture with Us
             </button>
           </div>
