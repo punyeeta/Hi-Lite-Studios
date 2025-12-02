@@ -134,12 +134,17 @@ export const useAdminBlogStore = create<AdminBlogState>()(
       set({ saving: true, error: null })
       try {
         const updatedStory = await updateBlogStory(id, updates)
-        set((state) => ({
-          stories: state.stories.map((s) => (s.id === id ? updatedStory : s)),
-          editingStory: updatedStory,
-          saving: false,
-        }))
-        // Sync with magazine store and invalidate cache
+        set((state) => {
+          const newCache = new Map(state.storyCache)
+          newCache.set(id, updatedStory)
+          return {
+            stories: state.stories.map((s) => (s.id === id ? updatedStory : s)),
+            editingStory: updatedStory,
+            saving: false,
+            storyCache: newCache,
+          }
+        })
+        // Sync with magazine store
         useMagazineStore.getState().updateItem(id.toString(), updatedStory)
         return updatedStory
       } catch (err: any) {
@@ -156,11 +161,16 @@ export const useAdminBlogStore = create<AdminBlogState>()(
       set({ saving: true, error: null })
       try {
         const updatedStory = await updateBlogStory(id, { ...updates, status: 'draft' })
-        set((state) => ({
-          stories: state.stories.map((s) => (s.id === id ? updatedStory : s)),
-          editingStory: updatedStory,
-          saving: false,
-        }))
+        set((state) => {
+          const newCache = new Map(state.storyCache)
+          newCache.set(id, updatedStory)
+          return {
+            stories: state.stories.map((s) => (s.id === id ? updatedStory : s)),
+            editingStory: updatedStory,
+            saving: false,
+            storyCache: newCache,
+          }
+        })
         useMagazineStore.getState().updateItem(id.toString(), updatedStory)
         return updatedStory
       } catch (err: any) {

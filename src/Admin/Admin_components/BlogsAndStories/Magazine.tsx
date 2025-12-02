@@ -19,7 +19,7 @@ const emptyForm: BlogFormState = {
   excerpt: '',
   content: '',
   is_pinned: false,
-  status: 'published',
+  status: 'draft',
 }
 
 const slugify = (value: string) =>
@@ -212,9 +212,10 @@ export default function MagazineAdmin() {
         })
         if (created) {
           setSuccessMessage(`Post ${status === 'draft' ? 'saved as draft' : 'published'}!`)
-          setTimeout(() => setSuccessMessage(null), 3000)
           resetForm()
           setMode('list')
+        } else {
+          setLocalError('Failed to create post')
         }
       } else if (mode === 'edit' && selectedStory) {
         const updated = await updateStory(selectedStory.id, {
@@ -224,13 +225,14 @@ export default function MagazineAdmin() {
           excerpt,
           content,
           is_pinned: form.is_pinned,
-          status,
+          status: status,
         })
         if (updated) {
           setSuccessMessage(`Post ${status === 'draft' ? 'saved as draft' : 'published'}!`)
-          setTimeout(() => setSuccessMessage(null), 3000)
           setSelectedStory(updated)
           setMode('list')
+        } else {
+          setLocalError('Failed to update post')
         }
       }
     } catch (err: any) {
@@ -240,7 +242,7 @@ export default function MagazineAdmin() {
   }
 
   const handleSave = async () => {
-    await handleSaveStory(form.status)
+    await handleSaveStory('published')
   }
 
   const handleCancelEdit = () => {
