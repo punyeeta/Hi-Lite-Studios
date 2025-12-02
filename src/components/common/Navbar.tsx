@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Wordmark from '@/assets/images/Wordmark.png'
 
 const Navbar = () => {
@@ -21,14 +21,14 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string) => {
     const section = document.getElementById(id)
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' })
     }
-  }
+  }, [])
 
-  const goHomeAndScroll = async (sectionId: string) => {
+  const goHomeAndScroll = useCallback(async (sectionId: string) => {
     if (location.pathname !== '/') {
       navigate('/')
       // Wait for navigation to complete before scrolling
@@ -49,7 +49,7 @@ const Navbar = () => {
     } else {
       scrollToSection(sectionId)
     }
-  }
+  }, [location.pathname, navigate, scrollToSection])
 
   return (
     <header

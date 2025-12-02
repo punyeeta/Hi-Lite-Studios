@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 type MagazineCardProps = {
   title: string
   image: string
@@ -5,7 +7,7 @@ type MagazineCardProps = {
   onClick?: () => void
 }
 
-const MagazineCard = ({ title, image, excerpt, onClick }: MagazineCardProps) => {
+const MagazineCard = memo(({ title, image, excerpt, onClick }: MagazineCardProps) => {
   return (
     <button
       type="button"
@@ -23,7 +25,9 @@ const MagazineCard = ({ title, image, excerpt, onClick }: MagazineCardProps) => 
       </div>
     </button>
   )
-}
+})
+
+MagazineCard.displayName = 'MagazineCard'
 
 export default MagazineCard
 

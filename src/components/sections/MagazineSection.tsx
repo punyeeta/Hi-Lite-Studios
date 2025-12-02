@@ -10,11 +10,12 @@ const MagazineSection = () => {
   const navigate = useNavigate()
   const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 })
 
+  // Only fetch once when section becomes visible and items are empty
   useEffect(() => {
-    if (isVisible) {
+    if (isVisible && items.length === 0) {
       fetchItems()
     }
-  }, [isVisible, fetchItems])
+  }, [isVisible, items.length])
 
   const previews = items.slice(0, 3)
 

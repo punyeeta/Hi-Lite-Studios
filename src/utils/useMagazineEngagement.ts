@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import type { MagazineEngagement, ReactionType } from '@/supabase/supabase_services/Blogs_Stories/reactions_comments'
 import {
   getEngagementsForBlog,
@@ -16,7 +16,7 @@ export const useMagazineEngagement = ({ blogStoryId }: UseMagazineEngagementOpti
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Load engagements
+  // Load engagements - must be called manually by parent component
   const loadEngagements = useCallback(async () => {
     setLoading(true)
     setError(null)
@@ -25,15 +25,11 @@ export const useMagazineEngagement = ({ blogStoryId }: UseMagazineEngagementOpti
       setEngagements(data)
     } catch (err: any) {
       setError(err.message || 'Failed to load engagements')
+      console.error('[Magazine Engagement] Load error:', err)
     } finally {
       setLoading(false)
     }
   }, [blogStoryId])
-
-  // Auto-load engagements on mount
-  useEffect(() => {
-    loadEngagements()
-  }, [loadEngagements])
 
   // Create engagement (emoji + comment)
   const createEngagement = useCallback(

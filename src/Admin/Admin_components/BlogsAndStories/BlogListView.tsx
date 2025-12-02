@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo, useState, useCallback } from 'react'
 import type { BlogStory } from '@/supabase/supabase_services/Blogs_Stories/Blogs_stories'
 import { BLOG_COLORS } from './constants'
 
@@ -30,6 +30,10 @@ const StoryCard = memo(function StoryCard({
   onDelete,
   onPinToggle,
 }: StoryCardProps) {
+  const handleEdit = useCallback(() => onEdit(story), [story, onEdit])
+  const handleDelete = useCallback(() => onDelete(story), [story, onDelete])
+  const handlePin = useCallback(() => onPinToggle(story), [story, onPinToggle])
+
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       <div className="p-3">
@@ -39,6 +43,7 @@ const StoryCard = memo(function StoryCard({
               src={story.cover_image}
               alt={story.title}
               className="h-full w-full object-cover"
+              loading="lazy"
             />
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-gray-400">
@@ -81,7 +86,7 @@ const StoryCard = memo(function StoryCard({
         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
           <button
             type="button"
-            onClick={() => onPinToggle(story)}
+            onClick={handlePin}
             className={`rounded-lg px-3 py-1 text-[11px] font-semibold uppercase tracking-wide shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 ${
               story.is_pinned
                 ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -94,7 +99,7 @@ const StoryCard = memo(function StoryCard({
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => onEdit(story)}
+              onClick={handleEdit}
               className="rounded-lg px-4 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105"
               style={{ backgroundColor: BLOG_COLORS.PRIMARY_PURPLE }}
             >
@@ -102,7 +107,7 @@ const StoryCard = memo(function StoryCard({
             </button>
             <button
               type="button"
-              onClick={() => onDelete(story)}
+              onClick={handleDelete}
               disabled={saving}
               className="rounded-lg px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-700 shadow-sm transition-all duration-150 hover:bg-gray-200 hover:shadow-lg hover:scale-105 disabled:cursor-not-allowed"
               style={{ background: BLOG_COLORS.LIGHT_GRAY_GRADIENT }}
@@ -134,12 +139,20 @@ export default memo(function BlogListView({
   }, [stories, filter])
   const filteredPinned = useMemo(() => filtered.filter((s) => s.is_pinned), [filtered])
   const filteredOthers = useMemo(() => filtered.filter((s) => !s.is_pinned), [filtered])
+
+  const handleFilterChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilter(e.target.value as any)
+  }, [])
+
+  const handleNewStory = useCallback(() => {
+    onNewStory()
+  }, [onNewStory])
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <button
           type="button"
-          onClick={onNewStory}
+          onClick={handleNewStory}
           className="rounded-lg bg-[#291471] px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm transition-all duration-150 hover:bg-[#1e0f55] hover:shadow-lg hover:scale-105"
         >
           Add New Blog
@@ -149,7 +162,7 @@ export default memo(function BlogListView({
             <span className="text-gray-600">Filter:</span>
             <select
               value={filter}
-              onChange={(e) => setFilter(e.target.value as any)}
+              onChange={handleFilterChange}
               className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 shadow-sm focus:border-[#291471] focus:outline-none focus:ring-1 focus:ring-[#291471]"
             >
               <option value="all">All</option>

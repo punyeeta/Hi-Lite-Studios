@@ -80,7 +80,7 @@ const About = () => {
 
   useEffect(() => {
     fetchAboutData()
-  }, [fetchAboutData])
+  }, [])
 
 
 

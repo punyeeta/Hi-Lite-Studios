@@ -68,28 +68,26 @@ export const useAdminBlogStore = create<AdminBlogState>()(
           error: err.message ?? 'Failed to load stories',
           loading: false,
         })
+        console.error('[AdminBlog] Fetch error:', err)
       }
     },
 
     // Fetch single story with full content for editing
     fetchStoryById: async (id: number) => {
-      // Get current state to check cache first
+      // Check cache first
       let currentState: AdminBlogState | undefined
       set((state) => {
         currentState = state
         return state
       })
 
-      // Check cache first - return immediately without showing loading state
       if (currentState?.storyCache.has(id)) {
         const cached = currentState.storyCache.get(id)
-        set({ editingStory: cached || null })
         return cached || null
       }
 
       set({ editingLoading: true, editingError: null })
       try {
-        // If not cached, fetch from database
         const story = await fetchBlogStoryById(id)
         set((state) => {
           const newCache = new Map(state.storyCache)
@@ -106,6 +104,7 @@ export const useAdminBlogStore = create<AdminBlogState>()(
           editingError: err.message ?? 'Failed to load story',
           editingLoading: false,
         })
+        console.error('[AdminBlog] Fetch single error:', err)
         return null
       }
     },

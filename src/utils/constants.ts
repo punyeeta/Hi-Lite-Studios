@@ -3,6 +3,9 @@
  */
 
 import type { BookingStatus } from '@/supabase/supabase_services/admin_boooking/bookings'
+import IndoorIcon from '@/assets/images/ServiceIndoor.png'
+import OutdoorIcon from '@/assets/images/ServiceOutdoor.png'
+import VideoIcon from '@/assets/images/ServiceVid.png'
 
 export type WorkLabel = 'Indoor & Studio' | 'Outdoor & Events' | 'Videography'
 
@@ -10,6 +13,66 @@ export const WORK_LABEL_OPTIONS: { value: WorkLabel; label: string }[] = [
   { value: 'Indoor & Studio', label: 'Indoor & Studio' },
   { value: 'Outdoor & Events', label: 'Outdoor & Events' },
   { value: 'Videography', label: 'Videography' },
+]
+
+// Services data - shared across Service.tsx and ServicesSection.tsx
+export type ServiceCard = {
+  id: string
+  title: string
+  description: string
+  icon: string
+  gradient: string
+  features: string[]
+  textColor: string
+}
+
+export const SERVICES_DATA: ServiceCard[] = [
+  {
+    id: 'indoor',
+    title: 'Indoor & Studio Photography',
+    description:
+      'Professional portraits, family photos, and academic photography in a controlled studio environment.',
+    icon: IndoorIcon,
+    gradient: 'from-[#4E26D7] to-[#291471]',
+    textColor: 'text-[#291471]',
+    features: [
+      'Individual Portraits',
+      'Family/Group Portraits',
+      'Graduation Academic Portraits',
+      'Fashion/Editorial Shoots',
+    ],
+  },
+  {
+    id: 'outdoor',
+    title: 'Outdoor & Event Photography',
+    description:
+      'Coverage of school activities, institutional events, and milestone celebrations with a natural and candid touch.',
+    icon: OutdoorIcon,
+    gradient: 'from-[#FBC93D] to-[#FF8000]',
+    textColor: 'text-[#FF8000]',
+    features: [
+      'School Event Coverage',
+      'Institutional/Corp. Events',
+      'Birthday/Milestone Celeb.',
+      'Outdoor Portrait Sessions',
+      'Organizational Shoots',
+      'Engagement/Pre-Event Shoots',
+    ],
+  },
+  {
+    id: 'video',
+    title: 'Videography',
+    description:
+      'High-quality event videography for schools, organizations, and personal events to complement our photography services.',
+    icon: VideoIcon,
+    gradient: 'from-[#F2322E] to-[#AA1815]',
+    textColor: 'text-[#AA1815]',
+    features: [
+      'Event Highlight Videos',
+      'Full Event Coverage',
+      'Video Documentation for School Events',
+    ],
+  },
 ]
 
 export const ADMIN_COLORS = {

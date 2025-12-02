@@ -19,8 +19,10 @@ const RecentWorks = () => {
 
 
   useEffect(() => {
-    fetchItems(12)
-  }, [fetchItems])
+    if (works.length === 0) {
+      fetchItems(12)
+    }
+  }, [])
 
   const yearRange = useMemo(() => {
     const current = new Date().getFullYear()

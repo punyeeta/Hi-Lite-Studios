@@ -12,10 +12,10 @@ const WorksSection = () => {
   const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 })
 
   useEffect(() => {
-    if (isVisible) {
+    if (isVisible && items.length === 0) {
       fetchItems(8)
     }
-  }, [isVisible, fetchItems])
+  }, [isVisible])
 
   const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%236b7280" font-size="16" font-family="sans-serif"%3EImage Placeholder%3C/text%3E%3C/svg%3E'
 

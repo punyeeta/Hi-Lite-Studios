@@ -40,9 +40,10 @@ export default function MagazineAdmin() {
   const [localError, setLocalError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
+  // Fetch stories only once on mount
   useEffect(() => {
     fetchStories()
-  }, [fetchStories])
+  }, [])
 
   const pinnedStories = useMemo(
     () => stories.filter((s) => s.is_pinned),
@@ -53,10 +54,10 @@ export default function MagazineAdmin() {
     [stories],
   )
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setForm(emptyForm)
     setSelectedStory(null)
-  }
+  }, [])
 
   const handleNewStory = useCallback(() => {
     resetForm()
@@ -118,7 +119,7 @@ export default function MagazineAdmin() {
       setShowDeleteModal(false)
       setDeleteTarget(null)
     }
-  }, [deleteTarget, deleteStory, selectedStory])
+  }, [deleteTarget, deleteStory, selectedStory, resetForm])
 
   const handleDeleteCancel = useCallback(() => {
     setShowDeleteModal(false)
@@ -139,7 +140,7 @@ export default function MagazineAdmin() {
       setForm((prev) => ({ ...prev, [field]: value as any }))
     }
 
-  const handleCoverUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCoverUpload = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -154,9 +155,9 @@ export default function MagazineAdmin() {
       setUploadingCover(false)
       e.target.value = ''
     }
-  }
+  }, [])
 
-  const handleBodyImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleBodyImageUpload = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -176,7 +177,7 @@ export default function MagazineAdmin() {
       setUploadingBodyImage(false)
       e.target.value = ''
     }
-  }
+  }, [])
 
   const handleSaveStory = async (status: BlogStatus = form.status) => {
     const title = form.title.trim()
@@ -241,25 +242,25 @@ export default function MagazineAdmin() {
     }
   }
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     await handleSaveStory('published')
-  }
+  }, [])
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     resetForm()
     setMode('list')
-  }
+  }, [resetForm])
 
-  const handleSaveDraft = async () => {
+  const handleSaveDraft = useCallback(async () => {
     await handleSaveStory('draft')
-  }
+  }, [])
 
-  const handleDeleteCurrentFromEditor = async () => {
+  const handleDeleteCurrentFromEditor = useCallback(async () => {
     if (!selectedStory) return
     // open modal for the currently selected story
     setDeleteTarget(selectedStory)
     setShowDeleteModal(true)
-  }
+  }, [selectedStory])
 
   const handleArchiveStory = useCallback(async () => {
     if (!selectedStory) return
@@ -274,7 +275,7 @@ export default function MagazineAdmin() {
       console.error('[BlogsAndStories] Archive error:', err)
       setLocalError(err.message ?? 'Failed to archive post')
     }
-  }, [selectedStory, archiveStory])
+  }, [selectedStory, archiveStory, resetForm])
 
   const isEditing = mode === 'edit' || mode === 'create'
 

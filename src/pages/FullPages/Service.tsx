@@ -1,76 +1,65 @@
-import { useState } from 'react'
+import { useState, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import IndoorIcon from '@/assets/images/ServiceIndoor.png'
-import OutdoorIcon from '@/assets/images/ServiceOutdoor.png'
-import VideoIcon from '@/assets/images/ServiceVid.png'
-import ServiceLogo from '@/assets/images/ServiceLogo.png'
 import BorderStar from '@/assets/images/BorderStar.png'
+import ServiceLogo from '@/assets/images/ServiceLogo.png'
 import StarService from '@/assets/images/ServiceStar.png'
-
-type ServiceCard = {
-  id: string
-  title: string
-  description: string
-  icon: string
-  gradient: string
-  features: string[]
-  textColor: string
-}
+import { SERVICES_DATA, type ServiceCard } from '@/utils/constants'
 
 const marqueeItems = ['Capture', 'Photography', 'Stories', 'Trusted', 'Moments']
 
-const services: ServiceCard[] = [
-  {
-    id: 'indoor',
-    title: 'Indoor & Studio Photography',
-    description:
-      'Professional portraits, family photos, and academic photography in a controlled studio environment.',
-    icon: IndoorIcon,
-    gradient: 'from-[#4E26D7] to-[#291471]',
-    textColor: 'text-[#291471]',
-    features: [
-      'Individual Portraits',
-      'Family/Group Portraits',
-      'Graduation Academic Portraits',
-      'Fashion/Editorial Shoots',
-    ],
-  },
-  {
-    id: 'outdoor',
-    title: 'Outdoor & Event Photography',
-    description:
-      'Coverage of school activities, institutional events, and milestone celebrations with a natural and candid touch.',
-    icon: OutdoorIcon,
-    gradient: 'from-[#FBC93D] to-[#FF8000]',
-    textColor: 'text-[#FF8000]',
-    features: [
-      'School Event Coverage',
-      'Institutional/Corp. Events',
-      'Birthday/Milestone Celeb.',
-      'Outdoor Portrait Sessions',
-      'Organizational Shoots',
-      'Engagement/Pre-Event Shoots',
-    ],
-  },
-  {
-    id: 'video',
-    title: 'Videography',
-    description:
-      'High-quality event videography for schools, organizations, and personal events to complement our photography services.',
-    icon: VideoIcon,
-    gradient: 'from-[#F2322E] to-[#AA1815]',
-    textColor: 'text-[#AA1815]',
-    features: [
-      'Event Highlight Videos',
-      'Full Event Coverage',
-      'Video Documentation for School Events',
-    ],
-  },
-]
+// Memoized service button component
+const ServiceButton = memo(({ service, onOpen }: { service: ServiceCard; onOpen: (card: ServiceCard) => void }) => (
+  <button
+    type="button"
+    onClick={() => onOpen(service)}
+    className={`group relative rounded-xl border border-white/60 bg-linear-to-br ${service.gradient} shadow-lg overflow-hidden transition-transform hover:-translate-y-1 hover:scale-[1.02] w-70 h-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white/70`}
+  >
+    <div className="absolute inset-3 rounded-xl border border-white-60" />
+    <img src={BorderStar} alt="" className="absolute left-6 top-6 h-6 w-6" />
+    <img
+      src={ServiceLogo}
+      alt="Service logo"
+      className="absolute right-6 top-6 h-6 w-6"
+    />
+    <div className="relative mt-2 flex flex-col items-center gap-4 overflow-hidden">
+      <img
+        src={service.icon}
+        alt={service.title}
+        className="h-22 w-22 transform transition duration-300 group-hover:-translate-y-8 group-hover:scale-75 group-hover:opacity-0"
+      />
+      <h3 className="text-2xl font-semibold text-white transition duration-300 group-hover:-translate-y-6 group-hover:opacity-0">
+        {service.title}
+      </h3>
+    </div>
+    <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center opacity-0 translate-y-4 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+      <p className="text-lg font-semibold text-white leading-relaxed">
+        {service.description}
+      </p>
+    </div>
+
+    <img src={BorderStar} alt="" className="absolute right-6 bottom-6 h-6 w-6" />
+    <img src={ServiceLogo} alt="Service logo" className="absolute left-6 bottom-6 h-6 w-6" />
+  </button>
+))
+
+ServiceButton.displayName = 'ServiceButton'
 
 const Service = () => {
   const [activeCard, setActiveCard] = useState<ServiceCard | null>(null)
   const navigate = useNavigate()
+
+  // Memoized handlers
+  const handleOpenCard = useCallback((card: ServiceCard) => {
+    setActiveCard(card)
+  }, [])
+
+  const handleCloseCard = useCallback(() => {
+    setActiveCard(null)
+  }, [])
+
+  const handleBookAppointment = useCallback(() => {
+    navigate('/appointment')
+  }, [navigate])
 
 
 
@@ -120,39 +109,12 @@ const Service = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-20 justify-items-center mx-auto max-w-fit">
-          {services.map((service) => (
-            <button
+          {SERVICES_DATA.map((service) => (
+            <ServiceButton
               key={service.id}
-              type="button"
-              onClick={() => setActiveCard(service)}
-              className={`group relative rounded-xl border border-white/60 bg-linear-to-br ${service.gradient} shadow-lg overflow-hidden transition-transform hover:-translate-y-1 hover:scale-[1.02] w-70 h-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white/70`}
-            >
-              <div className="absolute inset-3 rounded-xl border border-white-60" />
-              <img src={BorderStar} alt="" className="absolute left-6 top-6 h-6 w-6" />
-              <img
-                src={ServiceLogo}
-                alt="Service logo"
-                className="absolute right-6 top-6 h-6 w-6"
-              />
-              <div className="relative mt-2 flex flex-col items-center gap-4 overflow-hidden">
-                <img
-                  src={service.icon}
-                  alt={service.title}
-                  className="h-22 w-22 transform transition duration-300 group-hover:-translate-y-8 group-hover:scale-75 group-hover:opacity-0"
-                />
-                <h3 className="text-2xl font-semibold text-white transition duration-300 group-hover:-translate-y-6 group-hover:opacity-0">
-                  {service.title}
-                </h3>
-              </div>
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center opacity-0 translate-y-4 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                <p className="text-lg font-semibold text-white leading-relaxed">
-                  {service.description}
-                </p>
-              </div>
-
-              <img src={BorderStar} alt="" className="absolute right-6 bottom-6 h-6 w-6" />
-              <img src={ServiceLogo} alt="Service logo" className="absolute left-6 bottom-6 h-6 w-6" />
-            </button>
+              service={service}
+              onOpen={handleOpenCard}
+            />
           ))}
         </div>
 
@@ -177,7 +139,7 @@ const Service = () => {
                 type="button"
                 aria-label="Close"
                 className="absolute right-6 top-6 rounded-full bg-white/20 px-3 py-1 text-lg font-semibold text-white transition hover:bg-white/30"
-                onClick={() => setActiveCard(null)}
+                onClick={handleCloseCard}
               >
                 ×
               </button>
@@ -206,7 +168,7 @@ const Service = () => {
                   <button
                     type="button"
                     className="rounded-ee-2xl rounded-tl-2xl border border-white px-6 py-3 font-semibold transition hover:bg-white/10"
-                    onClick={() => navigate('/appointment')}
+                    onClick={handleBookAppointment}
                   >
                     Book Appointment
                   </button>
