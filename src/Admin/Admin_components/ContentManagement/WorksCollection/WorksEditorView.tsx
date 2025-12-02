@@ -62,7 +62,7 @@ export default function WorksEditorView({
   return (
     <div className="space-y-1">
       {/* Top Action Bar - Delete & Cancel on Right */}
-      <div className="flex items-center justify-end gap-3 mr-6 mb-4">
+      <div className="flex items-center justify-end gap-3 mr-6">
         {onDeleteCurrent && (
           <button
             type="button"
