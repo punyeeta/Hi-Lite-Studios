@@ -11,6 +11,7 @@ import { EngagementItem } from '@/components/common/EngagementItem'
 import StarBlack from '@/assets/images/StarBlack.png'
 import { useMagazineStore } from '@/store/magazineStore'
 import { useMagazineEngagement } from '@/utils/useMagazineEngagement'
+import BorderBlue from '@/assets/images/BorderBlue.png'
 
 const Magazine = () => {
   const { id } = useParams<{ id?: string }>()
@@ -133,27 +134,40 @@ const Magazine = () => {
             </article>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={() => navigate('/magazine')}
-                className="self-start rounded-ee-2xl rounded-tl-2xl border border-[#222222] px-5 py-2 text-sm font-semibold text-[#333333] transition hover:bg-[#222222] hover:text-white"
-              >
-                ← Back to Magazine
-              </button>
-              <div className="w-full flex justify-center py-8">
-                <img src={selectedItem.cover_image || ''} alt={selectedItem.title} className="max-w-2xl h-auto object-contain" />
+              {/* Top spacing and X close button on right */}
+              <div className="relative px-10 md:px-16">
+                <button
+                  type="button"
+                  onClick={() => navigate('/magazine')}
+                  aria-label="Close"
+                  className="absolute right-0 top-0 rounded-full border border-[#222222] w-9 h-9 text-[#222222] flex items-center justify-center hover:bg-[#222222] hover:text-white"
+                >
+                  ×
+                </button>
               </div>
-              <div className="space-y-4 px-8 py-8 md:px-10 max-w-4xl mx-auto">
+
+              {/* Title and published date above the cover image */}
+              <div className="px-10 md:px-16 max-w-5xl mx-auto w-full">
                 <h2 className="text-4xl font-semibold text-[#333333]">{selectedItem.title}</h2>
-                {selectedItem.excerpt && (
-                  <>
-                    <p className="text-base text-[#666666]">{selectedItem.excerpt}</p>
-                    <div className="h-px w-full bg-gray-200" />
-                  </>
+                {selectedItem.created_at && (
+                  <p className="mt-1 text-sm text-[#666666]">
+                    {new Date(selectedItem.created_at as any).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </p>
                 )}
               </div>
+
+              {/* Cover image section */}
+              <div className="w-full flex justify-center py-8 px-10 md:px-16">
+                <img src={selectedItem.cover_image || ''} alt={selectedItem.title} className="max-w-3xl w-full h-auto object-contain rounded-xl" />
+              </div>
+              {/* Border Blue below image */}
+              <div className="flex justify-center px-10 md:px-16">
+                <img src={BorderBlue} alt="border-blue" className="w-full max-w-4xl h-auto" />
+              </div>
+
+              {/* Story/description content */}
               <div 
-                className="text-base leading-relaxed text-[#333333] max-w-4xl mx-auto px-8 md:px-10"
+                className="text-base leading-relaxed text-[#333333] max-w-4xl mx-auto px-10 md:px-16"
                 style={{
                   '--tw-prose-body': '#333333',
                 } as React.CSSProperties}
@@ -232,18 +246,26 @@ const Magazine = () => {
                 />
               </div>
 
-              {/* Engagement Section */}
-              <div className="max-w-4xl mx-auto space-y-8 mt-12">
-                {/* Engagement Form */}
+              {/* Divider line with centered star after story */}
+              <div className="relative w-full left-1/2 right-1/2 -translate-x-1/2 my-10 px-10 md:px-16">
+                <div className="h-px w-full bg-black" />
+                <img src={StarBlack} alt="star-black" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 top-1/2 h-10 w-10" />
+              </div>
+
+              {/* Feedback Section */}
+              <div className="max-w-4xl mx-auto space-y-8 px-10 md:px-16">
                 <EngagementForm
                   onSubmit={handleEngagementSubmit}
                   isLoading={isSubmittingEngagement}
                 />
 
-                {/* Divider */}
-                <div className="h-px bg-gray-300 w-full" />
+                {/* Divider before past comments */}
+                <div className="relative w-full left-1/2 right-1/2 -translate-x-1/2">
+                  <div className="h-px w-full bg-black" />
+                  <img src={StarBlack} alt="star-black" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 top-1/2 h-10 w-10" />
+                </div>
 
-                {/* Engagements List */}
+                {/* Past Comments Section */}
                 <div className="space-y-4">
                   {engagement.loading ? (
                     <div className="space-y-4">

@@ -6,7 +6,7 @@ import Footer from './components/common/Footer';
 
 // Public pages
 import { Home } from './pages/Home'
-import { RecentWorks, Service, Magazine, FAQ, Capture, About, Appointment, WorkDetail } from './pages/FullPages'
+import { RecentWorks, Magazine, FAQ, Capture, About, Appointment, WorkDetail } from './pages/FullPages'
 
 // Admin pages
 import LoginForAdmin from './Admin/AdminLogin';
@@ -63,7 +63,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/works" element={<RecentWorks />} />
           <Route path="/works/:id" element={<WorkDetail />} />
-          <Route path="/services" element={<Service />} />
           <Route path="/magazine" element={<Magazine />} />
           <Route path="/magazine/:id" element={<Magazine />} />
           <Route path="/about" element={<About />} />

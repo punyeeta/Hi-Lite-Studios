@@ -257,9 +257,15 @@ const RecentWorks = () => {
                         }}
                       />
                     </div>
-                    {/* Label - Below Image */}
+                    {/* Title (label_2) above Label */}
+                    {work.label_2 && (
+                      <p className="mt-2 text-sm font-semibold text-[#222222] group-hover:text-[#111111] transition-colors">
+                        {work.label_2}
+                      </p>
+                    )}
+                    {/* Label - Below Title */}
                     {work.label_1 && (
-                      <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-600 group-hover:text-gray-900 transition-colors">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-600 group-hover:text-gray-900 transition-colors">
                         {work.label_1}
                       </p>
                     )}

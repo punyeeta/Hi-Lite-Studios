@@ -108,22 +108,26 @@ const WorkDetail = () => {
             />
           </div>
 
-          {/* Right Column */}
+          {/* Right Column: Title, Label, Date, Description */}
           <div className="space-y-4">
-            <h1 className="text-5xl font-semibold text-[#333333]">{work.label_1 || 'Work'}</h1>
+            {/* Title */}
+            <h1 className="text-5xl font-semibold text-[#333333]">{work.label_2 || work.label_1 || 'Work'}</h1>
 
-            {work.label_2 && (
+            {/* Label */}
+            {work.label_1 && (
               <div className="inline-flex items-center gap-2 text-sm font-semibold text-[#FF8000]">
-                <span>{work.label_2}</span>
+                <span>{work.label_1}</span>
               </div>
             )}
 
+            {/* Date */}
             {work.date && (
               <p className="text-base text-[#666666]">
-                {new Date(work.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                {new Date(work.date as any).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             )}
 
+            {/* Description */}
             {work.description && (
               <div className="text-base leading-relaxed text-[#333333]">
                 <style>{`
