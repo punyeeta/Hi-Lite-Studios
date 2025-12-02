@@ -10,12 +10,11 @@ const RecentWorks = () => {
   const navigate = useNavigate()
   const { items: works, loading, error, hasMore, fetchItems, loadMore } = useWorksStore()
   const [yearFilter, setYearFilter] = useState<string | 'all'>('all')
-  const [serviceFilters, setServiceFilters] = useState<Set<'Indoor & Studio' | 'Outdoor & Events' | 'Videography'>>(
-    new Set()
-  )
+  const [serviceFilters, setServiceFilters] = useState<Set<'Indoor & Studio' | 'Outdoor & Events' | 'Videography'>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
-  const [yearOpen, setYearOpen] = useState(false)
-  const yearRef = useRef<HTMLDivElement>(null)
+  const [showYearPicker, setShowYearPicker] = useState(false)
+  const ellipsisRef = useRef<HTMLDivElement | null>(null)
+  const pickerRef = useRef<HTMLDivElement | null>(null)
 
 
 
@@ -23,31 +22,55 @@ const RecentWorks = () => {
     fetchItems(12)
   }, [fetchItems])
 
-  // Close year dropdown on outside click
+  const yearRange = useMemo(() => {
+    const current = new Date().getFullYear()
+    const start = Math.max(2020, current - 10)
+    const set = new Set<number>()
+    for (let y = current; y >= start; y--) set.add(y)
+    works.forEach((w) => {
+      if (w.date) {
+        try {
+          const y = new Date(w.date).getFullYear()
+          if (y >= start || y > current) set.add(y)
+        } catch {}
+      }
+    })
+    return Array.from(set).sort((a, b) => b - a).map(String)
+  }, [works])
+
+  // Full picker years: include all from 2020..current plus any future/admin years present
+  const pickerYears = useMemo(() => {
+    const current = new Date().getFullYear()
+    const base: number[] = Array.from({ length: current - 2019 }, (_, i) => 2020 + i)
+    const fromData: number[] = []
+    works.forEach((w) => {
+      if (w.date) {
+        try {
+          const y = new Date(w.date).getFullYear()
+          fromData.push(y)
+        } catch {}
+      }
+    })
+    const all = new Set<number>([...base, ...fromData])
+    return Array.from(all).sort((a, b) => b - a)
+  }, [works])
+
+  // Close picker on outside click
   useEffect(() => {
+    if (!showYearPicker) return
     const onDocClick = (e: MouseEvent) => {
-      if (!yearRef.current) return
-      if (yearRef.current && !yearRef.current.contains(e.target as Node)) setYearOpen(false)
+      const target = e.target as Node
+      if (pickerRef.current && pickerRef.current.contains(target)) return
+      if (ellipsisRef.current && ellipsisRef.current.contains(target)) return
+      setShowYearPicker(false)
     }
     document.addEventListener('mousedown', onDocClick)
     return () => document.removeEventListener('mousedown', onDocClick)
-  }, [])
+  }, [showYearPicker])
 
   const handleLoadMore = () => {
     loadMore(8)
   }
-
-  const years = useMemo(() => {
-    const ys = new Set<string>()
-    works.forEach((w) => {
-      if (w.date) {
-        try {
-          ys.add(new Date(w.date).getFullYear().toString())
-        } catch {}
-      }
-    })
-    return Array.from(ys).sort((a, b) => Number(b) - Number(a))
-  }, [works])
 
   const filteredWorks = useMemo(() => {
     return works.filter((w) => {
@@ -62,7 +85,7 @@ const RecentWorks = () => {
 
   return (
     <div className="page-fade min-h-screen bg-white">
-      <section id="works" className="relative w-full bg-white md:px-8 py-8 overflow-hidden">
+      <section id="works" className="relative w-full bg-white md:px-8 py-8 overflow-hidden min-h-screen flex flex-col">
         {/* Decorative Top Left */}
         <div className="absolute top-[-150px] left-[-275px] w-[600px] h-[600px] object-contain">
           <img
@@ -73,7 +96,7 @@ const RecentWorks = () => {
         </div>
 
         {/* Decorative Bottom Right */}
-        <div className="absolute bottom-[-300px] right-[-275px] w-[600px] h-[600px] object-contain">
+        <div className="absolute bottom-[-400px] right-[-350px] object-contain">
           <img
             src={StarBottomRight}
             alt="Star bottom right"
@@ -81,7 +104,7 @@ const RecentWorks = () => {
           />
         </div>
 
-        <div className="relative z-10 w-full px-4 md:px-32">
+        <div className="relative z-10 w-full px-4 md:px-32 flex-1 flex flex-col">
           {/* Header Section */}
           <div className="flex flex-col items-center mb-6">
             <div className="-mb-3">
@@ -103,50 +126,90 @@ const RecentWorks = () => {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-wrap items-start justify-between gap-8 md:gap-10 mb-6">
-            {/* By Year */}
-            <div className="min-w-[260px] mr-auto">
+          <div className="flex flex-wrap items-start justify-between gap-8 md:gap-10">
+            <div className="min-w-[260px] mr-auto relative">
               <span className="block mb-2 text-xs font-semibold uppercase tracking-wide text-gray-700">By Year</span>
-              <div ref={yearRef} className="relative inline-block">
-                <button
-                  type="button"
-                  onClick={() => setYearOpen((o) => !o)}
-                  aria-haspopup="listbox"
-                  aria-expanded={yearOpen}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 shadow-sm hover:bg-gray-50"
-                >
-                  {yearFilter === 'all' ? 'All Years' : yearFilter}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    className={`h-4 w-4 text-gray-500 transition-transform ${yearOpen ? 'rotate-180' : ''}`}
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setYearFilter('all')}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${yearFilter === 'all'
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
+                    aria-selected={yearFilter === 'all'}
                   >
-                    <path d="M6 9l6 6 6-6" strokeWidth="2" />
-                  </svg>
-                </button>
-                {yearOpen && (
-                  <div className="absolute z-30 mt-2 w-40 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg">
+                    All
+                  </button>
+                  {yearRange.slice(0, 5).map((y) => (
+                    <button
+                      key={`recent-${y}`}
+                      type="button"
+                      onClick={() => setYearFilter(y)}
+                      className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${yearFilter === y
+                        ? 'bg-linear-to-r from-[#291471] to-[#4E26D7] text-white border-[#291471]'
+                        : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
+                      aria-selected={yearFilter === y}
+                    >
+                      {y}
+                    </button>
+                  ))}
+                </div>
+                {/* Row 2: Ellipsis + next 5 years */}
+                <div className="flex flex-wrap gap-2 items-center">
+                  <div ref={ellipsisRef} className="relative inline-block">
                     <button
                       type="button"
-                      onClick={() => { setYearFilter('all'); setYearOpen(false) }}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-sm ${yearFilter === 'all' ? 'bg-gray-900 text-white' : 'hover:bg-gray-100 text-gray-800'}`}
+                      onClick={() => setShowYearPicker((v) => !v)}
+                      className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${showYearPicker
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
+                      aria-label="Open year picker"
+                      title="Pick a year"
                     >
-                      All Years
+                      ....
                     </button>
-                    {years.map((y) => (
-                      <button
-                        key={y}
-                        type="button"
-                        onClick={() => { setYearFilter(y); setYearOpen(false) }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-sm ${yearFilter === y ? 'bg-gray-900 text-white' : 'hover:bg-gray-100 text-gray-800'}`}
-                      >
-                        {y}
-                      </button>
-                    ))}
+                    {showYearPicker && (
+                      <div
+                        ref={pickerRef}
+                        className="absolute left-0 top-full mt-2 z-30 
+                                    rounded-xl border border-gray-300 bg-white p-2 shadow-lg w-24 min-w-24 max-w-sm max-h-56 overflow-y-auto"
+                          style={{
+                            scrollbarWidth: 'thin',        // Firefox
+                            scrollbarColor: '#ccc transparent', // Firefox
+                          }}
+                        >
+                          {pickerYears.map((y) => (
+                            <button
+
+                            key={`picker-${y}`}
+                            type="button"
+                            onClick={() => { setYearFilter(String(y)); setShowYearPicker(false) }}
+                            className={`w-full text-left rounded-lg px-3 py-2 text-sm font-medium transition ${yearFilter === String(y)
+                              ? 'bg-gray-900 text-white'
+                              : 'hover:bg-gray-100 text-gray-800'}`}
+                          >
+                            {y}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                  {yearRange.slice(5, 10).map((y) => (
+                    <button
+                      key={`prev-${y}`}
+                      type="button"
+                      onClick={() => setYearFilter(y)}
+                      className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${yearFilter === y
+                        ? 'bg-linear-to-r from-[#291471] to-[#4E26D7] text-white border-[#291471]'
+                        : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
+                      aria-selected={yearFilter === y}
+                    >
+                      {y}
+                    </button>
+                  ))}
+                </div>
+                {/* Picker now rendered relative to ellipsis button above */}
               </div>
             </div>
 
@@ -233,11 +296,7 @@ const RecentWorks = () => {
                 />
               ))}
             </div>
-          ) : filteredWorks.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No works found yet.</p>
-            </div>
-          ) : (
+          ) : filteredWorks.length === 0 ? null : (
             <>
               {/* Image Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -287,6 +346,14 @@ const RecentWorks = () => {
               )}
             </>
           )}
+          {/* No works for selected year message */}
+          {!loading && filteredWorks.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-2xl md:text-3xl font-semibold text-gray-800">No works found for this year.</p>
+            </div>
+          )}
+          {/* Extra bottom spacing for page uniformity */}
+          <div className="h-24" />
         </div>
       </section>
     </div>

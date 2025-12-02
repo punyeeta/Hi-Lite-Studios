@@ -16,7 +16,7 @@ const Hero = () => {
           <img
             src={StarYellow}
             alt="Abstract geometric graphic"
-            className="absolute -left-16 w-1/2 max-w-[250px] object-contain"
+            className="absolute -left-16 w-1/2 object-contain"
           />
         {/* Left Side */}
 

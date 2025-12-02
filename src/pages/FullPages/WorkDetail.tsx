@@ -23,10 +23,25 @@ const WorkDetail = () => {
 
 
   const MAX_DESCRIPTION_LENGTH = 150
-  const shouldTruncate = work?.description && work.description.length > MAX_DESCRIPTION_LENGTH
-  const displayDescription = !expandedDescription && shouldTruncate && work?.description
-    ? work.description.substring(0, MAX_DESCRIPTION_LENGTH).trim() + '...' 
-    : work?.description
+  const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '')
+  const plainDescription = work?.description ? stripHtml(work.description) : ''
+  const shouldTruncate = plainDescription.length > MAX_DESCRIPTION_LENGTH
+  const truncatedDescription = shouldTruncate
+    ? plainDescription.substring(0, MAX_DESCRIPTION_LENGTH).trim() + '...'
+    : plainDescription
+
+  const gradientClassesFor = (srv?: string | null) => {
+    switch (srv) {
+      case 'Indoor & Studio':
+        return 'bg-gradient-to-r from-[#4E26D7] to-[#291471] text-white'
+      case 'Outdoor & Events':
+        return 'bg-gradient-to-r from-[#FBC93D] to-[#FFC800] text-[#291471]'
+      case 'Videography':
+        return 'bg-gradient-to-r from-[#F2322E] to-[#AA1815] text-white'
+      default:
+        return 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800'
+    }
+  }
 
   if (loading) {
     return (
@@ -77,7 +92,7 @@ const WorkDetail = () => {
         </div>
 
         {/* Decorative Bottom Right */}
-        <div className="absolute bottom-[-300px] right-[-275px] w-[600px] h-[600px] object-contain">
+        <div className="absolute bottom-[-500px] right-[-275px] object-contain">
           <img
             src={StarBottomRight}
             alt="Star bottom right"
@@ -115,13 +130,19 @@ const WorkDetail = () => {
             )}
             
             {work.label_1 && (
-              <p className="text-sm font-semibold uppercase tracking-wide text-gray-600">{work.label_1}</p>
+              <span
+                className={`inline-flex w-fit items-center rounded-full px-4 py-1 text-xs font-semibold tracking-wide uppercase shadow-sm ${gradientClassesFor(work.label_1)}`}
+              >
+                {work.label_1}
+              </span>
             )}
 
             {work.label_2 && (
-              <div className="inline-flex items-center gap-2 text-sm font-semibold text-[#FF8000]">
-                <span>{work.label_2}</span>
-              </div>
+              <span
+                className={`inline-flex w-fit items-center rounded-full px-4 py-1 text-xs font-semibold tracking-wide uppercase shadow-sm ${gradientClassesFor(work.label_2)}`}
+              >
+                {work.label_2}
+              </span>
             )}
 
             {work.date && (
@@ -139,7 +160,14 @@ const WorkDetail = () => {
                     text-align: justify;
                   }
                 `}</style>
-                <div className="work-description">{displayDescription}</div>
+                {!expandedDescription ? (
+                  <div className="work-description whitespace-pre-wrap">{truncatedDescription}</div>
+                ) : (
+                  <div
+                    className="work-description"
+                    dangerouslySetInnerHTML={{ __html: work.description || '' }}
+                  />
+                )}
                 {shouldTruncate && (
                   <div className="mt-4 flex justify-end">
                     <button
