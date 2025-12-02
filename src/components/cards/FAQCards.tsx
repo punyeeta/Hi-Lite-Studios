@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import StarRed from '@/assets/images/StarRed.png'
 import type { FAQItem } from '@/components/sections/context/FAQContext'
 
 type FAQCardProps = {
@@ -40,40 +41,47 @@ const FAQCard = ({
     }
   }
 
+  const showToggle = !isAdmin && !preview && !onClick
+  const isExpanded = expanded || isOpen
+
   return (
     <article
-      className={`rounded-2xl bg-white shadow-[6px_10px_40px_rgba(0,0,0,0.20)] transition hover:shadow-[12px_16px_40px_rgba(0,0,0,0.16)] overflow-hidden ${className}`}
+      className={`rounded-2xl bg-[#FEF9F8] shadow-[6px_10px_40px_rgba(0,0,0,0.12)] transition hover:shadow-[12px_16px_40px_rgba(0,0,0,0.16)] overflow-hidden ${className}`}
     >
-      <div
-        className={`w-full px-4 py-3 mt-2 text-left ${
-          !isAdmin && !preview ? 'cursor-pointer hover:bg-gray-50' : ''
-        } ${isAdmin ? 'cursor-default' : ''}`}
-        onClick={handleClick}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="text-xl md:text-2xl font-bold text-[#333333] flex-1">
-            {item.question}
-          </h3>
-          {!isAdmin && !preview && !onClick && (
-            <div
-              className={`text-2xl text-gray-400 transition shrink-0 ${
-                isOpen ? 'rotate-45' : ''
-              }`}
-            >
-              +
-            </div>
-          )}
+      <div className="w-full px-4 py-4 mt-1">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            {showToggle && (
+              <button
+                type="button"
+                onClick={handleClick}
+                aria-label={isExpanded ? 'Collapse answer' : 'Expand answer'}
+                className="rounded-full p-1.5 transition transform hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-300"
+              >
+                {isExpanded ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6 text-[#D42724]">
+                    <path fill="currentColor" d="M7.41 14.59 12 10l4.59 4.59L18 13.17l-6-6-6 6z" />
+                  </svg>
+                ) : (
+                  <img src={StarRed} alt="expand" className="h-6 w-6" />
+                )}
+              </button>
+            )}
+            <h3 className="text-xl md:text-3xl font-semibold text-[#1E1E1E]">
+              {item.question}
+            </h3>
+          </div>
         </div>
       </div>
 
       {/* Answer area */}
       {!isAdmin && (preview || expanded || isOpen) && (
-        <div className="px-4 py-2 mb-2 bg-white">
+        <div className="px-16 py-4 mb-3 bg-[FEF9F8] text-justify">
           <p
             className={`${
               preview
-                ? 'text-sm text-gray-600 leading-relaxed line-clamp-3'
-                : 'text-gray-700 leading-relaxed'
+                ? 'text-xl text-[#5C5C5C] leading-relaxed line-clamp-3'
+                : 'text-2xl text-[#5C5C5C] leading-relaxed'
             }`}
           >
             {item.answer}
@@ -89,7 +97,7 @@ const FAQCard = ({
               <button
                 type="button"
                 onClick={() => onMoveUp?.(item.id)}
-                className="rounded-lg px-3 py-1 text-sm font-semibold text-gray-700 transition-all duration-150 hover:shadow-sm hover:scale-105"
+                className="rounded-lg px-3 py-1 text-sm font-semibold text-gray-700 transition-all duration-150 hover:shadow-sm hover:scale-105 active:scale-95"
                 title="Move up"
               >
                 ↑
@@ -97,7 +105,7 @@ const FAQCard = ({
               <button
                 type="button"
                 onClick={() => onMoveDown?.(item.id)}
-                className="rounded-lg px-3 py-1 text-sm font-semibold text-gray-700 transition-all duration-150 hover:shadow-sm hover:scale-105"
+                className="rounded-lg px-3 py-1 text-sm font-semibold text-gray-700 transition-all duration-150 hover:shadow-sm hover:scale-105 active:scale-95"
                 title="Move down"
               >
                 ↓
@@ -105,7 +113,7 @@ const FAQCard = ({
               <button
                 type="button"
                 onClick={() => onToggleFeatured?.(item.id)}
-                className={`rounded-lg px-3 py-1 text-sm font-semibold transition-all duration-150 hover:scale-110 ${
+                className={`rounded-lg px-3 py-1 text-sm font-semibold transition-all duration-150 hover:scale-110 active:scale-95 ${
                   featured ? 'text-yellow-400' : 'text-gray-400'
                 }`}
                 title="Show on landing"
@@ -118,14 +126,14 @@ const FAQCard = ({
               <button
                 type="button"
                 onClick={() => onEdit?.(item)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all duration-150 hover:shadow-sm hover:scale-105"
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all duration-150 hover:shadow-sm hover:scale-105 active:scale-95"
               >
                 Edit
               </button>
               <button
                 type="button"
                 onClick={() => onDelete?.(item.id)}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-150 hover:shadow-lg hover:scale-105 active:scale-95"
                 style={{ background: 'linear-gradient(to right, #F2322E 0%, #AA1815 100%)' }}
               >
                 Delete

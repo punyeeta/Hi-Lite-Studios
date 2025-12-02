@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { useFAQ } from '@/components/sections/context/FAQContext'
 import FAQCard from '@/components/cards/FAQCards'
+import HeaderFAQImg from '@/assets/images/HeaderFAQ.png'
+import StarFAQ from '@/assets/images/StarFAQ.png'
 
 const FAQ = () => {
   const { items } = useFAQ()
@@ -9,31 +11,34 @@ const FAQ = () => {
 
 
   return (
-    <div className="page-fade min-h-screen bg-white py-16">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
+    <div className="page-fade relative min-h-screen bg-white pt-8 pb-20 overflow-hidden">
+      <img
+        src={StarFAQ}
+        alt="star-faq"
+        className="pointer-events-none select-none absolute left-[-50px] top-0 h-screen w-auto opacity-90 z-0"
+      />
+
+      <img
+        src={StarFAQ}
+        alt="star-faq"
+        className="pointer-events-none select-none absolute right-[-25px] bottom-[-350px] h-screen w-auto opacity-90 z-0 transform scale-x-[-1]"
+      />
+
+
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-2 relative z-10">
         {/* Header */}
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="text-6xl font-extrabold text-[#222222]">
-              Frequently Asked <span className="font-extrabold">Questions</span>
-            </h1>
-            <p className="mt-2 text-sm text-[#555555]">
-              A comprehensive guide to our services, booking process, and more.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="self-start rounded-ee-2xl rounded-tl-2xl border border-[#222222] px-6 py-2 text-sm font-semibold text-[#222222] transition hover:bg-[#222222] hover:text-white"
-          >
-            ← Back to Home
-          </button>
+        <header className="flex flex-col items-center gap-6">
+          <img
+            src={HeaderFAQImg}
+            alt="Frequently Asked Questions"
+            className="w-full max-w-3xl h-auto mx-auto"
+          />
         </header>
 
         {/* FAQ Cards List - show full answers */}
-        <div className="grid gap-8 md:grid-cols-1">
+        <div className="grid gap-10 md:grid-cols-1">
           {items.map((item) => (
-            <FAQCard key={item.id} item={item} isAdmin={false} expanded={true} />
+            <FAQCard key={item.id} item={item} isAdmin={false} expanded={false} />
           ))}
         </div>
 
