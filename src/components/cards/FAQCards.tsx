@@ -46,9 +46,12 @@ const FAQCard = ({
 
   return (
     <article
-      className={`rounded-2xl bg-[#FEF9F8] shadow-[6px_10px_40px_rgba(0,0,0,0.12)] transition hover:shadow-[12px_16px_40px_rgba(0,0,0,0.16)] overflow-hidden ${className}`}
+      onClick={onClick ? () => onClick(item) : undefined}
+      className={`rounded-2xl bg-[#FEF9F8] shadow-[6px_10px_40px_rgba(0,0,0,0.12)] transition hover:shadow-[12px_16px_40px_rgba(0,0,0,0.16)] overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     >
-      <div className="w-full px-4 py-4 mt-1">
+      <div className="w-full px-6 py-3">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             {showToggle && (
@@ -67,7 +70,7 @@ const FAQCard = ({
                 )}
               </button>
             )}
-            <h3 className="text-xl md:text-3xl font-semibold text-[#1E1E1E]">
+            <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E]">
               {item.question}
             </h3>
           </div>
@@ -76,12 +79,12 @@ const FAQCard = ({
 
       {/* Answer area */}
       {!isAdmin && (preview || expanded || isOpen) && (
-        <div className="px-16 py-4 mb-3 bg-[FEF9F8] text-justify">
+        <div className="px-6 py-2 mb-4 bg-[FEF9F8]">
           <p
             className={`${
               preview
-                ? 'text-xl text-[#5C5C5C] leading-relaxed line-clamp-3'
-                : 'text-2xl text-[#5C5C5C] leading-relaxed'
+                ? 'text-lg md:text-xl text-[#5C5C5C] leading-relaxed line-clamp-3'
+                : 'text-xl md:text-2xl text-[#5C5C5C] leading-relaxed'
             }`}
           >
             {item.answer}
