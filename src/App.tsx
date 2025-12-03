@@ -10,6 +10,8 @@ import { RecentWorks, Magazine, MagazineArticle, FAQ, Capture, About, Appointmen
 
 // Admin pages
 import LoginForAdmin from './Admin/AdminLogin';
+import AdminForgotPassword from './Admin/AdminForgotPassword';
+import AdminResetPassword from './Admin/AdminResetPassword';
 import AdminMain from './Admin/AdminMain';
 import BlogsStories from './Admin/Admin_components/BlogsAndStories/Magazine';
 import AdminBookings from './Admin/Admin_components/BookingAppointments/AdminBookings';
@@ -75,6 +77,11 @@ function App() {
 
         {/* Login Page */}
         <Route path="/login" element={<LoginForAdmin />} />
+        
+        {/* Password Recovery - Not Protected */}
+        <Route path="/admin/login" element={<LoginForAdmin />} />
+        <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+        <Route path="/admin/reset-password" element={<AdminResetPassword />} />
 
         {/* Admin Routes - Protected */}
         <Route element={<RequireAuth />}>

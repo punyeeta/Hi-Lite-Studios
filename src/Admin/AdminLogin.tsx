@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, Link } from 'react-router-dom'
 import type { Location } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../supabase/client'
@@ -117,9 +117,11 @@ export default function AdminLogin() {
                     {loading ? 'Signing in...' : 'Login'}
                   </Button>
 
-                  <p className="text-center text-lg text-gray-600 hover:underline cursor-pointer">
-                    Forgot Password?
-                  </p>
+                  <Link to="/admin/forgot-password">
+                    <p className="text-center text-lg text-gray-600 hover:underline cursor-pointer">
+                      Forgot Password?
+                    </p>
+                  </Link>
                 </form>
               </div>
             </div>
