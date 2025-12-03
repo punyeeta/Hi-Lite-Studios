@@ -62,7 +62,7 @@ const AboutSection = () => {
               <button 
                 type="button"
                 onClick={() => navigate('/about')}
-                className="relative mt-4 inline-flex w-32 hover:opacity-80 transition"
+                className="relative mt-4 inline-flex w-32 transition hover:opacity-90 hover:scale-[1.02] hover:drop-shadow-[0_0_25px_rgba(41,20,113,0.35)]"
               >
                 <img
                   src={LearnButton}

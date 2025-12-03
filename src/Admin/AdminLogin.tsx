@@ -6,7 +6,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import Logo from '@/assets/images/Logo.png'
+import Logo from '@/assets/Logo.svg'
 import Wordmark from '@/assets/images/Wordmark.png'
 import HeroStar from '@/assets/images/HeroStar.png'
 

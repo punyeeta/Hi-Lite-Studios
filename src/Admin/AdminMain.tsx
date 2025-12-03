@@ -26,9 +26,9 @@ export default function AdminMain() {
   }, [navigate])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <AdminSidebar onLogout={handleLogout} loggingOut={loading} />
-      <main className="ml-72 p-12 overflow-y-auto min-h-screen" style={{ contain: 'layout' }}>
+      <main className="ml-72 p-12 overflow-y-auto min-h-screen overflow-x-hidden" style={{ contain: 'layout' }}>
         <img
           src={HeroStar}
           alt="Admin Star Graphic"
@@ -38,8 +38,9 @@ export default function AdminMain() {
           <header className="space-y-3 mb-4">
             <p className="text-3xl font-bold text-[#D42724]">Welcome, Admin.</p>
           </header>
-
-          <Outlet />
+          <div className="w-full max-w-full">
+            <Outlet />
+          </div>
 
           {message && (
             <div className="mt-6 rounded-md border border-red-300 bg-red-50 p-4 text-sm text-red-700">

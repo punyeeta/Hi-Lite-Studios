@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useCallback, memo } from 'react'
+import { useEffect, useCallback, memo, useRef } from 'react'
 import type { TeamMember } from '@/supabase/supabase_services/Content_Management/aboutUs'
 import { useAboutStore } from '@/store/aboutStore'
 import IndoorIcon from '@/assets/images/ServiceIndoor.png'
@@ -160,31 +160,8 @@ const About = () => {
             </p>
           </div>
 
-          {/* Team Names Strip */}
-            <div className="w-full mb-8">
-              <div className="w-screen overflow-x-hidden relative left-1/2 -translate-x-1/2">
-                <div className="flex bg-[#FBC93D] py-4 items-center justify-center">
-                  {(teamMembers.length
-                    ? teamMembers.map((m) => m.name)
-                    : ['Team Member 1', 'Team Member 2', 'Team Member 3', 'Team Member 4']
-                  ).map((name, idx, arr) => (
-                    <div key={`${name}-${idx}`} className="flex items-center">
-                      <span className="text-white text-3xl whitespace-nowrap px-8">
-                        {name}
-                      </span>
-
-                      {idx < arr.length - 1 && (
-                        <img
-                          src={StarWhite}
-                          alt="star"
-                          className="w-18 h-18 mx-4"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          {/* Team Names Strip (seamless marquee with equal spacing) */}
+            <TeamStrip names={(teamMembers.length ? teamMembers.map((m) => m.name) : ['Team Member 1', 'Team Member 2', 'Team Member 3', 'Team Member 4'])} />
             </div>
           </section>
 
@@ -395,3 +372,67 @@ const ServiceModal = memo(({ service, onClose, onBooking }: ServiceModalProps) =
 ServiceModal.displayName = 'ServiceModal'
 
 export default About
+
+// Seamless marquee strip for team names, similar to Services section
+const TeamStrip = ({ names }: { names: string[] }) => {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const trackRef = useRef<HTMLDivElement | null>(null)
+  const seqRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const container = containerRef.current
+    const track = trackRef.current
+    const seq = seqRef.current
+    if (!container || !track || !seq) return
+
+    let x = 0
+    let rafId: number
+    const speed = 0.8
+
+    const seqWidth = () => seq.getBoundingClientRect().width
+
+    const third = seq.cloneNode(true) as HTMLDivElement
+    third.setAttribute('aria-hidden', 'true')
+    track.appendChild(third)
+
+    const step = () => {
+      x -= speed
+      const width = seqWidth()
+      if (x <= -width) {
+        x += width
+      }
+      track.style.transform = `translateX(${x}px)`
+      rafId = requestAnimationFrame(step)
+    }
+
+    rafId = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
+  const Item = ({ name, index }: { name: string; index: number }) => (
+    <div key={`team-${index}`} className="flex items-center shrink-0 px-4">
+      <span className="text-white text-3xl font-semibold whitespace-nowrap">
+        {name}
+      </span>
+      <img src={StarWhite} alt="star" className="w-10 h-10 shrink-0 ml-6" />
+    </div>
+  )
+
+  return (
+    <div className="w-full mb-8">
+      <div ref={containerRef} className="w-screen overflow-hidden relative left-1/2 -translate-x-1/2 bg-[#FBC93D] py-4">
+        <div ref={trackRef} className="flex whitespace-nowrap will-change-transform">
+          <div ref={seqRef} className="flex">
+            {names.map((n, idx) => <Item name={n} index={idx} />)}
+          </div>
+          <div aria-hidden="true" className="flex">
+            {names.map((n, idx) => <Item name={n} index={idx} />)}
+          </div>
+          <div aria-hidden="true" className="flex">
+            {names.map((n, idx) => <Item name={n} index={idx} />)}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

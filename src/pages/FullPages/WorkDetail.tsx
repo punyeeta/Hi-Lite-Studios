@@ -152,7 +152,7 @@ const WorkDetail = () => {
             )}
 
             {work.description && (
-              <div className="text-base leading-relaxed text-[#333333]">
+              <div className="relative z-10 text-base leading-relaxed text-[#333333]">
                 <style>{`
                   .work-description {
                     color: #444444;
@@ -173,7 +173,8 @@ const WorkDetail = () => {
                     <button
                       type="button"
                       onClick={() => setExpandedDescription(!expandedDescription)}
-                      className="px-6 py-2 text-base font-bold text-[#c21205] hover:text-[#a01604] transition rounded-md"
+                      className="px-6 py-2 text-base font-bold text-[#c21205] hover:text-[#a01604] transition rounded-md cursor-pointer"
+                      aria-expanded={expandedDescription}
                     >
                       {expandedDescription ? 'See Less' : 'See More'}
                     </button>

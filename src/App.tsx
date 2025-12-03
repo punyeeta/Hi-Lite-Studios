@@ -35,7 +35,9 @@ function UserLayout() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 pt-24">
-        <Outlet />
+        <div className="min-w-[1366px] max-w-[5120px] mx-auto w-full">
+          <Outlet />
+        </div>
       </main>
       <ContactSection />
       <Footer />

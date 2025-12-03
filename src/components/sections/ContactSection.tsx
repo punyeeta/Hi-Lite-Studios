@@ -20,12 +20,12 @@ const ContactSection = () => {
                 FJGR+FR5 Gaerlan St Cagayan de Oro Misamis Oriental
               </p>
             </div>
-
             <div className="flex items-center gap-3">
               <Phone className="w-5 h-5 shrink-0 text-white" />
               <p className="text-base md:text-lg text-[#dddddd]">
                 09169103229 | 09175613739 | 088 851 1237
               </p>
+
             </div>
 
             <div className="flex items-center gap-3">
@@ -54,7 +54,7 @@ const ContactSection = () => {
               href="https://fb.com/hilitestudio.cdo"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 text-white hover:text-gray-200 transition-colors"
+              className="group flex items-center gap-3 text-white hover:text-gray-200 transition-colors hover:scale-[1.02]"
             >
               <Facebook className="w-6 h-6 group-hover:scale-110 transition-transform" />
               <span className="text-base md:text-lg text-[#dddddd] underline-offset-2 group-hover:underline">
@@ -66,7 +66,7 @@ const ContactSection = () => {
               href="https://hilite.vercel.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 text-white hover:text-gray-200 transition-colors"
+              className="group flex items-center gap-3 text-white hover:text-gray-200 transition-colors hover:scale-[1.02]"
             >
               <Globe className="w-6 h-6 group-hover:scale-110 transition-transform" />
               <span className="text-base md:text-lg text-[#dddddd] underline-offset-2 group-hover:underline">

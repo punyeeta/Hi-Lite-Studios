@@ -128,7 +128,7 @@ const RecentWorks = () => {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-wrap items-start justify-between gap-8 md:gap-10">
+          <div className="flex flex-wrap items-start justify-between gap-6 md:gap-8 lg:gap-10">
             <div className="min-w-[260px] mr-auto relative">
               <span className="block mb-2 text-xs font-semibold uppercase tracking-wide text-gray-700">By Year</span>
               <div className="flex flex-col gap-2">
@@ -136,7 +136,7 @@ const RecentWorks = () => {
                   <button
                     type="button"
                     onClick={() => setYearFilter('all')}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${yearFilter === 'all'
+                    className={`rounded-full px-3 sm:px-3.5 md:px-4 py-1.5 sm:py-1.5 md:py-2 text-[12px] sm:text-[13px] md:text-sm font-semibold transition shadow-sm border ${yearFilter === 'all'
                       ? 'bg-gray-900 text-white border-gray-900'
                       : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
                     aria-selected={yearFilter === 'all'}
@@ -148,7 +148,7 @@ const RecentWorks = () => {
                       key={`recent-${y}`}
                       type="button"
                       onClick={() => setYearFilter(y)}
-                      className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${yearFilter === y
+                      className={`rounded-full px-3 sm:px-3.5 md:px-4 py-1.5 sm:py-1.5 md:py-2 text-[12px] sm:text-[13px] md:text-sm font-semibold transition shadow-sm border ${yearFilter === y
                         ? 'bg-linear-to-r from-[#291471] to-[#4E26D7] text-white border-[#291471]'
                         : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
                       aria-selected={yearFilter === y}
@@ -163,7 +163,7 @@ const RecentWorks = () => {
                     <button
                       type="button"
                       onClick={() => setShowYearPicker((v) => !v)}
-                      className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${showYearPicker
+                      className={`rounded-full px-3 sm:px-3.5 md:px-4 py-1.5 sm:py-1.5 md:py-2 text-[12px] sm:text-[13px] md:text-sm font-semibold transition shadow-sm border ${showYearPicker
                         ? 'bg-gray-900 text-white border-gray-900'
                         : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
                       aria-label="Open year picker"
@@ -202,7 +202,7 @@ const RecentWorks = () => {
                       key={`prev-${y}`}
                       type="button"
                       onClick={() => setYearFilter(y)}
-                      className={`rounded-full px-4 py-2 text-sm font-semibold transition shadow-sm border ${yearFilter === y
+                      className={`rounded-full px-3 sm:px-3.5 md:px-4 py-1.5 sm:py-1.5 md:py-2 text-[12px] sm:text-[13px] md:text-sm font-semibold transition shadow-sm border ${yearFilter === y
                         ? 'bg-linear-to-r from-[#291471] to-[#4E26D7] text-white border-[#291471]'
                         : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
                       aria-selected={yearFilter === y}
@@ -301,7 +301,7 @@ const RecentWorks = () => {
           ) : filteredWorks.length === 0 ? null : (
             <>
               {/* Image Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 {filteredWorks.map((work) => (
                   <div 
                     key={work.id} 
@@ -340,7 +340,7 @@ const RecentWorks = () => {
                   <button
                     onClick={handleLoadMore}
                     disabled={loading}
-                    className="px-8 py-2 bg-[#333333] text-white font-semibold rounded-ee-2xl rounded-tl-2xl hover:bg-[#444444] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 sm:px-7 md:px-8 py-2 sm:py-2 md:py-2.5 text-[13px] sm:text-sm md:text-base bg-[#333333] text-white font-semibold rounded-ee-2xl rounded-tl-2xl hover:bg-[#444444] transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Loading...' : 'Load More ↓'}
                   </button>

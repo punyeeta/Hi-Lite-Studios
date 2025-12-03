@@ -61,7 +61,7 @@ const WorksSection = () => {
           {/* View More Button */}
           <button
             onClick={handleViewMore}
-            className="bg-linear-to-r from-[#F2322E] to-[#AA1815] hover:bg-red-700 text-white px-10 py-2 rounded-ee-2xl rounded-tl-2xl font-bold text-xl transition-colors shadow-md hover:shadow-lg"
+            className="bg-linear-to-r from-[#F2322E] to-[#AA1815] hover:bg-red-700 text-white px-10 py-2 rounded-ee-2xl rounded-tl-2xl font-bold text-xl transition-colors shadow-md hover:shadow-[0_0_25px_rgba(242,50,46,0.6)] hover:scale-[1.02]"
           >
             View More
           </button>

@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from 'react'
+import { useEffect, useRef, useState, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BorderStar from '@/assets/images/BorderStar.png'
 import ServiceLogo from '@/assets/images/ServiceLogo.png'
@@ -64,7 +64,7 @@ const ServicesSection = () => {
   return (
     <section id="services" className="relative w-full bg-white py-4">
       {/* top marquee */}
-      <Strip direction="top" />
+        <Strip direction="top" />
 
       <div className="relative w-full flex flex-col items-center pt-10 pb-16">
         {/* Top line */}
@@ -105,7 +105,7 @@ const ServicesSection = () => {
         </div>
 
       {/* bottom marquee */}
-      <Strip direction="bottom" />
+        <Strip direction="bottom" />
 
       {/* modal */}
       {activeCard && (
@@ -168,21 +168,67 @@ const ServicesSection = () => {
 }
 
 const Strip = ({ direction }: { direction: 'top' | 'bottom' }) => {
-    const repeatedItems = [...marqueeItems, ...marqueeItems, ...marqueeItems]
-    return (
-        <div className={`w-full bg-[#F9C74F] py-3 ${direction === 'top' ? '' : 'mt-12'}`}>
-            <div className="flex whitespace-nowrap">
-            {repeatedItems.map((item, idx) => (
-                <div key={`${direction}-${idx}`} className="flex items-center shrink-0 px-5">
-                <span className="text-md font-light text-white tracking-[0.35em]">
-                    {item}
-                </span>
-                <img src={BorderStar} alt="" className="h-6 w-6 shrink-0 ml-2" />
-                </div>
-            ))}
-            </div>
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const trackRef = useRef<HTMLDivElement | null>(null)
+  const seqRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const container = containerRef.current
+    const track = trackRef.current
+    const seq = seqRef.current
+    if (!container || !track || !seq) return
+
+    let x = 0
+    let rafId: number
+    const speed = 0.8 // pixels per frame
+
+    const seqWidth = () => seq.getBoundingClientRect().width
+
+    const third = seq.cloneNode(true) as HTMLDivElement
+    third.setAttribute('aria-hidden', 'true')
+    track.appendChild(third)
+
+    const step = () => {
+      x -= speed
+      const width = seqWidth()
+      if (x <= -width) {
+        x += width
+      }
+      track.style.transform = `translateX(${x}px)`
+      rafId = requestAnimationFrame(step)
+    }
+
+    rafId = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
+  const createItem = (item: string, index: number) => (
+    <div key={`item-${index}`} className="flex items-center shrink-0 px-2">
+      <span className="text-md font-light text-white tracking-[0.35em] whitespace-nowrap">
+        {item}
+      </span>
+      <img src={BorderStar} alt="" className="h-8 w-8 shrink-0 ml-3" />
+    </div>
+  )
+
+  return (
+    <div
+      ref={containerRef}
+      className={`w-full bg-[#FBC93D] py-3 ${direction === 'top' ? '' : 'mt-12'}`}
+    >
+      <div ref={trackRef} className="flex whitespace-nowrap will-change-transform">
+        <div ref={seqRef} className="flex">
+          {marqueeItems.map((item, idx) => createItem(item, idx))}
         </div>
-    )
+        <div aria-hidden="true" className="flex">
+          {marqueeItems.map((item, idx) => createItem(item, idx))}
+        </div>
+        <div aria-hidden="true" className="flex">
+          {marqueeItems.map((item, idx) => createItem(item, idx))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default ServicesSection

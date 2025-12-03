@@ -52,10 +52,10 @@ const FAQSection = () => {
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-6 px-8 md:px-12">
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-fluid px-8 md:px-12 section-padding">
         {/* Header */}
         <header className="flex flex-col gap-4 items-start">
-          <h2 className="text-7xl leading-none font-extrabold bg-linear-to-r from-[#F2322E] to-[#AA1815] bg-clip-text text-transparent text-center">
+          <h2 className="title-fluid leading-none font-extrabold bg-linear-to-r from-[#F2322E] to-[#AA1815] bg-clip-text text-transparent text-center">
             Frequently Asked Questions
           </h2>
         </header>
@@ -78,7 +78,7 @@ const FAQSection = () => {
           <button
             type="button"
             onClick={() => navigate('/faq')}
-            className="inline-flex items-center gap-3 mb-2 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-10 py-3 text-lg font-semibold text-white shadow-lg transition hover:shadow-xl"
+            className="inline-flex items-center gap-3 mb-2 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-10 py-3 text-lg font-semibold text-white shadow-lg transition hover:shadow-[0_0_25px_rgba(242,50,46,0.6)] hover:scale-[1.02]"
           >
             View More FAQs
             <span className="text-2xl">→</span>

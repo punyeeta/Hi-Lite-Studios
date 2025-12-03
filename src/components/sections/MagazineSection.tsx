@@ -34,7 +34,7 @@ const MagazineSection = () => {
           <button
             type="button"
             onClick={() => navigate('/magazine')}
-            className="mt-5 mb-6 rounded-ee-2xl rounded-tl-2xl bg-[#333333] px-16 py-3 text-xl font-semibold text-white shadow-md transition hover:bg-[#444444]"
+            className="mt-5 mb-6 rounded-ee-2xl rounded-tl-2xl bg-[#333333] px-16 py-3 text-xl font-semibold text-white shadow-md transition hover:bg-[#444444] hover:shadow-[0_0_25px_rgba(51,51,51,0.35)] hover:scale-[1.02]"
           >
             Read More
             <span className="text-2xl ml-4">→</span>

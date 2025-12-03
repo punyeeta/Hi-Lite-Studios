@@ -34,7 +34,7 @@ const CaptureSection = () => {
         <div className="flex justify-center md:justify-end">
           <button
             onClick={handleCaptureClick}
-            className="px-6 py-2 bg-white text-[#3403d3] font-semibold rounded-ee-2xl rounded-tl-2xl text-lg transition duration-300 transform hover:scale-105 hover:shadow-lg"
+            className="px-6 py-2 bg-white text-[#3403d3] font-semibold rounded-ee-2xl rounded-tl-2xl text-lg transition duration-300 transform hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(52,3,211,0.35)]"
           >
             Capture With Us
             <span className="text-xl"> →</span>
