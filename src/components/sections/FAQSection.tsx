@@ -78,7 +78,7 @@ const FAQSection = () => {
           <button
             type="button"
             onClick={() => navigate('/faq')}
-            className="inline-flex items-center gap-3 mb-2 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-10 py-3 text-lg font-semibold text-white shadow-lg transition hover:shadow-[0_0_25px_rgba(242,50,46,0.6)] hover:scale-[1.02]"
+            className="inline-flex items-center gap-3 mb-2 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-10 py-3 text-lg font-semibold text-white shadow-lg transition hover:shadow-xl"
           >
             View More FAQs
             <span className="text-2xl">→</span>
