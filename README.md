@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# Hi-Lite Studio System Overview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Hi-Lite Studio** is a studio web application, developed to manage the studio’s creative portfolio, client bookings, and internal administration. It provides a smooth and efficient experience for both clients and administrators, while prioritizing security and responsiveness.
 
-Currently, two official plugins are available:
+### [Visit Live Site](https://hi-lite-studio.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## System Purpose
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Showcase Portfolio:** Display projects, artworks, and services professionally.
+- **Manage Bookings:** Allow clients to schedule appointments through an easy-to-use online form.
+- **Admin Management:** Enable studio staff to manage content, monitor bookings, and track studio activity through a secure dashboard.
+- **Enhanced Interaction:** Provide a chatbot to assist clients with common questions and navigation.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Key Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Client-Facing:
+- Browse creative works and portfolio items.
+- Submit booking requests online.
+- Access a responsive, mobile-friendly interface.
+- Interact with a chatbot for guidance.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Admin-Facing:
+- Secure login for studio staff.
+- Dashboard to manage bookings and portfolio content.
+- Monitor activity and view system data.
+- Add, update, or remove portfolio items and client bookings.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## System Architecture
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+|        Layer        |                   Technology                   |
+|---------------------|------------------------------------------------|
+| Frontend            | React + TypeScript (Vite)                      |
+| Backend & Database  | Supabase (authentication, database, storage))  |
+| Deployment          | Vercel                                         |
+| Styling & UI        | TailwindCSS with shadcn/ui components          |
+| Chatbot Integration | OpenAI API for client assistance               |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## Security & Performance
+
+- HTTPS via Vercel deployment ensures secure communication.
+- Regular dependency and security scanning using npm audit and basic OWASP checks.
+- Performance monitored using synthetic load testing tools (k6/Locust) to ensure fast loading and stable operations.
+
+---
+
+## Usage Workflow
+
+1. Clients visit the website to view the portfolio or submit a booking request.
+2. Admin users log in via the secure admin page to manage bookings and content.
+3. The system tracks activity and maintains data consistency, allowing the studio to operate efficiently and securely.
+
+---
+
+## Project Team
+| Name   | Role | GitHub |
+|--------|------|--------|
+|  Heart Chiong  |  Project Manager  | [@Aarchie14](https://github.com/Aarchie14) |
+|  Mark Vincent Limpahan  |  UI/UX Designer  | [@markvncent](https://github.com/markvncent) |
+|  Roxanne Locsin  |  Frontend Developer  | [@punyeeta](https://github.com/punyeeta) |
+|  Gil John Rey Naldoza  |  System Architect & QA  | [@GilNaldoza](https://github.com/GilNaldoza) |
+|  Rhenel Jhon Sajol  |  Backend Developer  | [@Tetsuuya](https://github.com/Tetsuuya) |
+|  Angel Janette Taglucop  |  System Architect & QA  | [@angel-jane](https://github.com/angel-jane) |
