@@ -1,6 +1,23 @@
 import FooterLogo from '../../assets/images/FooterLogo.png';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    if (location.pathname === '/') {
+      scrollToTop();
+    } else {
+      navigate('/');
+      setTimeout(scrollToTop, 200);
+    }
+  };
   return (
     <footer className="relative w-full bg-linear-to-r from-[#200f59] to-[#3403d3] pt-4 pb-4 px-4 md:px-20 overflow-hidden">
       {/* Top Border Line */}
@@ -18,7 +35,7 @@ const Footer = () => {
         {/* Center Column */}
         <div className="flex flex-col items-center gap-2 w-full">
         <div className="flex flex-col items-center my-2">
-            <a href="#navbar" className="cursor-pointer transition-transform hover:scale-105">
+            <a href="#top" onClick={handleLogoClick} className="cursor-pointer transition-transform hover:scale-105">
             <img
                 src={FooterLogo}
                 alt="Hi-Lite Studio Logo"

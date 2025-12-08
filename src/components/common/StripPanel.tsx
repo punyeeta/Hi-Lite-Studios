@@ -46,7 +46,7 @@ export default function InfiniteStrip() {
   }, [])
 
   return (
-    <div ref={containerRef} className="w-screen overflow-hidden bg-linear-to-r from-blue-950 to-indigo-700 py-2">
+    <div id="strip-panel" ref={containerRef} className="w-screen overflow-hidden bg-linear-to-r from-blue-950 to-indigo-700 py-2">
       <div ref={trackRef} className="flex whitespace-nowrap will-change-transform">
         {/* First sequence (measure width) */}
         <div ref={seqRef} className="flex">
