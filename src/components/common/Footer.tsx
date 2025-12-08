@@ -41,10 +41,18 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="text-center">
-        <p className="text-white text-xs md:text-sm">
+        <p className="text-white text-xs md:text-sm pb-2">
           © 2025 All Rights Reserved
         </p>
       </div>
+
+      {/* Legal Links */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
+        <a href="/privacy" className="text-white text-xs md:text-sm underline underline-offset-4 hover:opacity-90">Privacy Policy</a>
+        <span className="hidden md:inline text-white/70">|</span>
+        <a href="/terms" className="text-white text-xs md:text-sm underline underline-offset-4 hover:opacity-90">Terms of Service</a>
+      </div>
+
     </footer>
   );
 };

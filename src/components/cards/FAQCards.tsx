@@ -70,7 +70,7 @@ const FAQCard = ({
                 )}
               </button>
             )}
-            <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-[#1E1E1E]">
+            <h3 className="text-2xl sm:text-base md:text-lg lg:text-2xl font-bold text-[#1E1E1E]">
               {item.question}
             </h3>
           </div>

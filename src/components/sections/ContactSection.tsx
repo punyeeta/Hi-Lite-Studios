@@ -31,7 +31,7 @@ const ContactSection = () => {
             <div className="flex items-center gap-3">
               <Mail className="w-5 h-5 shrink-0 text-white" />
               <p className="text-base md:text-lg text-[#dddddd]">
-                hilitestudiocdo@gmail.com
+                studiohilite84@gmail.com
               </p>
             </div>
           </div>
@@ -41,7 +41,7 @@ const ContactSection = () => {
         <div className="flex flex-col items-start md:items-end justify-center">
           <div className="flex flex-col items-start space-y-3 font-medium">
             <a
-              href="mailto:hilitestudiocdo@gmail.com"
+              href="mailto:studiohilite84@gmail.com"
               className="group flex items-center gap-3 text-white hover:text-gray-200 transition-colors"
             >
               <Mail className="w-6 h-6 group-hover:scale-110 transition-transform" />
@@ -63,7 +63,7 @@ const ContactSection = () => {
             </a>
 
             <a
-              href="https://hilite.vercel.com"
+              href="https://hi-lite-studio.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-3 text-white hover:text-gray-200 transition-colors hover:scale-[1.02]"

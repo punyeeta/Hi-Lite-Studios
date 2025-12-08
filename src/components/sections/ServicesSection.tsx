@@ -94,16 +94,10 @@ const ServicesSection = () => {
         </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 md:gap-20 justify-items-center mx-auto md:max-w-fit w-full px-2 sm:px-4 md:px-0">
-          {SERVICES_DATA.map((service, index) => (
-            <div
-              key={service.id}
-              className={`${index === 2 ? 'col-span-2 md:col-span-1 flex justify-center' : ''}`}
-            >
-              <ServiceButton
-                service={service}
-                onOpen={handleOpenCard}
-              />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 md:gap-20 justify-items-center mx-auto md:max-w-fit w-full px-2 sm:px-4 md:px-0">
+          {SERVICES_DATA.map((service) => (
+            <div key={service.id}>
+              <ServiceButton service={service} onOpen={handleOpenCard} />
             </div>
           ))}
         </div>
@@ -208,7 +202,7 @@ const Strip = ({ direction }: { direction: 'top' | 'bottom' }) => {
 
   const createItem = (item: string, index: number) => (
     <div key={`item-${index}`} className="flex items-center shrink-0 px-2">
-      <span className="text-md font-light text-white tracking-[0.35em] whitespace-nowrap">
+      <span className="text-md text-white tracking-[0.35em] whitespace-nowrap">
         {item}
       </span>
       <img src={BorderStar} alt="" className="h-8 w-8 shrink-0 ml-3" />
