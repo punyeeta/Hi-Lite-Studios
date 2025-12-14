@@ -1,38 +1,38 @@
+export interface BookingsHeaderAction {
+  label: string
+  onClick: () => Promise<void> | void
+  color: string
+}
+
 export interface BookingsHeaderProps {
   selectedCount: number
   loading?: boolean
-  onApproveSelected: () => Promise<void> | void
-  onDeclineSelected: () => Promise<void> | void
+  actions: BookingsHeaderAction[]
 }
 
 export default function BookingsHeader({
   selectedCount,
   loading = false,
-  onApproveSelected,
-  onDeclineSelected,
+  actions,
 }: BookingsHeaderProps) {
   const isDisabled = !selectedCount || loading
 
+  if (actions.length === 0) return null
+
   return (
     <div className="flex gap-2">
-      <button
-        type="button"
-        onClick={onApproveSelected}
-        disabled={isDisabled}
-        className="rounded-md px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: isDisabled ? '#cccccc' : '#FFC800' }}
-      >
-        Approve Selected
-      </button>
-      <button
-        type="button"
-        onClick={onDeclineSelected}
-        disabled={isDisabled}
-        className="rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: isDisabled ? '#cccccc' : '#EE0202' }}
-      >
-        Decline Selected
-      </button>
+      {actions.map((action, index) => (
+        <button
+          key={index}
+          type="button"
+          onClick={action.onClick}
+          disabled={isDisabled}
+          className="rounded-md px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          style={{ backgroundColor: isDisabled ? '#cccccc' : action.color }}
+        >
+          {action.label}
+        </button>
+      ))}
     </div>
   )
 }

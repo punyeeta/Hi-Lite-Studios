@@ -9,6 +9,7 @@ import DeclinedIcon from '../../../assets/images/Adminbuttons/bookings_buttons/D
 import { useBookings, BOOKING_TABS } from '../../../utils'
 import { BookingsTable, BookingsHeader } from '../shared'
 import BookingDetailsModal from '../shared/BookingDetailsModal'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 
 type Tab = BookingStatus
 
@@ -33,10 +34,12 @@ export default function AdminBookings() {
   const [filterDate, setFilterDate] = useState<string>('')
 
   // Use custom hook for all booking logic
-  const { bookings, loading, error, updateStatus, updateManyStatus } = useBookings({ activeTab, filterDate })
+  const { bookings, loading, error, updateStatus, updateManyStatus, deleteMany } = useBookings({ activeTab, filterDate })
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [modalLoading, setModalLoading] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const toggleSelectAll = useCallback(() => {
     const allSelected = bookings.length > 0 && selectedIds.length === bookings.length
@@ -71,6 +74,29 @@ export default function AdminBookings() {
   const handleDeclineSelected = useCallback(() => {
     handleBulkStatusChange('declined')
   }, [handleBulkStatusChange])
+
+  const handleDeleteSelected = useCallback(() => {
+    if (!selectedIds.length) return
+    setShowDeleteModal(true)
+  }, [selectedIds.length])
+
+  const handleDeleteConfirmed = useCallback(async () => {
+    if (!selectedIds.length) return
+    setDeleting(true)
+    try {
+      await deleteMany(selectedIds)
+      setSelectedIds([])
+    } catch (err) {
+      console.error('[AdminBookings] Delete error:', err)
+    } finally {
+      setDeleting(false)
+      setShowDeleteModal(false)
+    }
+  }, [selectedIds, deleteMany])
+
+  const handleDeleteCancel = useCallback(() => {
+    setShowDeleteModal(false)
+  }, [])
 
   const handleRowClick = useCallback(async (booking: Booking) => {
     try {
@@ -109,6 +135,8 @@ export default function AdminBookings() {
 
   useEffect(() => {
     if (activeTab !== 'confirmed') setFilterDate('')
+    // Clear selections when switching tabs
+    setSelectedIds([])
   }, [activeTab])
 
   // Bookings are already filtered server-side when filterDate is used
@@ -150,6 +178,17 @@ export default function AdminBookings() {
 
         {activeTab === 'confirmed' ? (
           <div className="flex items-center gap-2">
+            <BookingsHeader
+              selectedCount={selectedIds.length}
+              loading={loading}
+              actions={[
+                {
+                  label: 'Delete Selected',
+                  onClick: handleDeleteSelected,
+                  color: '#EE0202',
+                },
+              ]}
+            />
             <label htmlFor="confirmed-filter-date" className="sr-only">Filter confirmed by date</label>
             <div className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 text-sm shadow-sm">
               <input
@@ -176,8 +215,30 @@ export default function AdminBookings() {
           <BookingsHeader
             selectedCount={selectedIds.length}
             loading={loading}
-            onApproveSelected={handleApproveSelected}
-            onDeclineSelected={handleDeclineSelected}
+            actions={[
+              {
+                label: 'Approve Selected',
+                onClick: handleApproveSelected,
+                color: '#FFC800',
+              },
+              {
+                label: 'Decline Selected',
+                onClick: handleDeclineSelected,
+                color: '#EE0202',
+              },
+            ]}
+          />
+        ) : activeTab === 'cancelled' || activeTab === 'declined' ? (
+          <BookingsHeader
+            selectedCount={selectedIds.length}
+            loading={loading}
+            actions={[
+              {
+                label: 'Delete Selected',
+                onClick: handleDeleteSelected,
+                color: '#EE0202',
+              },
+            ]}
           />
         ) : null}
       </div>
@@ -221,6 +282,21 @@ export default function AdminBookings() {
               isOpen={detailsOpen}
               onClose={() => setDetailsOpen(false)}
               loading={modalLoading}
+            />
+
+            <ConfirmModal
+              isOpen={showDeleteModal}
+              title="Delete Bookings"
+              message={
+                selectedIds.length === 1
+                  ? 'Are you sure you want to delete this booking? This action cannot be undone.'
+                  : `Are you sure you want to delete ${selectedIds.length} selected bookings? This action cannot be undone.`
+              }
+              confirmLabel="Delete"
+              cancelLabel="Cancel"
+              loading={deleting}
+              onConfirm={handleDeleteConfirmed}
+              onCancel={handleDeleteCancel}
             />
           </>
         )}

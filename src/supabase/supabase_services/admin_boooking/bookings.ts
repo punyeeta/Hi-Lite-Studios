@@ -110,3 +110,16 @@ export async function fetchBookingById(id: number) {
   return data as Booking
 }
 
+// Delete a single booking
+export async function deleteBooking(id: number) {
+  const { error } = await supabase.from(TABLE_NAME).delete().eq('id', id)
+  if (error) throw error
+}
+
+// Delete multiple bookings
+export async function deleteManyBookings(ids: number[]) {
+  if (!ids.length) return
+  const { error } = await supabase.from(TABLE_NAME).delete().in('id', ids)
+  if (error) throw error
+}
+

@@ -4,6 +4,8 @@ import {
   fetchBookingsByStatus,
   updateBookingStatus,
   updateManyBookingStatus,
+  deleteBooking,
+  deleteManyBookings,
 } from '@/supabase/supabase_services/admin_boooking/bookings'
 
 interface UseBookingsOptions {
@@ -87,6 +89,45 @@ export function useBookings({ activeTab, filterDate }: UseBookingsOptions) {
     }
   }
 
+  const deleteBookingById = async (id: number) => {
+    try {
+      // Remove from UI immediately (optimistic update)
+      setBookings((prev) => prev.filter((b) => b.id !== id))
+      
+      // Delete in database
+      await deleteBooking(id)
+      
+      // Refetch to ensure UI is in sync
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
+    } catch (err: any) {
+      setError(err.message ?? 'Failed to delete booking')
+      // Reload on error to sync state
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
+    }
+  }
+
+  const deleteMany = async (ids: number[]) => {
+    if (!ids.length) return
+    try {
+      // Remove from UI immediately (optimistic update)
+      setBookings((prev) => prev.filter((b) => !ids.includes(b.id)))
+      
+      // Delete in database
+      await deleteManyBookings(ids)
+      
+      // Refetch to ensure UI is in sync
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
+    } catch (err: any) {
+      setError(err.message ?? 'Failed to delete selected bookings')
+      // Reload on error to sync state
+      const updated = await fetchBookingsByStatus(activeTab as BookingStatus, filterDate)
+      setBookings(updated)
+    }
+  }
+
   return {
     bookings,
     loading,
@@ -95,5 +136,7 @@ export function useBookings({ activeTab, filterDate }: UseBookingsOptions) {
     setBookings,
     updateStatus,
     updateManyStatus,
+    deleteBooking: deleteBookingById,
+    deleteMany,
   }
 }
