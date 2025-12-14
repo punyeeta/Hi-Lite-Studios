@@ -19,7 +19,7 @@ const HeroMobile = () => {
         {/* Text */}
         <div className="relative z-10 flex flex-col justify-start">
           <p className="mb-1 text-2xl sm:text-xl font-medium text-black">Welcome,</p>
-          <h1 className="text-6xl sm:text-6xl font-black bg-linear-to-r from-[#291471] to-[#4E26D7] bg-clip-text text-transparent leading-none">
+          <h1 className="text-5xl sm:text-5xl font-black bg-linear-to-r from-[#291471] to-[#4E26D7] bg-clip-text text-transparent leading-none">
             <span className="block">This is Hi-</span>
             <span className="block">Lite Studio.</span>
           </h1>
@@ -28,37 +28,40 @@ const HeroMobile = () => {
           </p>
         </div>
 
-        {/* Buttons - Scattered */}
-        <div className="relative z-10 mt-13 h-[200px]">
-          <div className="absolute top-7 left-63 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-3 py-2 text-xs font-medium italic text-white transition hover:shadow-[0_0_15px_rgba(74,20,140,0.6)] opacity-80" style={{ animation: 'floatY 4s ease-in-out infinite' }}>
-            Capture with us
+        {/* Button Cluster - centered layout matching medium-large design */}
+        <div className="relative z-0 mt-6 sm:mt-8 h-[210px] sm:h-60 md:h-[260px]">
+          {/* Center CTA */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <button
+              onClick={() => navigate('/appointment')}
+              className="cursor-pointer rounded-md bg-linear-to-r from-[#F2322E] to-[#AA1815] px-6 sm:px-8 md:px-9 py-2.5 sm:py-3 md:py-3.5 text-sm sm:text-base md:text-lg font-semibold italic text-white shadow-lg transition hover:shadow-[0_0_25px_rgba(242,50,46,0.7)] hover:scale-[1.02] whitespace-nowrap"
+              aria-label="Book Appointment"
+            >
+              <span className="relative z-10">Book Appointment</span>
+            </button>
           </div>
 
-          <div className="absolute bottom-12 left-10 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-3 py-2 text-xs font-medium italic text-white transition hover:shadow-[0_0_15px_rgba(74,20,140,0.6)] opacity-80" style={{ animation: 'floatY 5s ease-in-out infinite', animationDelay: '0.2s' }}>
-            Own your spotlight
-          </div>
-          
-          <button
-            onClick={() => navigate('/appointment')}
-            className="absolute left-50 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-md bg-linear-to-r from-[#F2322E] to-[#AA1815] px-4 sm:px-5 py-4 sm:py-2 text-xs sm:text-sm md:text-base font-semibold italic text-white shadow-lg transition hover:shadow-[0_0_25px_rgba(242,50,46,0.7)] hover:scale-[1.02] whitespace-nowrap">
-            <span className="relative z-10">Book Appointment</span>
-          </button>
-
-          <div className="absolute top-0 left-39 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-3 py-1.5 text-xs font-medium italic text-white transition hover:shadow-[0_0_15px_rgba(242,50,46,0.6)] opacity-80" style={{ animation: 'floatY 4.5s ease-in-out infinite', animationDelay: '0.1s' }}>
-            Create moments
-          </div>
-
-          <div className="absolute bottom-1 left-30 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-3 py-1.5 text-xs font-medium italic text-white transition hover:shadow-[0_0_15px_rgba(242,50,46,0.6)] opacity-80" style={{ animation: 'floatY 5.2s ease-in-out infinite', animationDelay: '0.3s' }}>
-            Make your memories
-          </div>
-
-          <div className="absolute bottom-33 left-15 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-3 py-1.5 text-xs font-medium italic text-white transition hover:shadow-[0_0_15px_rgba(255,193,7,0.6)] opacity-80" style={{ animation: 'floatY 4.8s ease-in-out infinite', animationDelay: '0.15s' }}>
+          {/* Surrounding badges - equal sizes */}
+          <span className="absolute left-1/4 top-[24%] sm:top-[10%] md:top-[12%] -translate-x-[78%] sm:-translate-x-[80%] md:-translate-x-[85%] rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2 text-[11px] sm:text-sm md:text-sm font-medium italic text-white opacity-90 transition hover:shadow-[0_0_15px_rgba(255,193,7,0.6)]" style={{ animation: 'floatY 4.8s ease-in-out infinite', animationDelay: '0.15s' }}>
             Dream with us
-          </div>
+          </span>
+          <span className="absolute left-30 top-[14%] sm:top:[10%] md:top-[12%] translate-x-[18%] sm:translate-x-[22%] md:translate-x-[26%] rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2 text-[11px] sm:text-sm md:text-sm font-medium italic text-white opacity-90 transition hover:shadow-[0_0_15px_rgba(242,50,46,0.6)]" style={{ animation: 'floatY 4.5s ease-in-out infinite', animationDelay: '0.1s' }}>
+            Create moments
+          </span>
 
-          <div className="absolute bottom-10 left-60 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-3 py-1.5 text-xs font-medium italic text-white transition hover:shadow-[0_0_15px_rgba(255,193,7,0.6)] opacity-80" style={{ animation: 'floatY 5.4s ease-in-out infinite', animationDelay: '0.25s' }}>
+          <span className="absolute left-0 sm:left-0 md:left-0 top-36 -translate-y-[60%] sm:-translate-y-[55%] md:-translate-y-[50%] rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2 text-[11px] sm:text-sm md:text-sm font-medium italic text-white opacity-90 transition hover:shadow-[0_0_15px_rgba(74,20,140,0.6)]" style={{ animation: 'floatY 5s ease-in-out infinite', animationDelay: '0.2s' }}>
+            Own your spotlight
+          </span>
+          <span className="absolute right-0 sm:right-0 md:right-0 top-[32%] -translate-y-[40%] sm:-translate-y-[45%] md:-translate-y-[48%] rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2 text-[11px] sm:text-sm md:text-sm font-medium italic text-white opacity-90 transition hover:shadow-[0_0_15px_rgba(74,20,140,0.6)]" style={{ animation: 'floatY 4s ease-in-out infinite' }}>
+            Capture with us
+          </span>
+
+          <span className="absolute left-40 bottom-[8%] sm:bottom-[10%] md:bottom-[12%] -translate-x-[58%] sm:-translate-x-[60%] md:-translate-x-[62%] rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2 text-[11px] sm:text-sm md:text-sm font-medium italic text-white opacity-90 transition hover:shadow-[0_0_15px_rgba(242,50,46,0.6)]" style={{ animation: 'floatY 5.2s ease-in-out infinite', animationDelay: '0.3s' }}>
+            Make your memories
+          </span>
+          <span className="absolute left-1/2 bottom-[20%] sm:bottom-[10%] md:bottom-[12%] translate-x-[38%] sm:translate-x-[40%] md:translate-x-[42%] rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2 text-[11px] sm:text-sm md:text-sm font-medium italic text-white opacity-90 transition hover:shadow-[0_0_15px_rgba(255,193,7,0.6)]" style={{ animation: 'floatY 5.4s ease-in-out infinite', animationDelay: '0.25s' }}>
             Frame your story
-          </div>
+          </span>
         </div>
       </div>
     </section>

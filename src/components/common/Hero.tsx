@@ -77,36 +77,42 @@ const Hero = () => {
       </div>
 
       {/* Button Cluster */}
-      <div className="block md:hidden relative z-10 mx-auto mt-3 mb-2 w-full max-w-[520px] px-2">
-        <div className="relative h-[220px] w-full">
-          <div className="absolute left-1/2 -translate-x-[70%] top-10 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-4 py-2 text-sm font-medium italic text-white opacity-80 w-fit" style={{ animation: 'floatY 4s ease-in-out infinite' }}>
-            Create moments
+      <div className="block md:hidden relative z-10 mx-auto mt-4 mb-3 w-full max-w-[520px] px-3">
+        <div className="relative w-full">
+          {/* Top row */}
+          <div className="flex justify-center gap-3 mb-3">
+            <span className="rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-4 py-2 text-sm font-medium italic text-white opacity-80" style={{ animation: 'floatY 4.5s ease-in-out infinite', animationDelay: '0.1s' }}>
+              Create moments
+            </span>
+            <span className="rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-4 py-2 text-sm font-medium italic text-white opacity-80" style={{ animation: 'floatY 4s ease-in-out infinite' }}>
+              Capture with us
+            </span>
           </div>
-          <div className="absolute left-1/2 -translate-x-[15%] top-16 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-4 py-2 text-sm font-medium italic text-white opacity-80 w-fit" style={{ animation: 'floatY 4.8s ease-in-out infinite', animationDelay: '0.15s' }}>
-            Dream with us
+          {/* Middle CTA */}
+          <div className="flex justify-center mb-3">
+            <button
+              onClick={() => navigate('/appointment')}
+              className="rounded-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-7 py-4 text-lg font-semibold italic text-white shadow-lg transition hover:shadow-[0_0_25px_rgba(242,50,46,0.7)] hover:scale-[1.02]">
+              <span className="relative z-10">Book Appointment</span>
+              <span className="absolute inset-0 rounded-2xl p-1 pointer-events-none border-sweep-mask"></span>
+            </button>
           </div>
-          <button
-            onClick={() => navigate('/appointment')}
-            className="cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-7 py-4 text-lg font-semibold italic text-white shadow-lg transition hover:shadow-[0_0_25px_rgba(242,50,46,0.7)] hover:scale-[1.02] w-fit">
-            <span className="relative z-10">Book Appointment</span>
-            <span className="absolute inset-0 rounded-2xl p-1 pointer-events-none border-sweep-mask"></span>
-          </button>
-          <div className="absolute left-1/2 -translate-x-[70%] bottom-10 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-4 py-2 text-sm font-medium italic text-white opacity-80 w-fit" style={{ animation: 'floatY 5s ease-in-out infinite', animationDelay: '0.2s' }}>
-            Own your spotlight
-          </div>
-          <div className="absolute left-1/2 -translate-x-[15%] bottom-6 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-4 py-2 text-sm font-medium italic text-white opacity-80 w-fit" style={{ animation: 'floatY 5.4s ease-in-out infinite', animationDelay: '0.25s' }}>
-            Frame your story
-          </div>
-          <div className="absolute left-1/2 -translate-x-[42%] top-0 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-4 py-2 text-sm font-medium italic text-white opacity-80 w-fit">
-            Capture with us
-          </div>
-          <div className="absolute left-1/2 -translate-x-[58%] bottom-0 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-3.5 py-2 text-sm font-medium italic text-white opacity-80 w-fit">
-            Make your memories
+          {/* Bottom row */}
+          <div className="flex justify-center gap-3">
+            <span className="rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-4 py-2 text-sm font-medium italic text-white opacity-80" style={{ animation: 'floatY 5s ease-in-out infinite', animationDelay: '0.2s' }}>
+              Own your spotlight
+            </span>
+            <span className="rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-4 py-2 text-sm font-medium italic text-white opacity-80" style={{ animation: 'floatY 5.4s ease-in-out infinite', animationDelay: '0.25s' }}>
+              Frame your story
+            </span>
+            <span className="rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#F2322E] to-[#AA1815] px-4 py-2 text-sm font-medium italic text-white opacity-80" style={{ animation: 'floatY 5.2s ease-in-out infinite', animationDelay: '0.3s' }}>
+              Make your memories
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Button Cluster - medium screens: equal spacing similar to large */}
+      {/* Button Cluster - medium screens */}
       <div className="hidden md:block lg:hidden relative z-10 mx-auto mt-4 mb-2 w-full max-w-xl">
         <div className="relative h-[260px] w-full">
           <div className="absolute right-4 top-14 rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#291471] to-[#4E26D7] px-5 py-2.5 text-base font-medium italic text-white opacity-80 w-fit" style={{ animation: 'floatY 4s ease-in-out infinite' }}>
