@@ -18,7 +18,7 @@ const Privacy = memo(() => {
         <h1 className="text-5xl md:text-4xl font-extrabold mb-4">Privacy Policy</h1>
         <p className="text-base text-[#666] mb-6">Last updated: December 05, 2025</p>
 
-        <p className="text-base mb-4">
+        <p className="mb-4">
           This Privacy Policy explains how we collect, use, disclose, and safeguard your information
           when you use our website at <a href="https://hi-lite-studio.vercel.app/" className="underline">https://hi-lite-studio.vercel.app/</a> (the “Website”).
           By using the Website, you consent to the practices described in this Policy.

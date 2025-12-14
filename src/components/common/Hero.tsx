@@ -7,15 +7,15 @@ const Hero = () => {
 
   return (
     <section className="relative w-full bg-white overflow-hidden pt-4 pb-10">
+      <div className="absolute left-0 top-6 pointer-events-none">
+        <img
+          src={StarYellow}
+          alt="Abstract geometric graphic"
+          className="w-full object-contain"
+        />
+      </div>
       <div className="relative mx-auto flex w-full max-w-[1500px] flex-col gap-8 px-2 md:flex-row md:items-start md:px-4">
          <div className="relative flex w-full flex-col justify-start pl-0 pr-2 md:w-1/2 md:px-0">
-          <img
-            src={StarYellow}
-            alt="Abstract geometric graphic"
-            className="absolute -left-16 w-1/2 object-contain"
-          />
-        {/* Left Side */}
-
 
           {/* Foreground Text */}
           <div className="relative z-10 mb-6 mt-8 pl-6 md:pl-20">
