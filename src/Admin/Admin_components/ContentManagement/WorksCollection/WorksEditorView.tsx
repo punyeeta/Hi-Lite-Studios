@@ -287,6 +287,7 @@ export default function WorksEditorView({
             // Optionally, you could update local arrays order here if needed by parent
           }}
           editMode={(form as any).media_edit_mode === true}
+          onEditModeChange={(editing) => onChangeField('media_edit_mode', editing)}
           emptyMessage="No media added yet. Click 'Add Media' to upload images."
         />
       </div>

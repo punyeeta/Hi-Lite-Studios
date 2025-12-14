@@ -13,6 +13,7 @@ interface MediaGalleryProps {
   emptyMessage?: string
   columns?: number
   editMode?: boolean
+  onEditModeChange?: (editing: boolean) => void
 }
 
 export default function MediaGallery({
@@ -23,6 +24,7 @@ export default function MediaGallery({
   emptyMessage = 'No media added yet.',
   columns = 4,
   editMode: externalEditMode,
+  onEditModeChange,
 }: MediaGalleryProps) {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
   const [editMode, setEditMode] = useState(!!externalEditMode)
@@ -44,7 +46,10 @@ export default function MediaGallery({
 
   const startHold = useCallback(() => {
     if (holdTimer.current) window.clearTimeout(holdTimer.current)
-    holdTimer.current = window.setTimeout(() => setEditMode(true), 500)
+    holdTimer.current = window.setTimeout(() => {
+      setEditMode(true)
+      if (onEditModeChange) onEditModeChange(true)
+    }, 500)
   }, [])
 
   const cancelHold = useCallback(() => {
@@ -53,6 +58,13 @@ export default function MediaGallery({
       holdTimer.current = null
     }
   }, [])
+
+  // Notify parent when edit mode changes (e.g., via external toggle or programmatic changes)
+  const prevEdit = useRef<boolean>(editMode)
+  if (prevEdit.current !== editMode) {
+    prevEdit.current = editMode
+    if (onEditModeChange) onEditModeChange(editMode)
+  }
 
   const onDragStart = (id: string) => {
     dragId.current = id
