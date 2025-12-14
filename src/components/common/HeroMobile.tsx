@@ -6,7 +6,7 @@ const HeroMobile = () => {
 
   return (
     <section className="relative w-full bg-white overflow-hidden h-auto md:h-[75vh] flex flex-col">
-      {/* Star Yellow Background - Top */}
+      {/* Star Yellow Background */}
       <div className="absolute top-0 -left-20 md:-left-70 w-[400px] md:w-[800px] h-[500px] md:h-[550px] opacity-70 pointer-events-none">
         <img
           src={StarYellow}
@@ -16,7 +16,6 @@ const HeroMobile = () => {
       </div>
 
       <div className="relative mx-auto flex w-full flex-1 flex-col px-4 md:px-4 py-3 md:py-3">
-        {/* Text */}
         <div className="relative z-10 flex flex-col justify-start">
           <p className="mb-1 text-2xl sm:text-xl font-medium text-black">Welcome,</p>
           <h1 className="text-5xl sm:text-5xl font-black bg-linear-to-r from-[#291471] to-[#4E26D7] bg-clip-text text-transparent leading-none">
@@ -28,7 +27,7 @@ const HeroMobile = () => {
           </p>
         </div>
 
-        {/* Button Cluster - centered layout matching medium-large design */}
+        {/* Button Cluster  */}
         <div className="relative z-0 mt-6 sm:mt-8 h-[210px] sm:h-60 md:h-[260px]">
           {/* Center CTA */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -41,7 +40,7 @@ const HeroMobile = () => {
             </button>
           </div>
 
-          {/* Surrounding badges - equal sizes */}
+          {/* Surrounding badges */}
           <span className="absolute left-1/4 top-[24%] sm:top-[10%] md:top-[12%] -translate-x-[78%] sm:-translate-x-[80%] md:-translate-x-[85%] rounded-ee-2xl rounded-tl-2xl bg-linear-to-r from-[#FBC93D] to-[#FF8000] px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2 text-[11px] sm:text-sm md:text-sm font-medium italic text-white opacity-90 transition hover:shadow-[0_0_15px_rgba(255,193,7,0.6)]" style={{ animation: 'floatY 4.8s ease-in-out infinite', animationDelay: '0.15s' }}>
             Dream with us
           </span>
