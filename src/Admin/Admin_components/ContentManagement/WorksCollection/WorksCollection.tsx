@@ -174,8 +174,6 @@ export default function WorksCollection() {
   }
 
   const handleDeleteMedia = async (mediaId: string) => {
-    if (!confirm('Are you sure you want to delete this image?')) return
-
     try {
       if (mediaId.startsWith('temp-')) {
         // Delete from pending media
