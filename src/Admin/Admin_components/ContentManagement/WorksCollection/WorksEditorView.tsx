@@ -59,6 +59,16 @@ export default function WorksEditorView({
   onConfirmDelete,
   onCancelDelete,
 }: WorksEditorViewProps) {
+  // Ensure Calendar receives a Date object when `form.date` is a stored string
+  const selectedDate = (() => {
+    if (!form.date) return undefined
+    if (form.date instanceof Date) return form.date
+    // Convert YYYY-MM-DD to a Date at local midnight
+    const str = form.date as unknown as string
+    const [y, m, d] = str.split('-').map(Number)
+    if (!y || !m || !d) return undefined
+    return new Date(y, m - 1, d)
+  })()
   return (
     <div className="space-y-1">
       {/* Top Action Bar - Delete & Cancel on Right */}
@@ -147,7 +157,8 @@ export default function WorksEditorView({
               <div className="rounded-2xl border border-[#dcdcdc] p-2 flex justify-center">
                 <Calendar
                   mode="single"
-                  selected={form.date || undefined}
+                  selected={selectedDate}
+                  defaultMonth={selectedDate}
                   onSelect={(date) => onChangeField('date', date || null)}
                   disabled={submitting || deleting}
                 />

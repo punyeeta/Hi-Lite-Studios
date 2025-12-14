@@ -17,7 +17,7 @@ const HeroMobile = () => {
 
       <div className="relative mx-auto flex w-full flex-1 flex-col px-4 md:px-4 py-3 md:py-3">
         <div className="relative z-10 flex flex-col justify-start">
-          <p className="mb-1 text-2xl sm:text-xl font-medium text-black">Welcome,</p>
+          <p className="mb-1 text-2xl sm:text-xl font-semibold text-black">Welcome,</p>
           <h1 className="text-5xl sm:text-5xl font-black bg-linear-to-r from-[#291471] to-[#4E26D7] bg-clip-text text-transparent leading-none">
             <span className="block">This is Hi-</span>
             <span className="block">Lite Studio.</span>

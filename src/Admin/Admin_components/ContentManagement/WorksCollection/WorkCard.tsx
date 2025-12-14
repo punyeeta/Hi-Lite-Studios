@@ -55,6 +55,14 @@ export default function WorkCard({ work, onEdit }: WorkCardProps) {
           <h3 className="text-sm font-semibold text-gray-900 truncate">
             {work.title}
           </h3>
+          {/* Published Date */}
+          {work.date && (
+            <p className="mt-1 text-xs text-gray-600">
+              {new Date(work.date as unknown as string).toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              })}
+            </p>
+          )}
         </div>
       )}
     </article>

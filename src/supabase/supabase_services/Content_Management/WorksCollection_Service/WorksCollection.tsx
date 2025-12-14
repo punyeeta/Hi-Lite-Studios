@@ -108,6 +108,20 @@ export async function fetchWorkWithMedia(id: string) {
 }
 
 export async function createWork(input: NewWorkInput) {
+  // Normalize date to date-only string (YYYY-MM-DD) using local calendar day
+  const normalizedDate = (() => {
+    const d = input.date as unknown as Date | string | null | undefined
+    if (!d) return null
+    if (d instanceof Date) {
+      // Use local getters to reflect the user's chosen calendar day
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+    // If string, keep as-is assuming it's already date-only or ISO
+    return d as string
+  })()
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .insert({
@@ -115,7 +129,7 @@ export async function createWork(input: NewWorkInput) {
       description: input.description ?? null,
       label_1: input.label_1 ?? null,
       label_2: input.label_2 ?? null,
-      date: input.date ?? null,
+      date: normalizedDate,
       title: input.title ?? null,
       status: input.status ?? 'draft',
     })
@@ -127,6 +141,19 @@ export async function createWork(input: NewWorkInput) {
 }
 
 export async function updateWork(id: string, updates: UpdateWorkInput) {
+  // Normalize date to date-only string (YYYY-MM-DD) using local calendar day
+  const normalizedDate = (() => {
+    const d = updates.date as unknown as Date | string | null | undefined
+    if (d === undefined) return undefined // preserve undefined to avoid overwriting
+    if (!d) return null
+    if (d instanceof Date) {
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+    return d as string
+  })()
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .update({
@@ -134,7 +161,7 @@ export async function updateWork(id: string, updates: UpdateWorkInput) {
       description: updates.description,
       label_1: updates.label_1,
       label_2: updates.label_2,
-      date: updates.date,
+      date: normalizedDate,
       title: updates.title,
       status: updates.status,
     })
