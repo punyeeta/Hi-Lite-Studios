@@ -87,11 +87,19 @@ export default function WorksCollection() {
   const handleEditWork = async (work: Work) => {
     setSelectedWork(work)
     setSelectedWorkId(work.id)
+    // Parse date string as local date to avoid timezone issues
+    let parsedDate: Date | null = null
+    if (work.date) {
+      const [year, month, day] = work.date.split('-').map(Number)
+      if (year && month && day) {
+        parsedDate = new Date(year, month - 1, day)
+      }
+    }
     setForm({
       main_image_url: work.main_image_url || '',
       description: work.description || '',
       label_1: (work.label_1 as WorkLabel) || '',
-      date: work.date ? new Date(work.date) : null,
+      date: parsedDate,
       title: work.title || '',
       status: work.status || 'draft',
     })
@@ -232,12 +240,21 @@ export default function WorksCollection() {
     setSuccess(null)
 
     try {
+      // Format date as YYYY-MM-DD using local date components to avoid timezone issues
+      let formattedDate: string | null = null
+      if (form.date) {
+        const year = form.date.getFullYear()
+        const month = String(form.date.getMonth() + 1).padStart(2, '0')
+        const day = String(form.date.getDate()).padStart(2, '0')
+        formattedDate = `${year}-${month}-${day}`
+      }
+      
       const workData = {
         main_image_url: form.main_image_url || null,
         description: form.description || null,
         label_1: (form.label_1 as WorkLabel) || null,
         label_2: null,
-        date: form.date ? form.date.toISOString().split('T')[0] : null,
+        date: formattedDate,
         title: form.title || null,
         status,
       }
