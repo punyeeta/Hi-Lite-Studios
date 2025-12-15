@@ -11,6 +11,8 @@ const WorkDetail = () => {
   const [expandedDescription, setExpandedDescription] = useState(false)
   const { workCache, workLoading: loading, fetchWorkById } = useWorksStore()
   const work = id ? workCache.get(id) : null
+  const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set())
+  const [imagesPreloading, setImagesPreloading] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -19,6 +21,53 @@ const WorkDetail = () => {
     }
     fetchWorkById(id)
   }, [id, navigate, fetchWorkById])
+
+  // Preload all images when work data is available
+  useEffect(() => {
+    if (!work) return
+
+    const imageUrls: string[] = []
+    
+    // Add main image
+    if (work.main_image_url) {
+      imageUrls.push(work.main_image_url)
+    }
+    
+    // Add all gallery images
+    if (work.media && work.media.length > 0) {
+      work.media.forEach((media) => {
+        if (media.image_url) {
+          imageUrls.push(media.image_url)
+        }
+      })
+    }
+
+    if (imageUrls.length === 0) return
+
+    setImagesPreloading(true)
+    setImagesLoaded(new Set())
+
+    // Preload all images
+    const loadPromises = imageUrls.map((url) => {
+      return new Promise<string>((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => resolve(url)
+        img.onerror = () => reject(url)
+        img.src = url
+      })
+    })
+
+    Promise.allSettled(loadPromises).then((results) => {
+      const loaded = new Set<string>()
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          loaded.add(imageUrls[index])
+        }
+      })
+      setImagesLoaded(loaded)
+      setImagesPreloading(false)
+    })
+  }, [work])
 
 
 
@@ -115,12 +164,24 @@ const WorkDetail = () => {
       <section className="px-8 md:px-10 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           {/* Left: Cover image */}
-          <div className="w-full">
-            <img
-              src={work.main_image_url || ''}
-              alt={work.label_1 || 'Work'}
-              className="w-full h-auto object-cover rounded-xl"
-            />
+          <div className="w-full relative">
+            {work.main_image_url && (!imagesLoaded.has(work.main_image_url) && imagesPreloading) && (
+              <div className="absolute inset-0 bg-gray-200 rounded-xl animate-pulse z-0" />
+            )}
+            {work.main_image_url && (
+              <img
+                src={work.main_image_url}
+                alt={work.label_1 || 'Work'}
+                className={`w-full h-auto object-cover rounded-xl transition-opacity duration-300 relative z-10 ${
+                  imagesLoaded.has(work.main_image_url) || !imagesPreloading ? 'opacity-100' : 'opacity-0'
+                }`}
+                onLoad={() => {
+                  if (work.main_image_url) {
+                    setImagesLoaded((prev) => new Set(prev).add(work.main_image_url!))
+                  }
+                }}
+              />
+            )}
           </div>
 
           {/* Right Column */}
@@ -200,17 +261,28 @@ const WorkDetail = () => {
       {work.media && work.media.length > 0 && (
         <section className="px-4 sm:px-6 md:px-8 max-w-6xl mx-auto mb-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-6">
-            {work.media.map((media) => (
-              <div key={media.id} className="flex flex-col cursor-pointer group">
-                <div className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
-                  <img
-                    src={media.image_url}
-                    alt="Gallery"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+            {work.media.map((media) => {
+              const isLoaded = imagesLoaded.has(media.image_url) || !imagesPreloading
+              return (
+                <div key={media.id} className="flex flex-col cursor-pointer group">
+                  <div className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg relative">
+                    {!isLoaded && (
+                      <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+                    )}
+                    <img
+                      src={media.image_url}
+                      alt="Gallery"
+                      className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
+                        isLoaded ? 'opacity-100' : 'opacity-0'
+                      }`}
+                      onLoad={() => {
+                        setImagesLoaded((prev) => new Set(prev).add(media.image_url))
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </section>
       )}
