@@ -13,6 +13,7 @@ const WorkDetail = () => {
   const work = id ? workCache.get(id) : null
   const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set())
   const [imagesPreloading, setImagesPreloading] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   useEffect(() => {
     if (!id) {
@@ -68,6 +69,54 @@ const WorkDetail = () => {
       setImagesPreloading(false)
     })
   }, [work])
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (lightboxIndex === null) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setLightboxIndex(null)
+      } else if (e.key === 'ArrowRight') {
+        setLightboxIndex((prev) => {
+          if (prev === null || !work?.media) return prev
+          return (prev + 1) % work.media.length
+        })
+      } else if (e.key === 'ArrowLeft') {
+        setLightboxIndex((prev) => {
+          if (prev === null || !work?.media) return prev
+          return (prev - 1 + work.media.length) % work.media.length
+        })
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [lightboxIndex, work])
+
+  // Robust freeze: lock body position and restore on close
+  useEffect(() => {
+    const body = document.body
+    if (lightboxIndex !== null) {
+      const scrollY = window.scrollY
+      const prev = {
+        position: body.style.position,
+        top: body.style.top,
+        width: body.style.width,
+        overflow: body.style.overflow,
+      }
+      body.style.position = 'fixed'
+      body.style.top = `-${scrollY}px`
+      body.style.width = '100%'
+      body.style.overflow = 'hidden'
+      return () => {
+        body.style.position = prev.position
+        body.style.top = prev.top
+        body.style.width = prev.width
+        body.style.overflow = prev.overflow
+        // Restore scroll position
+        window.scrollTo(0, scrollY)
+      }
+    }
+  }, [lightboxIndex])
 
 
 
@@ -275,6 +324,10 @@ const WorkDetail = () => {
                       className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
                         isLoaded ? 'opacity-100' : 'opacity-0'
                       }`}
+                      onClick={() => {
+                        const idx = work.media.findIndex((m) => m.id === media.id)
+                        setLightboxIndex(idx >= 0 ? idx : 0)
+                      }}
                       onLoad={() => {
                         setImagesLoaded((prev) => new Set(prev).add(media.image_url))
                       }}
@@ -285,6 +338,67 @@ const WorkDetail = () => {
             })}
           </div>
         </section>
+      )}
+
+      {/* Lightbox overlay */}
+      {lightboxIndex !== null && work.media && work.media[lightboxIndex] && (
+        <div
+          className="fixed inset-0 z-1000 bg-black/80 flex items-center justify-center p-4 touch-none"
+          onClick={() => setLightboxIndex(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative flex items-center justify-center w-full h-full">
+               {/* Prev */}
+               <button
+                 type="button"
+                 aria-label="Previous"
+                 className="absolute top-1/2 -translate-y-1/2 left-6 md:left-10 flex items-center justify-center leading-none rounded-full bg-white/80 text-black px-3 py-2 pt-px text-3xl font-semibold shadow-lg hover:bg-white"
+              onClick={(e) => {
+                e.stopPropagation()
+                setLightboxIndex((prev) => {
+                  if (prev === null || !work?.media) return prev
+                  return (prev - 1 + work.media.length) % work.media.length
+                })
+              }}
+            >
+                 ‹
+            </button>
+
+            <img
+              src={work.media[lightboxIndex].image_url}
+              alt="Full view"
+              className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            />
+
+               {/* Next */}
+               <button
+                 type="button"
+                 aria-label="Next"
+                 className="absolute top-1/2 -translate-y-1/2 right-6 md:right-10 flex items-center justify-center leading-none rounded-full bg-white/80 text-black px-3 py-2 pt-px text-3xl font-semibold shadow-lg hover:bg-white"
+              onClick={(e) => {
+                e.stopPropagation()
+                setLightboxIndex((prev) => {
+                  if (prev === null || !work?.media) return prev
+                  return (prev + 1) % work.media.length
+                })
+              }}
+            >
+                 ›
+            </button>
+          </div>
+          <button
+            type="button"
+            aria-label="Close"
+            className="absolute top-4 right-4 rounded-full bg-white/90 text-black px-3 py-1 text-sm font-semibold shadow hover:bg-white"
+            onClick={(e) => {
+              e.stopPropagation()
+              setLightboxIndex(null)
+            }}
+          >
+            Close
+          </button>
+        </div>
       )}
     </div>
   )
