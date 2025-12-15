@@ -14,6 +14,7 @@ const WorkDetail = () => {
   const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set())
   const [imagesPreloading, setImagesPreloading] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const isVideo = (url: string) => /\.(mp4|webm|ogg|mov|m4v)$/i.test(url)
 
   useEffect(() => {
     if (!id) {
@@ -314,24 +315,50 @@ const WorkDetail = () => {
               const isLoaded = imagesLoaded.has(media.image_url) || !imagesPreloading
               return (
                 <div key={media.id} className="flex flex-col cursor-pointer group">
-                  <div className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg relative">
+                  <div
+                    className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg relative"
+                    onClick={() => {
+                      const idx = work.media.findIndex((m) => m.id === media.id)
+                      setLightboxIndex(idx >= 0 ? idx : 0)
+                    }}
+                  >
                     {!isLoaded && (
                       <div className="absolute inset-0 bg-gray-200 animate-pulse" />
                     )}
-                    <img
-                      src={media.image_url}
-                      alt="Gallery"
-                      className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
-                        isLoaded ? 'opacity-100' : 'opacity-0'
-                      }`}
-                      onClick={() => {
-                        const idx = work.media.findIndex((m) => m.id === media.id)
-                        setLightboxIndex(idx >= 0 ? idx : 0)
-                      }}
-                      onLoad={() => {
-                        setImagesLoaded((prev) => new Set(prev).add(media.image_url))
-                      }}
-                    />
+                    {isVideo(media.image_url) ? (
+                      <>
+                        <video
+                          src={media.image_url}
+                          className={`w-full h-full object-cover transition-all duration-300 ${
+                            isLoaded ? 'opacity-100' : 'opacity-0'
+                          }`}
+                          muted
+                          playsInline
+                          preload="metadata"
+                          onLoadedData={() => {
+                            setImagesLoaded((prev) => new Set(prev).add(media.image_url))
+                          }}
+                        />
+                        <div className="pointer-events-none absolute inset-0 grid place-items-center">
+                          <div className="h-10 w-10 rounded-full bg-black/50 text-white grid place-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <img
+                        src={media.image_url}
+                        alt="Gallery"
+                        className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${
+                          isLoaded ? 'opacity-100' : 'opacity-0'
+                        }`}
+                        onLoad={() => {
+                          setImagesLoaded((prev) => new Set(prev).add(media.image_url))
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               )
@@ -365,11 +392,29 @@ const WorkDetail = () => {
                  ‹
             </button>
 
-            <img
-              src={work.media[lightboxIndex].image_url}
-              alt="Full view"
-              className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
-            />
+            {(() => {
+              const url = work.media![lightboxIndex!].image_url
+              if (isVideo(url)) {
+                return (
+                  <video
+                    src={url}
+                    className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl bg-black"
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="auto"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                )
+              }
+              return (
+                <img
+                  src={url}
+                  alt="Full view"
+                  className="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                />
+              )
+            })()}
 
                {/* Next */}
                <button

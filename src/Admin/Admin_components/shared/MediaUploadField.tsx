@@ -24,7 +24,7 @@ export default function MediaUploadField({
       <span>{uploading ? 'Uploading...' : buttonText}</span>
       <input
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         multiple={multiple}
         onChange={onUpload}
         className="hidden"

@@ -27,6 +27,8 @@ const WorksSection = () => {
     navigate('/works')
   }
 
+  const isVideo = (url?: string | null) => !!url && /\.(mp4|webm|ogg|mov|m4v)$/i.test(url)
+
   return (
     <section ref={ref} id="works" className="relative w-full bg-white px-4 md:px-8 py-8 overflow-hidden">
       {/* Decorative Top Left */}
@@ -92,12 +94,31 @@ const WorksSection = () => {
                 className="flex flex-col cursor-pointer group"
                 onClick={() => navigate(`/works/${work.id}`)}
               >
-                <div className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
-                  <img
-                    src={work.main_image_url || placeholderImage}
-                    alt={work.label_1 || 'Work'}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="aspect-square w-full bg-gray-100 overflow-hidden rounded-lg relative">
+                  {isVideo(work.main_image_url) ? (
+                    <>
+                      <video
+                        src={work.main_image_url!}
+                        className="w-full h-full object-cover"
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
+                      <div className="pointer-events-none absolute inset-0 grid place-items-center">
+                        <div className="h-10 w-10 rounded-full bg-black/50 text-white grid place-items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <img
+                      src={work.main_image_url || placeholderImage}
+                      alt={work.label_1 || 'Work'}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  )}
                 </div>
                 {/* Label - Below Image */}
                 {work.label_1 && (

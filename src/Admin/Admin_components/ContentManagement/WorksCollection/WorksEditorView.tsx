@@ -254,9 +254,9 @@ export default function WorksEditorView({
                 onClick={() => onChangeField('media_edit_mode', true)}
                 className="rounded-full px-5 py-2 text-xs font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-105"
                 style={{ backgroundColor: COLORS.PRIMARY_RED }}
-                title="Reorder Images"
+                title="Reorder Media"
               >
-                Reorder Images
+                Reorder Media
               </button>
             ) : (
               <button
@@ -308,7 +308,7 @@ export default function WorksEditorView({
           }}
           editMode={(form as any).media_edit_mode === true}
           onEditModeChange={(editing) => onChangeField('media_edit_mode', editing)}
-          emptyMessage="No media added yet. Click 'Add Media' to upload images."
+          emptyMessage="No media added yet. Click 'Add Media' to upload images or videos."
         />
       </div>
     </div>
