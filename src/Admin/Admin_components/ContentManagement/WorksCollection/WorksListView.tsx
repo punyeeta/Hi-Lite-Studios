@@ -16,12 +16,8 @@ export default function WorksListView({
   onNewWork,
   onEditWork,
 }: WorksListViewProps) {
-  // Sort works from newest to oldest based on published date (fallback safe)
-  const sortedWorks = [...works].sort((a, b) => {
-    const aDate = a.date ? new Date(a.date as unknown as string).getTime() : 0;
-    const bDate = b.date ? new Date(b.date as unknown as string).getTime() : 0;
-    return bDate - aDate;
-  });
+  // Use works array as-is - database already provides sorted order (by date, then created_at)
+  // This prevents cards from reordering when dates are updated, since we preserve array position
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
@@ -77,7 +73,7 @@ export default function WorksListView({
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-          {sortedWorks.map((work) => (
+          {works.map((work) => (
             <WorkCard
               key={work.id}
               work={work}
