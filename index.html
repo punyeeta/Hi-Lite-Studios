@@ -35,16 +35,6 @@
       // Update on load and resize
       updateViewport();
       window.addEventListener('resize', updateViewport);
-      
-      // Also prevent zoom out via double-tap gesture on mobile
-      let lastTouchEnd = 0;
-      document.addEventListener('touchend', function(event) {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300 && window.innerWidth < 1024) {
-          event.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, false);
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
